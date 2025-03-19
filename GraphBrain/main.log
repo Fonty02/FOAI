@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.21.0 (MiKTeX 25.3) (format=lualatex 2025.3.19)  19 MAR 2025 21:15
+This is LuaHBTeX, Version 1.21.0 (MiKTeX 25.3) (format=lualatex 2025.3.19)  19 MAR 2025 22:54
  system commands enabled.
  file:line:error style messages enabled.
 **c:/Users/fonta/Desktop/Magistrale/Repo/FOAI/GraphBrain/main
@@ -1391,13 +1391,13 @@ warning  (pdf backend): ignoring duplicate destination with the name 'page.1'
 <images/exception1.png, id=46, 612.03656pt x 689.57625pt>
 File: images/exception1.png Graphic file (type png)
 <use images/exception1.png>
-Package luatex.def Info: images/exception1.png  used on input line 40.
+Package luatex.def Info: images/exception1.png  used on input line 49.
 (luatex.def)             Requested size: 306.01753pt x 344.78728pt.
-)
 
-[3<./images/exception1.png>]
 
-[4] (./main.aux)
+[3])
+
+[4<./images/exception1.png>] (./main.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
@@ -1412,16 +1412,16 @@ Here is how much of LuaTeX's memory you used:
  608 words of node memory still in use:
    7 hlist, 2 vlist, 2 rule, 5 glue, 4 kern, 1 glyph, 12 attribute, 67 glue_spec
 , 8 attribute_list, 2 write nodes
-   avail lists: 1:1,2:642,3:154,4:66,5:276,6:39,7:3652,8:1,9:188,10:9,11:360
+   avail lists: 1:1,2:670,3:159,4:68,5:244,6:44,7:3545,8:1,9:197,10:9,11:343
  61084 multiletter control sequences out of 65536+600000
  55 fonts using 3432055 bytes
- 87i,8n,88p,770b,435s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 87i,8n,88p,770b,437s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {C:/Users/fonta/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}{C:/
 Users/fonta/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}<C:/Users
 /fonta/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/
 fonta/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/fo
 nta/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri12.pfb>
-Output written on main.pdf (5 pages, 407676 bytes).
+Output written on main.pdf (5 pages, 407940 bytes).
 
 PDF statistics: 73 PDF objects out of 1000 (max. 8388607)
  11 named destinations out of 1000 (max. 131072)
