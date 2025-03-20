@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.21.0 (MiKTeX 25.3) (format=lualatex 2025.3.19)  19 MAR 2025 22:54
+This is LuaHBTeX, Version 1.21.0 (MiKTeX 25.3) (format=lualatex 2025.3.19)  20 MAR 2025 22:18
  system commands enabled.
  file:line:error style messages enabled.
 **c:/Users/fonta/Desktop/Magistrale/Repo/FOAI/GraphBrain/main
@@ -1391,7 +1391,7 @@ warning  (pdf backend): ignoring duplicate destination with the name 'page.1'
 <images/exception1.png, id=46, 612.03656pt x 689.57625pt>
 File: images/exception1.png Graphic file (type png)
 <use images/exception1.png>
-Package luatex.def Info: images/exception1.png  used on input line 49.
+Package luatex.def Info: images/exception1.png  used on input line 50.
 (luatex.def)             Requested size: 306.01753pt x 344.78728pt.
 
 
@@ -1412,7 +1412,7 @@ Here is how much of LuaTeX's memory you used:
  608 words of node memory still in use:
    7 hlist, 2 vlist, 2 rule, 5 glue, 4 kern, 1 glyph, 12 attribute, 67 glue_spec
 , 8 attribute_list, 2 write nodes
-   avail lists: 1:1,2:670,3:159,4:68,5:244,6:44,7:3545,8:1,9:197,10:9,11:343
+   avail lists: 1:1,2:670,3:158,4:68,5:220,6:44,7:3366,8:1,9:196,10:9,11:312
  61084 multiletter control sequences out of 65536+600000
  55 fonts using 3432055 bytes
  87i,8n,88p,770b,437s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -1421,7 +1421,7 @@ Users/fonta/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}<C:/Users
 /fonta/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/
 fonta/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/fo
 nta/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri12.pfb>
-Output written on main.pdf (5 pages, 407940 bytes).
+Output written on main.pdf (5 pages, 408232 bytes).
 
 PDF statistics: 73 PDF objects out of 1000 (max. 8388607)
  11 named destinations out of 1000 (max. 131072)
