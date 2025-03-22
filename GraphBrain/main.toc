@@ -3,4 +3,3 @@
 \contentsline {subsection}{\numberline {1.1}Exercise 1}{2}{subsection.1.1}%
 \contentsline {subsubsection}{\numberline {1.1.1}Brief description}{2}{subsubsection.1.1.1}%
 \contentsline {subsubsection}{\numberline {1.1.2}Improvements to the ontology}{2}{subsubsection.1.1.2}%
-\contentsline {subsubsection}{\numberline {1.1.3}Bugs and improvements in the interface}{3}{subsubsection.1.1.3}%
