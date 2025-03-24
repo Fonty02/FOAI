@@ -1,52 +1,56 @@
 \subsection{Exercise 1}
 
-\subsubsection{Brief description}
+\subsubsection{Overview}
 
-In this exercise, I've uploaded the following 
+This document provides a detailed description of the updates performed. The modifications have been structured into two main sections: firstly, the upload of various entities to specific classes, and secondly, the improvements proposed for the ontology design. Each section is organized into bullet-point lists for clarity.
 
-to retrocomputing:
+\subsubsection{Data Upload Details}
+
+
 \begin{itemize}
-    \item \textbf{Metal Slug Series - Main games}: about 10 games from the Metal Slug series, which are the main games in the series.
-    \item \textbf{Flight Simulator Series}: about 10 games
-    \item \textbf{Street Fighter Series}: about 8 games
-    \item \textbf{Dragon Ball Games}: about 15 games
-    \item \textbf{Pro evolution Soccer Series}: Games of the Pro Evolution Soccer series and also its predecessors (about 35 games)
-    \item About 5 console games
-    \item About 5 company
-    \item Mouse and keyboards (about 15 devices)
-    \item List of EXPO events (about 35 events)
-    \item For each videogame, which is a software, I've added information with the relationship \textit{producedBy} to the company that produced it
-    \item For each console the producer (I also add the produced for already existing consoles)
-    \item For each Mouse and Keyboard I've added the producer
-    \item I've added my city Matera and nearby cities (about 30)
-    \item Update the name for existing Internet protocols (8) and add new ones (about 70)
-   
+    \item \textbf{Metal Slug Series - Main Games}: Approximately 10 main titles from the Metal Slug series  \textit{RETROCOMPUTING $\rightarrow$ VIDEOGAME}
+    \item \textbf{Flight Simulator Series}: Around 10 flight simulation games.  \textit{RETROCOMPUTING $\rightarrow$ VIDEOGAME}
+    \item \textbf{Street Fighter Series}: Roughly 8 distinct titles.  \textit{RETROCOMPUTING $\rightarrow$ VIDEOGAME}
+    \item \textbf{Dragon Ball Games}: About 15 games.  \textit{RETROCOMPUTING $\rightarrow$ VIDEOGAME}
+    \item \textbf{Pro Evolution Soccer Series}: Nearly 35 games including both current titles and their historical predecessors.  \textit{RETROCOMPUTING $\rightarrow$ VIDEOGAME}
+    \item \textbf{Console Games}: Approximately 5 devices.  \textit{RETROCOMPUTING $\rightarrow$ CONSOLE}
+    \item \textbf{Technology Vendors}: Details for 5 companies.  \textit{RETROCOMPUTING $\rightarrow$ COMPANY}
+    \item \textbf{Peripheral Devices}: Information for about 15 mouse and keyboard devices.  \textit{RETROCOMPUTING $\rightarrow$ Input Device   (Mouse, Keyboard)}
+    \item \textbf{EXPO Events}: A list of approximately 35 events. \textit{RETROCOMPUTING $\rightarrow$ Event}
+    \item \textbf{Software Relationships}: For each videogame, a \textit{producedBy} relationship has been established linking the software to the company that developed it.
+    \item \textbf{Console Relationships}: For each console, the producing company has been recorded along with associated relationships to already existing consoles.
+    \item \textbf{Peripheral Relationships}: For each mouse and keyboard device, the producer has been identified.
+    \item \textbf{Geographical Data}: Inclusion of Matera and surrounding cities (approximately 30 locations).
+    \item \textbf{Internet Protocols}: Updates include renaming 8 existing protocols and adding around 70 new entries.  \textit{RETROCOMPUTING $\rightarrow$ InternetProtocol}
+    \item \textbf{Crapiata}: A traditional dish from Matera, described as a soup made with legumes and vegetables, albeit missing some ingredients.   \textit{FOOD}
+    \item \textbf{Culinary Relationships}: Established relevant relationships associated with the aforementioned dish.
 \end{itemize}
 
-to food:
+\subsubsection{Proposed Ontology Enhancements}
+
+The following updates are suggested to further improve the ontology:
+
 \begin{itemize}
-    \item \textbf{Crapiata}: a dish from Matera, which is a soup made with legumes and vegetables (and also some missing ingredients)
-    \item Relationships about the previous plate
+    \item \textbf{Genre Classification for Videogames}:
+    \begin{itemize}
+        \item \textit{First Person Shooter}: Introduce as a subclass of \textit{Videogame}.
+        \item \textit{Fighting Game}: Introduce as a subclass of \textit{Videogame}.
+        \item \textit{Action Game}: Introduce as a subclass of \textit{Videogame}.
+        \item \textit{Sandbox Game}: Introduce as a subclass of \textit{Videogame}.
+    \end{itemize}
+    \item \textbf{Software Development Relationships}: The \textit{developedBy} relation currently connects \textit{Software} to \textit{Person}, it is proposed to extend this relationship to include \textit{Organization} as well.
+    \item \textbf{Operational Context}:
+    \begin{itemize}
+        \item Introduce a \textit{executedOn} relationship between \textit{Software} and \textbf{Operating System} to denote the platform on which the software operates.
+        \item Introduce an \textit{runOn} relationship between \textit{Videogame} and \textbf{Console} to specify the console on which the videogame is executed.
+    \end{itemize}
 \end{itemize}
 
+\subsubsection{Interface Improvements}
 
+Several adjustments have been made to enhance the user interface:
 
-
-\subsubsection{Improvements to the ontology}
-I suggest to add the following updtates to the ontology:
 \begin{itemize}
-    \item \textbf{First Person Shooter}: I suggest to add the class \textit{First Person Shooter} to the ontology as subclass of \textit{Videogame}
-    \item \textbf{Fighting Game}: I suggest to add the class \textit{Fighting Game} to the ontology as subclass of \textit{Videogame}
-    \item \textbf{Action Game}: I suggest to add the class \textit{Action Game} to the ontology as subclass of \textit{Videogame}
-    \item \textbf{Sandnox Game}: I suggest to add the class \textit{Sandbox Game} to the ontology as subclass of \textit{Videogame}
-    \item For software the relationship developedBy involves software and Person. However, in many cases (e.g. videogames) the software is developed by an Organization. I suggest to add this update to the ontology as well.
-    \item I would add a relationship \textit{runOn} between the class \textit{Software} and the class \textbf{Operating System} to indicate the operating system on which the software runs.
-    \item I'dd add also \textit{executedOn} between the class \textit{Videogame} and the class \textbf{Console} to indicate the console on which the videogame runs.
-\end{itemize}
-
-
-Interface
-\begin{itemize}
-    \item I'd add HTML Date Type to insert dates
-    \item When I want to add a new relationship, I can't start from the Object but only from the Subject.
+    \item Incorporation of an HTML Date Type field for the insertion of dates.
+    \item Modification of the relationship creation process to allow starting from either the Subject or the Object.
 \end{itemize}
