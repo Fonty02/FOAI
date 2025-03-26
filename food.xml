@@ -9,7 +9,7 @@
             <entity name="Beverage">
                 <attribute name="Type"> <!-- modifica -->
                     <value name="Alcoholic" />
-                    <value name="Non-Alcoholic" /> <!-- Correzione: "Analcoholic" → "Non-Alcoholic" -->
+                    <value name="Non-Alcoholic" /> 
                     <value name="Sparkling" />
                     <value name="With caffeine" />
                 </attribute>
