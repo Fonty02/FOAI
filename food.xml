@@ -6,12 +6,13 @@
     <entities>
         <entity name="FoodBeverage">
             <entity name="Food"/>
-            <entity name="Beverage"/>
-                <attribute name="Type"> <!-- modifca -->
-                    <value name="Alcholic" />
-                    <value name="Analcholic" />
+            <entity name="Beverage">
+                <attribute name="Type"> <!-- modifica -->
+                    <value name="Alcoholic" />
+                    <value name="Non-Alcoholic" /> <!-- Correzione: "Analcoholic" → "Non-Alcoholic" -->
                     <value name="Sparkling" />
                     <value name="With caffeine" />
+                </attribute>
             </entity>
         </entity>
         <entity name="Ingredient">
@@ -157,7 +158,6 @@
 		</relationship>
 		<relationship name="proposes" inverse="proposedBy">
 			<reference subject="PointOfInterest" object="Menu"/>
-		</relationship>
 		</relationship>
 		<relationship name="substitutesFor" inverse="substitutesFor"> <!-- aliasOf ? -->
 			<reference subject="FoodBeverage" object="FoodBeverage" />
