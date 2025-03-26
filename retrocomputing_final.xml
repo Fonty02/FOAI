@@ -1,0 +1,479 @@
+<?xml version="1.0"?>
+<!-- <!DOCTYPE domain SYSTEM "graphbrain.dtd"> -->
+<domain name="retrocomputing" author="stefano" version="1">
+    <imports>
+        <import schema="general" />
+        <import schema="lam" />
+    </imports>
+    <entities>
+        <entity name="Artifact">
+            <entity name="Artwork"/>
+            <entity name="Component">
+                <attribute name="acronym" mandatory="false" datatype="string" />
+                <attribute name="technology" mandatory="false" datatype="string" />
+                <attribute name="originalPrice" mandatory="false" datatype="real" />
+                <attribute name="announcementDate" mandatory="false" datatype="date" />
+                <attribute name="presentationDate" mandatory="false" datatype="date" />
+                <attribute name="startDate" mandatory="false" datatype="date" />
+                <attribute name="endDate" mandatory="false" datatype="date" />
+                
+                <entity name="AuxiliaryBoard" />
+                <entity name="Capacitor" />
+                <entity name="ExpansionBoard" />
+                
+                <entity name="Chip">
+                    <entity name="Logic">
+                        <entity name="Buffer" />
+                        <entity name="CoProcessor" />
+                        <entity name="Decoder" />
+                        <entity name="FlipFlop">
+                            <attribute name="type" mandatory="false" datatype="select">
+                                <value name="D" />
+                                <value name="FK" />
+                                <value name="JK" />
+                                <value name="T" />
+                            </attribute>
+                        </entity>
+                        <entity name="Gate">
+                            <attribute name="function" mandatory="false" datatype="select">
+                                <value name="NAND" />
+                                <value name="AND" />
+                                <value name="XOR" />
+                            </attribute>
+                        </entity>
+                        <entity name="Memory">
+                            <attribute name="capacity" mandatory="false" datatype="string" />
+                            <attribute name="speed" mandatory="false" datatype="string" />
+                            <entity name="EPROM" />
+                            <entity name="PROM" />
+                            <entity name="RAM" />
+                            <entity name="ROM">
+                                <attribute name="content" mandatory="false" datatype="string" />
+                            </entity>
+                            <entity name="ShiftRegister" />
+                        </entity>
+                    </entity>
+                    
+                    <entity name="MicroProcessor">
+                        <attribute name="speed" mandatory="false" datatype="string" />
+                        <attribute name="bits" mandatory="false" datatype="integer" />
+                    </entity>
+                    
+                    <entity name="PLA" />
+                    <entity name="RRIOT" />
+                </entity>
+                
+                <entity name="MainBoard" />
+                <entity name="Resistor" />
+            </entity>
+
+            <entity name="Device">
+                <attribute name="partNumber" mandatory="false" datatype="string" />
+                <attribute name="originalPrice" mandatory="false" datatype="real" />
+                <attribute name="announcementDate" mandatory="false" datatype="date" />
+                <attribute name="presentationDate" mandatory="false" datatype="date" />
+                <attribute name="startDate" mandatory="false" datatype="date" />
+                <attribute name="endDate" mandatory="false" datatype="date" />
+                
+                <entity name="Calculator">
+                    <entity name="AddingMachine" />
+                    <entity name="MechanicCalculator" />
+                    <entity name="ElectricCalculator" />
+                    <entity name="ElectroMechanicCalculator" />
+                    <entity name="ElectronicCalculator" />
+                </entity>
+                
+                <entity name="Computer">
+                    <entity name="Board" />
+                    <entity name="Home" />
+                    <entity name="Mainframe" />
+                    <entity name="Mini" />
+                    <entity name="Personal" />
+                </entity>
+                
+                <entity name="InputDevice">
+                    <entity name="Keyboard">
+                        <attribute name="layout" mandatory="false" datatype="string" />
+                        <attribute name="keys" mandatory="false" datatype="integer" />
+                        <attribute name="technology" mandatory="false" datatype="string" />
+                    </entity>
+                    <entity name="Mouse">
+                        <attribute name="buttons" mandatory="false" datatype="integer" />
+                        <attribute name="technology" mandatory="false" datatype="string" />
+                    </entity>
+                    <entity name="Scanner">
+                        <attribute name="size" mandatory="false" datatype="string" />
+                        <attribute name="resolution" mandatory="false" datatype="string" />
+                        <attribute name="colors" mandatory="false" datatype="string" />
+                    </entity>
+                    <entity name="GraphicPad" />
+                    <entity name="Paddle" />
+                    <entity name="Joystick" />
+                    <entity name="LightPen" />
+                    <entity name="WebCam" />
+                </entity>
+                
+                <entity name="OutputDevice">
+                    <entity name="Monitor">
+                        <attribute name="size" mandatory="false" datatype="string" />
+                        <attribute name="resolution" mandatory="false" datatype="string" />
+                        <attribute name="frequency" mandatory="false" datatype="string" />
+                        <attribute name="standard" mandatory="false" datatype="string" />
+                        <attribute name="technology" mandatory="false" datatype="string" />
+                    </entity>
+                    <entity name="Printer">
+                        <attribute name="technology" mandatory="false" datatype="select">
+                            <value name="Chain" />
+                            <value name="Drum" />
+                            <value name="Daisy" />
+                            <value name="DotMatrix" />
+                            <value name="Inkjet" />
+                            <value name="Laser" />
+                        </attribute>
+                        <attribute name="size" mandatory="false" datatype="string" />
+                        <attribute name="resolution" mandatory="false" datatype="string" />
+                        <attribute name="speed" mandatory="false" datatype="string" />
+                    </entity>
+                    <entity name="Plotter" />
+                </entity>
+                
+                <entity name="InputOutputDevice">
+                    <entity name="AcousticCoupler" />
+                    <entity name="DockingStation" />
+                    <entity name="Modem" />
+                    <entity name="TouchScreen" />
+                </entity>
+                
+                <entity name="StorageDevice">
+                    <entity name="CardPuncher" />
+                    <entity name="PunchedCardPlayer" />
+                    <entity name="TapePlayer" />
+                    <entity name="CoilTapePlayer" />
+                    <entity name="DiskPackPlayer" />
+                    <entity name="CassetteTapePlayer" />
+                    <entity name="MagneticDiskSinglePlayer" />
+                    <entity name="MagneticDiskDoublePlayer" />
+                    <entity name="HardDisk" />
+                    <entity name="Zip" />
+                </entity>
+                
+                <entity name="StorageMedium">
+                    <attribute name="capacity" mandatory="true" datatype="string" />
+                    <attribute name="technology" mandatory="true" datatype="select">
+                        <value name="Electronic" />
+                        <value name="Magnetic" />
+                        <value name="Optical" />
+                        <value name="Paper" />
+                        <value name="SolidState" /><!-- MODIFICA: Aggiunto SolidState -->
+                    </attribute>
+                    <attribute name="appearance" mandatory="true" datatype="select">
+                        <value name="Card" />
+                        <value name="Cartridge" />
+                        <value name="Cassette" />
+                        <value name="Disk" />
+                        <value name="Stick" />
+                        <value name="TapeReel" />
+                    </attribute>
+                </entity>
+                
+                <entity name="NonComputers">
+                    <entity name="Console"/>
+                    <entity name="Phone" />
+                    <entity name="Typewriter">
+                        <entity name="ElectricTypewriter" />
+                        <entity name="MechanicalTypewriter" />
+                    </entity>
+                    <entity name="Watch" />
+                </entity>
+                
+                <!-- Nuova entità FPGA-->
+                <entity name="FPGA" />
+                <!-- MODIFICA -->
+            </entity>
+
+            <entity name="Software">
+                <attribute name="acronym" mandatory="false" datatype="string" />
+                <attribute name="version" mandatory="false" datatype="string" />
+                <attribute name="announcementDate" mandatory="false" datatype="date" />
+                <attribute name="presentationDate" mandatory="false" datatype="date" />
+                <attribute name="startDate" mandatory="false" datatype="date" />
+                <attribute name="endDate" mandatory="false" datatype="date" />
+                
+                <entity name="Development">
+                    <entity name="IDE" />
+                    <entity name="Translator" />
+                </entity>
+                <entity name="Educational" />
+                <entity name="Embedded" />
+                <entity name="OfficeAutomation">
+                    <entity name="Browser" />
+                    <entity name="Database" />
+                    <entity name="EmailClient" />
+                    <entity name="Graphics" />
+                    <entity name="Presentation" />
+                    <entity name="Spreadsheet" />
+                    <entity name="TextProcessor" />
+                </entity>
+                <entity name="OperatingSystem" />
+                <!-- Attriubuto category invece delle sottoclassi-->
+                <entity name="Videogame" Category="FPS,TPS,Sandbox,Sport,RPG,MMORPG,RTS,TBS,MOBA,Racing,Fighting,Platformer,Survival,Horror,Puzzle,Simulation,Adventure,Metroidvania,Roguelike,VisualNovel,PartyGame,Stealth"/>
+            </entity>         
+            <!-- Nuova entità PreservationProject -->
+            <entity name="PreservationProject">
+                <attribute name="goal" mandatory="true" datatype="text" />
+                <attribute name="description" mandatory="false" datatype="text"/>
+            </entity>
+        </entity>
+
+        <entity name="Award">
+            <attribute name="date" mandatory="false" datatype="date" />
+            <entity name="Education" />
+            <entity name="Prize" />
+            <entity name="Record" />
+        </entity>
+        
+        <entity name="Configuration">
+        </entity>
+        
+        <entity name="Fix">
+            <attribute name="item" mandatory="true" datatype="entity" target="Item" />
+            <attribute name="description" mandatory="false" datatype="string" />
+            <attribute name="startDate" mandatory="true" datatype="date" />
+            <attribute name="endDate" mandatory="false" datatype="date" />
+            <attribute name="faultyPart" mandatory="false" datatype="entity" target="Component" />
+            <attribute name="replacement" mandatory="false" datatype="entity" target="Component" />
+            
+            <!-- Nuovi attributi per Fix -->
+            <attribute name="repairDifficulty" mandatory="false" datatype="select">
+                <value name="Beginner" />
+                <value name="Intermediate" />
+                <value name="Expert" />
+            </attribute>
+            <attribute name="documentationLink" mandatory="false" datatype="url" /><!-- MODIFICA -->
+        </entity>
+        
+        <entity name="Item">
+            <attribute name="serialNo" mandatory="true" datatype="string" />
+            <attribute name="description" mandatory="false" distinguishing="true" datatype="string" />
+            <attribute name="productionDate" mandatory="false" datatype="date" />
+            <attribute name="working" mandatory="false" datatype="boolean" />
+            <attribute name="complete" mandatory="false" datatype="boolean" />
+            <attribute name="boxed" mandatory="false" datatype="boolean" />
+            
+            <entity name="ComponentItem">
+                <attribute name="instanceOf" mandatory="true" datatype="entity" target="Component" />
+            </entity>
+            <entity name="DeviceItem">
+                <attribute name="instanceOf" mandatory="true" datatype="entity" target="Device" />
+            </entity>
+            <entity name="DocumentItem">
+                <attribute name="instanceOf" mandatory="true" datatype="entity" target="Document" />
+            </entity>
+            <entity name="SoftwareItem">
+                <attribute name="instanceOf" mandatory="true" datatype="entity" target="Software" />
+            </entity>
+            <entity name="SystemItem">
+                <attribute name="instanceOf" mandatory="true" datatype="entity" target="System" />
+            </entity>
+        </entity>
+        
+        <entity name="Package">
+            <attribute name="description" mandatory="true" datatype="text" />
+        </entity>
+        
+        <entity name="System">
+            <attribute name="type" mandatory="false" datatype="string" />
+        </entity>
+    </entities>
+
+    <relationships>
+        <!-- Nuova relazione supports -->
+        <relationship name="supports" inverse="supportedBy">
+            <reference subject="Device" object="Software" />
+            <attribute name="compatibilityNotes" mandatory="false" datatype="text" />
+        </relationship>
+
+        <relationship name="compatibleWith" inverse="compatibleWith">
+            <reference subject="Component" object="Component" />
+            <reference subject="Device" object="Device" />
+            <reference subject="Software" object="Software" />
+            <reference subject="Software" object="Component" /><!-- MODIFICA: Aggiunto riferimento -->
+        </relationship>
+
+        <!-- Nuova relazione per segnare su quale Sistema Operativo puo essere eseguto un videogioco-->
+        <relationship name="executes" inverse="executedBy">
+            <reference subject="Operating System" object="Videogame"/>
+        </relationship>
+
+
+        <!-- Nuova relazione per segnare su quale Console puo essere eseguto un videogioco-->
+        <relationship name="runs" inverse="runOn">
+            <reference subject="Console" object="Videogame"/>
+        </relationship>
+
+
+        <relationship name="executes" inverse="executedBy">
+            <reference subject="Operating System" object="Videogame"/>
+        </relationship>
+
+
+        <relationship name="acquired" inverse="acquiredBy">
+            <reference subject="Organization" object="Organization" />
+            <attribute name="date" mandatory="false" datatype="date" />
+            <attribute name="originalPrice" mandatory="false" datatype="real" />
+        </relationship>
+        <relationship name="aliasOf" inverse="aliasOf">
+            <reference subject="Device" object="Device" />
+        </relationship>
+        <relationship name="belongsTo" inverse="hasMember">
+            <reference subject="Award" object="Collection" />
+            <reference subject="Component" object="Collection" />
+            <reference subject="Device" object="Collection" />
+            <reference subject="System" object="Collection" />
+            <reference subject="Software" object="Collection" />
+            <attribute name="number" mandatory="false" datatype="string" />
+            <attribute name="startDate" mandatory="false" datatype="date" />
+            <attribute name="endDate" mandatory="false" datatype="date" />
+        </relationship>
+        <relationship name="clones" inverse="clonedBy">
+            <reference subject="Component" object="Component" />
+            <reference subject="Device" object="Device" />
+            <reference subject="Software" object="Software" />
+        </relationship>
+        <relationship name="concerns" inverse="citedIn">
+            <reference subject="Document" object="Collection" />
+            <reference subject="Document" object="Component" />
+            <reference subject="Document" object="Device" />
+            <reference subject="Document" object="System" />
+            <reference subject="Document" object="Software" />
+            <attribute name="position" mandatory="false" datatype="string" />
+        </relationship>
+        <relationship name="developed" inverse="developedBy">
+            <reference subject="Person" object="Component" />
+            <reference subject="Person" object="Device" />
+            <reference subject="Person" object="Fix" />
+            <reference subject="Person" object="Collection" />
+            <reference subject="Person" object="Software" />
+            <reference subject="Person" object="System" />
+            <attribute name="role" mandatory="false" datatype="string" />
+            <attribute name="order" mandatory="false" datatype="integer" />
+        </relationship>
+        <relationship name="evaluated" inverse="evaluatedBy">
+            <reference subject="Person" object="Component" />
+            <reference subject="Person" object="Device" />
+            <reference subject="Person" object="Item" />
+            <reference subject="Person" object="Package" />
+            <reference subject="Person" object="Software" />
+            <reference subject="Person" object="System" />
+            <attribute name="value" mandatory="true" datatype="real" />
+            <attribute name="type" mandatory="true" datatype="select">
+                <value name="Opinion" />
+                <value name="Purchase" />
+            </attribute>
+            <attribute name="evaluationDate" mandatory="false" datatype="date" />
+        </relationship>
+        <relationship name="evolves" inverse="evolvedBy">
+            <reference subject="Component" object="Component" />
+            <reference subject="Device" object="Device" />
+            <reference subject="Software" object="Software" />
+            <reference subject="System" object="System" />
+        </relationship>
+        <relationship name="got" inverse="givenTo">
+            <reference subject="Organization" object="Award" />
+            <reference subject="Document" object="Award" />
+            <reference subject="Event" object="Award" />
+            <reference subject="IntellectualWork" object="Award" />
+            <reference subject="Person" object="Award" />
+            <reference subject="Place" object="Award" />
+            <reference subject="Software" object="Award" />
+            <attribute name="date" mandatory="false" datatype="date" />
+            <attribute name="mark" mandatory="false" datatype="string" />
+            <attribute name="rank" mandatory="false" datatype="integer" />
+        </relationship>
+        <relationship name="instanceOf" inverse="hasInstance">
+            <reference subject="Software" object="IntellectualWork" />
+        </relationship>
+        <relationship name="interactedWith" inverse="interactedWith">
+            <reference subject="Person" object="Device" />
+            <reference subject="Person" object="Software" />
+            <attribute name="role" mandatory="false" datatype="string" />
+            <attribute name="startDate" mandatory="false" datatype="date" />
+            <attribute name="endDate" mandatory="false" datatype="date" />
+        </relationship>
+        <relationship name="isA" inverse="kindOf">
+            <reference subject="Component" object="Component" />
+            <reference subject="Device" object="Device" />
+            <reference subject="Software" object="Software" />
+        </relationship>
+        <relationship name="mayReplace" inverse="mayBeReplacedBy">
+            <reference subject="Component" object="Component" />
+        </relationship>
+        <relationship name="owned" inverse="ownedBy">
+            <reference subject="Organization" object="Device" />
+            <reference subject="Organization" object="Item" />
+            <reference subject="Person" object="Component" />
+            <reference subject="Person" object="Configuration" />
+            <reference subject="Person" object="Device" />
+            <reference subject="Person" object="Item" />
+            <reference subject="Person" object="Package" />
+            <reference subject="Person" object="Software" />
+            <attribute name="quantity" mandatory="false" datatype="integer" />
+            <attribute name="startDate" mandatory="false" datatype="date" />
+            <attribute name="endDate" mandatory="false" datatype="date" />
+            <attribute name="public" mandatory="false" datatype="boolean" />
+        </relationship>
+        <relationship name="packagedWith" inverse="hadInPackage">
+            <reference subject="Device" object="Device" />
+            <reference subject="Document" object="Device" />
+        </relationship>
+        <relationship name="partOf" inverse="hasPart">
+            <reference subject="Component" object="Item" />
+            <reference subject="Component" object="Device" />
+            <reference subject="Item" object="Device" />
+            <reference subject="Item" object="Document" />
+            <reference subject="Software" object="Software" />
+            <reference subject="Device" object="System" />
+            <attribute name="quantity" mandatory="false" datatype="integer" />
+            <attribute name="startDate" mandatory="false" datatype="date" />
+            <attribute name="endDate" mandatory="false" datatype="date" />
+        </relationship>
+        <relationship name="produced" inverse="producedBy">
+            <reference subject="Organization" object="Collection" />
+            <reference subject="Organization" object="Component" />
+            <reference subject="Organization" object="Device" />
+            <reference subject="Organization" object="Package" />
+            <reference subject="Organization" object="Series" />
+            <reference subject="Organization" object="Software" />
+            <reference subject="Organization" object="System" />
+            <attribute name="role" mandatory="false" datatype="string" />
+            <attribute name="place" mandatory="false" datatype="entity" target="Place" />
+        </relationship>
+        <relationship name="proposed" inverse="proposedBy">
+            <reference subject="Package" object="Configuration">
+                <attribute name="role" mandatory="false" datatype="string" />
+            </reference>
+        </relationship>
+        <relationship name="repaired" inverse="repairedBy">
+            <reference subject="Person" object="Item" />
+            <attribute name="reason" mandatory="false" datatype="string" />
+            <attribute name="date" mandatory="false" datatype="date" />
+        </relationship>
+        <relationship name="requires" inverse="requiredBy">
+            <reference subject="Software" object="Device" />
+            <reference subject="Software" object="Software" />
+        </relationship>
+        <relationship name="wasIn" inverse="hosted">
+            <reference subject="Component" object="Event" />
+            <reference subject="Device" object="Event" />
+            <reference subject="Item" object="Event" />
+            <reference subject="Item" object="Place" />
+            <reference subject="Person" object="Collection" />
+            <reference subject="Place" object="Collection" />
+            <reference subject="System" object="Event" />
+            <attribute name="reason" mandatory="false" datatype="string" />
+            <attribute name="position" mandatory="false" datatype="string" />
+            <attribute name="startDate" mandatory="false" datatype="date" />
+            <attribute name="endDate" mandatory="false" datatype="date" />
+        </relationship>
+    </relationships>
+</domain>

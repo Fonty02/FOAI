@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<domain name="openScience">
+    <imports>
+        <import schema="general"/>
+        <import schema="lam"/>
+        <import schema="retrocomputing"/> <!-- Se System/Software sono riutilizzabili -->
+    </imports>
+    <entities>
+    <!-- modifica-->
+        <entity name="Dataset">
+            <attribute name="name" mandatory="true" datatype="string" />
+            <attribute name="description" mandatory="false" datatype="string" />
+            <attribute name="creationDate" mandatory="true" datatype="date" />
+            <attribute name="license" mandatory="false" datatype="string" />
+            <attribute name="format" mandatory="true" datatype="select">
+                <value name="CSV" />
+                <value name="JSON" />
+                <value name="XML" />
+                <value name="RDF" />
+            </attribute>
+        </entity>
+        <entity name="DocumentDescription">
+            <entity name="DocumentLayoutStructure">
+                <entity name="DocumentPage"/>
+                <entity name="DocumentColumn"/>
+                <entity name="DocumentTextBlock">
+                    <entity name="DocumentLine"/>
+                    <entity name="DocumentWord"/>
+                </entity>
+                <entity name="DocumentSeparator"/>
+                <entity name="DocumentList"/>
+                <entity name="DocumentFigure"/>
+                <entity name="DocumentTable"/>
+                <entity name="DocumentFormula"/>
+                <entity name="DocumentStructuredText"/>
+            </entity>
+            <entity name="DocumentMetadata">
+                <attribute name="author" mandatory="false" datatype="string" />
+                <attribute name="version" mandatory="false" datatype="string" />
+                <attribute name="keywords" mandatory="false" datatype="string" multiple="true" />
+            </entity>
+            <entity name="DocumentLogicalStructure">
+                <entity name="DocumentType"/>
+                <entity name="LogicalComponent"/>
+            </entity>
+            <entity name="DocumentGrammaticalStructure">
+                <entity name="GrammaticalConstruct"/>
+                <entity name="PartOfSpeech"/>
+            </entity>
+        </entity>
+        <!--modifica-->
+        <entity name="Environment">
+            <attribute name="type" mandatory="true" datatype="select">
+                <value name="Lab" />
+                <value name="Field" />
+                <value name="Virtual" />
+            </attribute>
+            <attribute name="description" mandatory="false" datatype="string" />
+        </entity>
+        <entity name="Person">
+
+            <entity name="Researcher">
+            </entity>
+            <!--modifica-->
+            <entity name="Author" />
+            <entity name="Reviewer" />
+        </entity>
+        <entity name="Project">
+            <attribute datatype="string" mandatory="true" name="name"/>
+        </entity>
+        <entity name="Setting"/>
+		<entity name="Software"/> <!-- c'e' in retrocomputing -->
+		<entity name="System"/> <!-- c'e' in retrocomputing -->
+		<entity name="Tool"/>
+    </entities>
+    <relationships>
+        <relationship name="above" inverse="below">
+            <reference subject="DocumentDescription" object="DocumentDescription"/>
+        </relationship>
+        <relationship name="describes" inverse="describedBy">
+            <reference subject="DocumentDescription" object="Document"/>
+            <reference subject="DocumentDescription" object="DocumentDescription"/>
+        </relationship>
+        <relationship name="embodiedBy" inverse="embodies">
+            <reference subject="LogicalComponent" object="DocumentDescription"/>
+        </relationship>
+        <relationship name="funded" inverse="fundedBy">
+            <reference subject="Organization" object="Project"/>
+        </relationship>
+        <relationship name="instanceOf" inverse="hasInstance">
+            <reference subject="Word" object="PartOfSpeech"/>
+        </relationship>
+        <relationship name="leftOf" inverse="rightOf">
+            <reference subject="DocumentDescription" object="DocumentDescription"/>
+        </relationship>
+        <relationship name="subjectOf" inverse="objectOf">
+            <reference subject="GrammaticalComponent" object="GrammaticalComponent"/>
+        </relationship>
+        <relationship name="specificationFor" inverse="hasSpecification">
+            <reference subject="GrammaticalComponent" object="GrammaticalComponent"/>
+        </relationship>
+        <relationship name="mentions" inverse="mentionedBy">
+            <reference subject="Document" object="Document"/>
+            <reference subject="Document" object="Dataset"/>
+            <reference subject="Document" object="Person"/>
+        </relationship>
+        <relationship name="partOf" inverse="hasPart">
+            <reference subject="DocumentDescription" object="Document"/>
+            <reference subject="DocumentDescription" object="DocumentDescription"/>
+            <reference subject="Dataset" object="Dataset"/>
+        </relationship>
+        <relationship name="processes" inverse="isProcessedBy">
+            <reference subject="Software" object="Dataset"/>
+        </relationship>
+        <relationship name="runs" inverse="isRunBy">
+            <reference subject="Device" object="Software"/>
+        </relationship>
+        <relationship name="used" inverse="usedBy">
+            <reference subject="Document" object="Dataset"/>
+            <reference subject="Document" object="Device"/>
+            <reference subject="Document" object="Software"/>
+            <reference subject="Document" object="Tool"/>
+            <reference subject="Project" object="Dataset"/>
+            <reference subject="Project" object="Device"/>
+            <reference subject="Project" object="Software"/>
+            <reference subject="Project" object="Tool"/>
+            <attribute name="purpose" mandatory="false" datatype="string" />
+            <attribute name="duration" mandatory="false" datatype="integer" />
+        </relationship>
+        <relationship name="wasIn" inverse="contained">
+            <reference subject="Person" object="Place"/>
+            <reference subject="Organization" object="Event"/>
+            <reference subject="Person" object="Organization"/>
+        </relationship>
+    </relationships>
+</domain>

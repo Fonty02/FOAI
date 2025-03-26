@@ -1,0 +1,178 @@
+<?xml version="1.0"?>
+<domain name="food">
+    <imports>
+        <import schema="general"/>
+    </imports>
+    <entities>
+        <entity name="FoodBeverage">
+            <entity name="Food"/>
+            <entity name="Beverage"/>
+                <attribute name="Type"> <!-- modifca -->
+                    <value name="Alcholic" />
+                    <value name="Analcholic" />
+                    <value name="Sparkling" />
+                    <value name="With caffeine" />
+            </entity>
+        </entity>
+        <entity name="Ingredient">
+            <entity name="Animal">
+                <entity name="Dairy"/>
+                <entity name="Meat"/>
+                <entity name="Seafood"/>
+            </entity>
+            <entity name="Chemical"/>
+            <entity name="Mushroom"/>
+            <entity name="Vegetal">
+                <entity name="Fruit"/>
+                <entity name="Vegetable"/>
+            </entity>
+        </entity>
+        <entity name="Menu">
+            <attribute name="type" mandatory="false" datatype="select">
+                <value name="Breakfast"/>
+                <value name="Brunch"/>
+                <value name="Dinner"/>
+                <value name="Kids"/>
+                <value name="Lunch"/>
+            </attribute>
+        </entity>
+        <entity name="MenuItem">
+            <attribute name="type" mandatory="false" datatype="select">
+                <value name="Appetizer"/>
+                <value name="FirstCourse"/>
+                <value name="SecondCourse"/>
+                <value name="SideDish"/>
+                <value name="Dessert"/>
+                <value name="Beverage"/>
+            </attribute>
+            <attribute name="price" mandatory="false" datatype="real"/>
+            <!-- Nuovi attributi -->
+            <attribute name="dietaryInfo" mandatory="false" datatype="string" />>
+        </entity>
+        <entity name="Nutrient">
+            <attribute name="type" mandatory="false" datatype="select">
+                <value name="Carbohydrate"/>
+                <value name="Lipid"/>
+                <value name="MineralSalt"/>
+                <value name="Protein"/>
+                <value name="Sugar"/>
+                <value name="Vitamin"/>
+            </attribute>
+        </entity>
+        <!-- Rimozione di SensorialFeature -->
+        <entity name="PointOfInterest">
+            <attribute name="estimatedCost" mandatory="false" datatype="real"/>
+            <attribute name="noOfSeats" mandatory="false" datatype="integer"/>
+            <entity name="Service">
+                <entity name="Hotel"/>
+                <entity name="Restaurant">
+                    <!-- Aggiunto tipo di cucina -->
+                    <attribute name="cuisineType" mandatory="true" datatype="string" />
+                </entity>
+            </entity>
+        </entity>
+        <entity name="Recipe">
+            <attribute name="produces" mandatory="false" datatype="entity" target="FoodBeverage" />
+            <!-- Modifica a select -->
+            <attribute name="processing" mandatory="true" datatype="select">
+                <value name="Raw" />
+                <value name="Boiled" />
+                <value name="Fried" />
+            </attribute>
+            <attribute name="cookingTime" mandatory="false" datatype="integer" />
+            <attribute name="complexity" mandatory="false" datatype="integer" />
+            <attribute name="expensiveness" mandatory="false" datatype="integer" />
+        </entity>
+        <!-- Nuove entità -->
+        <entity name="DietaryRestriction">
+            <attribute name="type" mandatory="true" datatype="select">
+                <value name="Allergy" />
+                <value name="Intolerance" />
+                <value name="Vegan"/>
+                <value name="Gluten-Free"/>
+                <value name="Vegetarian"/>
+            </attribute>
+        </entity>
+        <entity name="KitchenTool">
+            <attribute name="name" mandatory="true" datatype="string"/>
+        </entity>
+    </entities>
+    <relationships>
+        <!-- Nuova relazione per nutrienti -->
+        <relationship name="contains" inverse="isContainedIn">
+            <reference subject="FoodBeverage" object="Nutrient" />
+            <attribute name="quantity" mandatory="true" datatype="real" />
+        </relationship>
+        <!-- Correzione a requires -->
+        <relationship name="requires" inverse="requiredBy">
+            <reference subject="Recipe" object="Ingredient"/>
+            <reference subject="Recipe" object="KitchenTool"/>
+        </relationship>
+
+        <relationship name="associatesWith" inverse="associatesWith">
+			<reference subject="FoodBeverage" object="FoodBeverage"/>
+			<reference subject="Ingredient" object="FoodBeverage"/>
+			<reference subject="Ingredient" object="Ingredient"/>
+		</relationship>
+        <relationship name="describes" inverse="describedBy">
+			<reference subject="Category" object="FoodBeverage"/>
+			<reference subject="Category" object="Ingredient"/>
+            <attribute name="sensorialDescription" mandatory="false" datatype="text" />
+            <attribute name="tasteIntensity" mandatory="false" datatype="integer" min="1" max="10" />
+            <attribute name="textureDescription" mandatory="false" datatype="string" />
+		</relationship>
+        <relationship name="instanceOf" inverse="hasInstance">
+               <reference subject="MenuItem" object="FoodBeverage"/>
+		</relationship>
+        <relationship name="interestedIn" inverse="interests">
+			<reference subject="User" object="FoodBeverage"/>
+			<reference subject="User" object="Ingredient"/>
+			<reference subject="User" object="MenuItem"/>
+		</relationship>
+        <relationship name="intolerantTo" inverse="causesIntolerance">
+			<reference subject="User" object="FoodBeverage"/>
+			<reference subject="User" object="Ingredient"/>
+			<reference subject="User" object="Nutrient"/>
+		</relationship>
+		<relationship name="isA" inverse="kindOf">
+			<reference subject="FoodBeverage" object="FoodBeverage"/>
+			<reference subject="Ingredient" object="Ingredient"/>
+			<reference subject="MenuItem" object="FoodBeverage"/>
+		</relationship>
+        <relationship name="likes" inverse="likedBy">
+			<reference subject="User" object="FoodBeverage"/>
+			<reference subject="User" object="Ingredient"/>
+			<reference subject="User" object="MenuItem"/>
+			<attribute name="reason" mandatory="false" datatype="select">
+				<value name="Intolerance"/>
+				<value name="Taste"/>
+			</attribute>
+		</relationship>
+		<relationship name="partOf" inverse="hasPart">
+			<reference subject="Ingredient" object="FoodBeverage"/>
+			<reference subject="Ingredient" object="Ingredient"/>
+			<reference subject="Ingredient" object="MenuItem"/>
+			<reference subject="MenuItem" object="Menu"/>
+			<reference subject="Nutrient" object="Ingredient"/>
+		</relationship>
+		<relationship name="proposes" inverse="proposedBy">
+			<reference subject="PointOfInterest" object="Menu"/>
+		</relationship>
+		</relationship>
+		<relationship name="substitutesFor" inverse="substitutesFor"> <!-- aliasOf ? -->
+			<reference subject="FoodBeverage" object="FoodBeverage" />
+			<reference subject="Ingredient" object="Ingredient" />
+		</relationship>
+		<relationship name="typicalOf" inverse="hasTypical">
+			<reference subject="FoodBeverage" object="Place"/>
+			<reference subject="Ingredient" object="Place"/>
+		</relationship>
+		<relationship name="wasIn" inverse="hosted">
+			<reference subject="Person" object="PointOfInterest"/>
+			<reference subject="PointOfInterest" object="Place"/>
+			<reference subject="User" object="PointOfInterest"/>
+			<attribute name="reason" mandatory="false" datatype="string"/>
+			<attribute name="date" mandatory="false" datatype="date"/>
+		</relationship>
+    </relationships>
+</domain>

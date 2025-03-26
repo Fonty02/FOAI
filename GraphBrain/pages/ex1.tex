@@ -1,10 +1,10 @@
-\subsection{Exercise 1}
+\section{Exercise 1}
 
-\subsubsection{Overview}
+\subsection{Overview}
 
-This document provides a detailed description of the updates performed. The modifications have been structured into two main sections: firstly, the upload of various entities to specific classes, and secondly, the improvements proposed for the ontology design. Each section is organized into bullet-point lists for clarity.
+This document provides a detailed description of the updates performed. The modifications have been structured into two main sections: firstly, the upload of various entities to specific classes, and secondly, the improvements proposed for the the interface.
 
-\subsubsection{Data Upload Details}
+\subsection{Data Upload Details}
 
 
 \begin{itemize}
@@ -26,31 +26,65 @@ This document provides a detailed description of the updates performed. The modi
     \item \textbf{Culinary Relationships}: Established relevant relationships associated with the aforementioned dish.
 \end{itemize}
 
-\subsubsection{Proposed Ontology Enhancements}
 
-The following updates are suggested to further improve the ontology:
 
-\begin{itemize}
-    \item \textbf{Genre Classification for Videogames}:
-    \begin{itemize}
-        \item \textit{First Person Shooter}: Introduce as a subclass of \textit{Videogame}.
-        \item \textit{Fighting Game}: Introduce as a subclass of \textit{Videogame}.
-        \item \textit{Action Game}: Introduce as a subclass of \textit{Videogame}.
-        \item \textit{Sandbox Game}: Introduce as a subclass of \textit{Videogame}.
-    \end{itemize}
-    \item \textbf{Software Development Relationships}: The \textit{developedBy} relation currently connects \textit{Software} to \textit{Person}, it is proposed to extend this relationship to include \textit{Organization} as well.
-    \item \textbf{Operational Context}:
-    \begin{itemize}
-        \item Introduce a \textit{executedOn} relationship between \textit{Software} and \textbf{Operating System} to denote the platform on which the software operates.
-        \item Introduce an \textit{runOn} relationship between \textit{Videogame} and \textbf{Console} to specify the console on which the videogame is executed.
-    \end{itemize}
-\end{itemize}
-
-\subsubsection{Interface Improvements}
+\subsection{Interface Improvements}
 
 Several adjustments have been made to enhance the user interface:
 
 \begin{itemize}
     \item Incorporation of an HTML Date Type field for the insertion of dates.
     \item Modification of the relationship creation process to allow starting from either the Subject or the Object.
+\end{itemize}
+
+
+\section{Exercise 2}
+
+Here I will provide a brief overview of the changes made the ontology. The modifications are divided by domains and, for each domain, they are divided into two sections: the first one is about the entities and the second one is about the reletionships
+\subsection{RETROCOMPUTING}
+
+\subsubsection{Entities}
+\begin{itemize}
+    \item \textbf{StorageMedium}: I suggest to add a new value for \textit{StorageMedium} called \textit{SolidState}. This value will be used to represent all the solid state storage devices such as SSD, USB pen drive and so on.
+    \item \textbf{FPGA}: I suggest to add a new sub-class of \textit{Device} called \textit{FPGA}. This class will be used to represent all the FPGA devices, such as Microchip IGLOO Series
+    \item \textbf{Category}: Since a videogame can be classified into multiple categories, I suggest to add an attribute to videogame called \textit{Category} that will be a list of categorie such as FPS, Sport, RPG, MOBa and so on. The previously existing sub-classes of \textit{Videogame} have been removed.
+    \item \textbf{Preservation Project}: I suggest to add a new class called \textit{PreservationProject} sub-class of \textit{Artifact}. This class will be used to represent all the preservation projects that are related to retrocomputing for example \textit{Internet Archive} or \textit{MAME}. The new attributes are goal (mandatory) and description 
+    \item \textbf{Fix}: I suggest to introduce 2 new attributes to \textit{Fix} which are \textit{repairDifficulty} that can assume only 3 values (Beginner, Intermediate, Expert) and \textit{documentationLink} that is a link to the documentation of the fix.
+\end{itemize}
+
+\subsubsection{Relationships}
+\begin{itemize}
+\item \textbf{supports}: I suggest to add this new relationship between \textit{Device} (subject) and \textit{Software} (object). This relationship will be used to represent the software that is supported by a specific device. The attribute is compatibilityNotes
+\item \textbf{compatibleWith}: I suggest to add Software (subject) and Component (object). This relationship will be used to represent the software that is compatible with a specific component.
+\item \textbf{executes}: I suggest to add this new relationship between \textit{Operating System} (subject) and \textit{Videogame} (object). This relationship will be used to represent the videogame that is executed by a specific operating system.
+\item \textbf{runs}: I suggest to add this new relationship between \textit{Console} (subject) and \textit{Videogame} (object). This relationship will be used to represent the videogame that is run by a specific console.
+\end{itemize}
+
+\subsection{FOOD}
+\subsubsection{Entities}
+\begin{itemize}
+    \item \textbf{Beverage}: I suggest to add a new attribute called \textit{Type} to indicate the type of beverage (alcoholic, non-alcoholic, etc.).
+    \item \textbf{Menu Item}: I suggest to add a new attribute called \textit{dietaryInfo} to indicate the dietary information of the menu item (vegan, vegetarian, gluten-free, etc.).
+    \item \textbf{SensorialFeature}: Sensorial feature has been removed \footnote{Sensorial Feature may be described as attributes in a relationships without a specific class.}
+    \item \textbf{Restaurant}: I suggest to add the attribute \textit{type} to indicate the type of restaurant (fast food, fine dining, etc.).
+    \item \textbf{DietaryRestriction}: I suggest to add this new entity to represent the dietary restrictions that can be associated with a food item or menu item. The new attributes are name (mandatory) that can assume fixed values (vegan, vegetarian, gluten-free, etc.) 
+    \item \textbf{KitchenTool}: I suggest to add this new entity to represent the kitchen tools that can be used in the preparation of food. The new attributes are name (mandatory)
+\end{itemize}
+
+\subsubsection{Relationships}
+\begin{itemize}
+    \item \textbf{contains}: I suggest to add this new relationship between \textit{FoodBeverage} (subject) and \textit{Nutrient} (object). This relationship will be used to represent the nutrients that are contained in a specific food or beverage. The attribute is quantity (mandatory) that can assume fixed values (low, medium, high).
+    \item \textbf{requires}: The subject has been modified from \textit{Artifact} to \textit{KitchenTool}
+    \item \textbf{describes}: New attributes have been added to express SensorialFeature 
+\end{itemize}
+
+\subsection{OpensScience}
+
+I've added the instruction <import schema "retrocomputing"> to the ontology to import the retrocomputing schema
+
+\subsubsection{Entities}
+\begin{itemize}
+    \item \textbf{Dataset}: I suggest to add new attributes: creationDate,license,format
+    \item \textbf{Environment}: I suggest to add new attributes: type (whose values are Lab, Field or Virtual) and description
+    \item \textbf{Author}: I suggest to add \textit{Author} as a sub-class of \textit{Person}
 \end{itemize}

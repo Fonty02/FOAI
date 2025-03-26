@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.21.0 (MiKTeX 25.3) (format=lualatex 2025.3.19)  24 MAR 2025 11:58
+This is LuaHBTeX, Version 1.21.0 (MiKTeX 25.3) (format=lualatex 2025.3.19)  26 MAR 2025 22:29
  system commands enabled.
  file:line:error style messages enabled.
 **c:/Users/fonta/Desktop/Magistrale/Repo/FOAI/GraphBrain/main
@@ -1361,7 +1361,7 @@ Package hyperref Info: Link coloring ON on input line 35.
 File: lstlang1.sty 2024/09/23 1.10c listings language file
 )
 (./pages/front.tex
-<images/uniba-logo.png, id=26, 869.2475pt x 289.08pt>
+<images/uniba-logo.png, id=58, 869.2475pt x 289.08pt>
 File: images/uniba-logo.png Graphic file (type png)
 <use images/uniba-logo.png>
 Package luatex.def Info: images/uniba-logo.png  used on input line 3.
@@ -1394,36 +1394,43 @@ CON-
 
 
 
-[2])
+[2]
 
-[3] (./main.aux)
+[3]
+
+[4])
+
+[5] (./main.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 28FAF11EDDE34F4DCD3722F9CD062529;779.
+(rerunfilecheck)             Checksum: E3DDDD3C1B929C955D08A306743EFE6E;1527.
 )
 
 Here is how much of LuaTeX's memory you used:
- 39103 strings out of 475506
+ 39142 strings out of 475506
  100000,1648299 words of node,token memory allocated
- 608 words of node memory still in use:
-   7 hlist, 2 vlist, 2 rule, 5 glue, 4 kern, 1 glyph, 12 attribute, 67 glue_spec
-, 8 attribute_list, 2 write nodes
-   avail lists: 1:1,2:694,3:145,4:68,5:294,6:38,7:4234,8:1,9:184,10:10,11:538
- 61072 multiletter control sequences out of 65536+600000
- 55 fonts using 3432055 bytes
- 87i,8n,88p,770b,439s stack positions out of 10000i,1000n,20000p,200000b,200000s
-{C:/Users/fonta/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}{C:/
-Users/fonta/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}<C:/Users
+ 627 words of node memory still in use:
+   7 hlist, 2 vlist, 2 rule, 6 glue, 4 kern, 1 glyph, 16 attribute, 67 glue_spec
+, 10 attribute_list, 2 write nodes
+   avail lists: 1:1,2:646,3:155,4:108,5:342,6:41,7:5327,8:2,9:239,10:9,11:639
+ 61100 multiletter control sequences out of 65536+600000
+ 85 fonts using 5355751 bytes
+ 87i,8n,88p,770b,449s stack positions out of 10000i,1000n,20000p,200000b,200000s
+{C:/Users/fonta/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}{C:/U
+sers/fonta/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}<C:/Users
 /fonta/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><
 C:/Users/fonta/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C
-:/Users/fonta/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/
-Users/fonta/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri12.pfb>
-Output written on main.pdf (4 pages, 351297 bytes).
+:/Users/fonta/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/
+Users/fonta/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Us
+ers/fonta/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr7.pfb><C:/Users
+/fonta/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/fo
+nta/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri12.pfb>
+Output written on main.pdf (6 pages, 425393 bytes).
 
-PDF statistics: 75 PDF objects out of 1000 (max. 8388607)
- 10 named destinations out of 1000 (max. 131072)
- 56 words of extra memory for PDF output out of 10000 (max. 100000000)
+PDF statistics: 138 PDF objects out of 1000 (max. 8388607)
+ 21 named destinations out of 1000 (max. 131072)
+ 120 words of extra memory for PDF output out of 10000 (max. 100000000)
 
