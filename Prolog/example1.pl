@@ -143,3 +143,15 @@ married(mary, david).
 %             - Con david (marito di mary) insieme a diane si ha: steve (maschio).
 %
 
+
+/**
+ *   ?- setof(X,parent(X,Y),Z).
+Y = kevin,
+Z = [mary,robert] ? 
+
+
+Y is lock by X. How to solve? 
+
+setof(X,Y^parent(X,Y),Z).
+ * 
+ * //
