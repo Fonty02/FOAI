@@ -1,0 +1,1 @@
+?-write('What''s  your name:' ),read(Name),write('Hello, '),write(Name),write('!'),nl.  %il nome tra ' ' e non tra " "
