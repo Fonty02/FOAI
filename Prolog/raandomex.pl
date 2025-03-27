@@ -1,107 +1,133 @@
-/*
-def fattoriale(n):
-    if n == 0:
-        return 1
-    return n * fattoriale(n - 1)
+father(albero,carlo).
+father(albero,giovanna).
+father(marco,giulio).
+mother(franca,carlo).
+mother(franca,giovanna).
+mother(maria,giulio).
+male(albero).
+male(carlo).
+female(giovanna).
+male(marco).
+male(giulio).
+female(franca).
+female(maria).
+parent(X,Y) :- father(X,Y).
+parent(X,Y) :- mother(X,Y).
+diff(X,Y) :- X \= Y.
 
-print(fattoriale(5))  # Output: 120
-*/
+isMother(X):-
+    mother(X,_).
+isFather(X):-
+    father(X,_).
+isSon(X):-
+    male(X),
+    parent(_,X).
 
-fattoriale(0, 1).
-fattoriale(N, F) :- 
-    N > 0,
-    N1 is N - 1,
-    fattoriale(N1, F1),
-    F is N * F1.
+% flatten(L,LF) to flatten a list L into LF
 
+flatten([], []).  % Caso base: una lista vuota resta vuota.
 
+flatten([X|T], L) :-  
+    flatten(X, FX),   % Se X è una lista, la appiattiamo
+    flatten(T, FT),   % Ricorsione sulla coda
+    conc(FX, FT, L).  % Concatenazione senza append/3
 
-/*
-def pari(n):
-    return n % 2 == 0
+flatten(X, [X]) :-  
+    X \= [], X \= [_|_].  % Se X non è una lista, è un atomo e lo restituiamo in una lista
 
-print(pari(4))  # Output: True
-print(pari(5))  # Output: False
-*/
-
-pari(0).
-pari(X):-
-    X>=2,
-    X1 is X-2,
-    pari(X1).
-
-
-dispari(1).
-dispari(X):-
-    X>=3,
-    X1 is X-2,
-    dispari(X1).
-
-
-/*
-
-def massimo(a, b):
-    return a if a > b else b
-
-print(massimo(10, 20))  # Output: 20
-
-*/
+% Definiamo la concatenazione manualmente senza usare append/3
+conc([], L, L).  
+conc([H|T], L, [H|R]) :- conc(T, L, R). 
 
 
-massimo(A,B,C):-
-    A>=B,
-    C is A.
+%find the last element of a list
 
-massimo(A,B,C):-
-    A<B,
-    C is B.
-
-/*
-def potenza(base, esp):
-    if esp == 0:
-        return 1
-    return base * potenza(base, esp - 1)
-
-print(potenza(2, 3))  # Output: 8
-
-*/
-
-potenza(B,0,X):- 
-    X is 1.
-
-potenza(Base,Esponente,X):-
-    Esponente>0,
-    E1 is Esponente-1,
-    potenza(Base,E1,X1),
-    X is Base*X1.
+lastElement([X|[]],X).
+lastElement([H|T],E):-
+    lastElement(T,E).
 
 
+penultimo([X|T],M):-
+    T=[F|[]],
+    M=X.
 
-/*
-def conta_pari(n):
-    count = 0
-    i = 1
-    while i <= n:  # Ciclo while
-        if i % 2 == 0:  # Condizione if
-            count += 1
-        i += 1
-    return count
-
-print(conta_pari(10))  # Output: 5 (2, 4, 6, 8, 10)
-*/
+penultimo([X|T],M):-
+    penultimo(T,M).
 
 
-contaPari(0,1).
-contaPari(N,Result):-
-    N>0,
-    pari(N),
-    N1 is N-1,
-    contaPari(N1,R1),
-    Result is R1+1.
+element_at(E,[H|T],P):-
+    P=1,
+    E=H.
+element_at(E,[H|T],P):-
+    K is P-1,
+    element_at(E,T,K).
 
-contaPari(N,Result):-
-    N>0,
-    dispari(N),
-    N1 is N-1,
-    contaPari(N1,R1),
-    Result is R1+0. 
+numberElement([],0).
+numberElement([H|T],X):-
+    numberElement(T,K),
+    X is K+1.
+
+reverseList([],[]).
+reverseList([H|[]],L):-
+    L=[H|[]].
+reverseList([H|T],L):-
+    reverse(T,PL),
+    L=[PL|H].
+
+
+palindrome([]).
+palindrome(X):-
+    reverse(X,Y),
+    X=Y.
+
+
+my_flatten([], []).  % Caso base: una lista vuota resta vuota.
+my_flatten(X,L):-
+    \+ is_list(X),
+    L=[X].
+my_flatten([H|T],L):-
+    my_flatten(H,HF),
+    my_flatten(T,TF),
+    append(HF,TF,L).
+
+eliminateDuplicate([],[]).
+eliminateDuplicate([H|T],L):-
+    member(H,T),
+    !,
+    eliminateDuplicate(T,PL),
+    L=PL.
+eliminateDuplicate([H|T],L):-
+    eliminateDuplicate(T,PL),
+    L=[H|PL].
+    
+
+
+pack([], []).  
+pack([H|T], [ [H|Ts] | R ]) :- 
+    take_same(H, T, Ts, Rest),
+    pack(Rest, R).
+
+take_same(H, [H|T], [H|Ts], Rest) :-  
+    take_same(H, T, Ts, Rest).
+take_same(H, [X|T], [], [X|T]) :-  
+    H \= X.
+take_same(_, [], [], []).
+
+/**
+ *  H -> valore da raccogliere
+ * [H|T] -> lista su cui si opera
+ * [H|Ts] -> lista con elementi uguali a H
+ * Rest -> resto della lista
+ * 
+ * */
+
+%insertAt(E,L,Pos,NewList)
+insertAt(X,L,1,N):-
+    append([X],L,N).
+
+insertAt(X,[H|T],P,N):-
+    P>1,
+    P1 is P-1,
+    insertAt(X,T,P1,N2),
+    append([H],N2,N).
+ 
