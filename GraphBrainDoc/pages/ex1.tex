@@ -87,3 +87,15 @@ I've added the instruction <import schema "retrocomputing"> to the ontology to i
     \item \textbf{Environment}: I suggest to add new attributes: type (whose values are Lab, Field or Virtual) and description
     \item \textbf{Author}: I suggest to add \textit{Author} as a sub-class of \textit{Person}
 \end{itemize}
+
+\subsection{General}
+\subsubsection{Entities}
+\begin{itemize}
+    \item \textbf{Material}: I suggest to add a new Category called \textit{Material} to represent the materials that can be used to describe Item.
+    \item \textbf{Document}: I suggest to add a new attribute called \textit{ToC} to represent the table of contents of the document.
+    \item \textbf{Item}: I suggest to add a new attribute called \textit{conditionNotes} to represent the condition of the item
+\end{itemize}
+\subsubsection{Relationships}
+\begin{itemize}
+    \item \textbf{madeOf}: I suggest to add this new relationship between \textit{Item} (subject) and \textit{Material} (object)
+\end{itemize}

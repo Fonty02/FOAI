@@ -13,3 +13,6 @@
 \contentsline {subsubsection}{\numberline {3.2.2}Relationships}{5}{subsubsection.3.2.2}%
 \contentsline {subsection}{\numberline {3.3}OpensScience}{5}{subsection.3.3}%
 \contentsline {subsubsection}{\numberline {3.3.1}Entities}{5}{subsubsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.4}General}{5}{subsection.3.4}%
+\contentsline {subsubsection}{\numberline {3.4.1}Entities}{5}{subsubsection.3.4.1}%
+\contentsline {subsubsection}{\numberline {3.4.2}Relationships}{6}{subsubsection.3.4.2}%
