@@ -47,7 +47,7 @@ Here I will provide a brief overview of the changes made the ontology. The modif
 \begin{itemize}
     \item \textbf{StorageMedium}: I suggest to add a new value for \textit{StorageMedium} called \textit{SolidState}. This value will be used to represent all the solid state storage devices such as SSD, USB pen drive and so on.
     \item \textbf{FPGA}: I suggest to add a new sub-class of \textit{Device} called \textit{FPGA}. This class will be used to represent all the FPGA devices, such as Microchip IGLOO Series
-    \item \textbf{Category}: Since a videogame can be classified into multiple categories, I suggest to add an attribute to videogame called \textit{Category} that will be a list of categorie such as FPS, Sport, RPG, MOBa and so on. The previously existing sub-classes of \textit{Videogame} have been removed.
+    \item \textbf{Videogame}: Since a videogame can be classified into multiple categories, I suggest to add an attribute to videogame called \textit{Category} that will be a list of categorie such as FPS, Sport, RPG, MOBa and so on. The previously existing sub-classes of \textit{Videogame} have been removed.
     \item \textbf{Preservation Project}: I suggest to add a new class called \textit{PreservationProject} sub-class of \textit{Artifact}. This class will be used to represent all the preservation projects that are related to retrocomputing for example \textit{Internet Archive} or \textit{MAME}. The new attributes are goal (mandatory) and description 
     \item \textbf{Fix}: I suggest to introduce 2 new attributes to \textit{Fix} which are \textit{repairDifficulty} that can assume only 3 values (Beginner, Intermediate, Expert) and \textit{documentationLink} that is a link to the documentation of the fix.
 \end{itemize}
@@ -56,8 +56,7 @@ Here I will provide a brief overview of the changes made the ontology. The modif
 \begin{itemize}
 \item \textbf{supports}: I suggest to add this new relationship between \textit{Device} (subject) and \textit{Software} (object). This relationship will be used to represent the software that is supported by a specific device. The attribute is compatibilityNotes
 \item \textbf{compatibleWith}: I suggest to add Software (subject) and Component (object). This relationship will be used to represent the software that is compatible with a specific component.
-\item \textbf{executes}: I suggest to add this new relationship between \textit{Operating System} (subject) and \textit{Videogame} (object). This relationship will be used to represent the videogame that is executed by a specific operating system.
-\item \textbf{runs}: I suggest to add this new relationship between \textit{Console} (subject) and \textit{Videogame} (object). This relationship will be used to represent the videogame that is run by a specific console.
+\item \textbf{supports}: I suggest to add this new relationship between \textit{Device} / \textit{OperatingSystem} (subject)and \textit{Software} (object). This relationship will be used to represent the software that is supported by a specific device or operating system. The attribute is compatibilityNotes
 \end{itemize}
 
 \subsection{FOOD}

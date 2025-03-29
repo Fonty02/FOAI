@@ -1,13 +1,12 @@
 <?xml version="1.0"?>
-<!-- <!DOCTYPE domain SYSTEM "graphbrain.dtd"> -->
-<domain name="retrocomputing" author="stefano" version="1">
+<domain name="retrocomputing" author="stefano" version="2">
     <imports>
         <import schema="general" />
         <import schema="lam" />
     </imports>
     <entities>
         <entity name="Artifact">
-            <entity name="Artwork"/>
+            <entity name="Artwork" />
             <entity name="Component">
                 <attribute name="acronym" mandatory="false" datatype="string" />
                 <attribute name="technology" mandatory="false" datatype="string" />
@@ -16,11 +15,9 @@
                 <attribute name="presentationDate" mandatory="false" datatype="date" />
                 <attribute name="startDate" mandatory="false" datatype="date" />
                 <attribute name="endDate" mandatory="false" datatype="date" />
-                
                 <entity name="AuxiliaryBoard" />
                 <entity name="Capacitor" />
                 <entity name="ExpansionBoard" />
-                
                 <entity name="Chip">
                     <entity name="Logic">
                         <entity name="Buffer" />
@@ -53,20 +50,16 @@
                             <entity name="ShiftRegister" />
                         </entity>
                     </entity>
-                    
                     <entity name="MicroProcessor">
                         <attribute name="speed" mandatory="false" datatype="string" />
                         <attribute name="bits" mandatory="false" datatype="integer" />
                     </entity>
-                    
                     <entity name="PLA" />
                     <entity name="RRIOT" />
                 </entity>
-                
                 <entity name="MainBoard" />
                 <entity name="Resistor" />
             </entity>
-
             <entity name="Device">
                 <attribute name="partNumber" mandatory="false" datatype="string" />
                 <attribute name="originalPrice" mandatory="false" datatype="real" />
@@ -74,7 +67,6 @@
                 <attribute name="presentationDate" mandatory="false" datatype="date" />
                 <attribute name="startDate" mandatory="false" datatype="date" />
                 <attribute name="endDate" mandatory="false" datatype="date" />
-                
                 <entity name="Calculator">
                     <entity name="AddingMachine" />
                     <entity name="MechanicCalculator" />
@@ -82,7 +74,6 @@
                     <entity name="ElectroMechanicCalculator" />
                     <entity name="ElectronicCalculator" />
                 </entity>
-                
                 <entity name="Computer">
                     <entity name="Board" />
                     <entity name="Home" />
@@ -90,7 +81,6 @@
                     <entity name="Mini" />
                     <entity name="Personal" />
                 </entity>
-                
                 <entity name="InputDevice">
                     <entity name="Keyboard">
                         <attribute name="layout" mandatory="false" datatype="string" />
@@ -112,7 +102,6 @@
                     <entity name="LightPen" />
                     <entity name="WebCam" />
                 </entity>
-                
                 <entity name="OutputDevice">
                     <entity name="Monitor">
                         <attribute name="size" mandatory="false" datatype="string" />
@@ -136,14 +125,12 @@
                     </entity>
                     <entity name="Plotter" />
                 </entity>
-                
                 <entity name="InputOutputDevice">
                     <entity name="AcousticCoupler" />
                     <entity name="DockingStation" />
                     <entity name="Modem" />
                     <entity name="TouchScreen" />
                 </entity>
-                
                 <entity name="StorageDevice">
                     <entity name="CardPuncher" />
                     <entity name="PunchedCardPlayer" />
@@ -156,7 +143,6 @@
                     <entity name="HardDisk" />
                     <entity name="Zip" />
                 </entity>
-                
                 <entity name="StorageMedium">
                     <attribute name="capacity" mandatory="true" datatype="string" />
                     <attribute name="technology" mandatory="true" datatype="select">
@@ -164,7 +150,7 @@
                         <value name="Magnetic" />
                         <value name="Optical" />
                         <value name="Paper" />
-                        <value name="SolidState" /><!-- MODIFICA: Aggiunto SolidState -->
+                        <value name="SolidState" /> <!-- MODIFICA: Aggiunto SolidState -->
                     </attribute>
                     <attribute name="appearance" mandatory="true" datatype="select">
                         <value name="Card" />
@@ -175,9 +161,8 @@
                         <value name="TapeReel" />
                     </attribute>
                 </entity>
-                
                 <entity name="NonComputers">
-                    <entity name="Console"/>
+                    <entity name="Console" />
                     <entity name="Phone" />
                     <entity name="Typewriter">
                         <entity name="ElectricTypewriter" />
@@ -185,12 +170,8 @@
                     </entity>
                     <entity name="Watch" />
                 </entity>
-                
-                <!-- Nuova entità FPGA-->
-                <entity name="FPGA" />
-                <!-- MODIFICA -->
+                <entity name="FPGA" /> <!-- MODIFICA: Nuova entità FPGA sotto Device -->
             </entity>
-
             <entity name="Software">
                 <attribute name="acronym" mandatory="false" datatype="string" />
                 <attribute name="version" mandatory="false" datatype="string" />
@@ -198,7 +179,6 @@
                 <attribute name="presentationDate" mandatory="false" datatype="date" />
                 <attribute name="startDate" mandatory="false" datatype="date" />
                 <attribute name="endDate" mandatory="false" datatype="date" />
-                
                 <entity name="Development">
                     <entity name="IDE" />
                     <entity name="Translator" />
@@ -215,26 +195,45 @@
                     <entity name="TextProcessor" />
                 </entity>
                 <entity name="OperatingSystem" />
-                <!-- Attriubuto category invece delle sottoclassi-->
-                <entity name="Videogame" Category="FPS,TPS,Sandbox,Sport,RPG,MMORPG,RTS,TBS,MOBA,Racing,Fighting,Platformer,Survival,Horror,Puzzle,Simulation,Adventure,Metroidvania,Roguelike,VisualNovel,PartyGame,Stealth"/>
-            </entity>         
-            <!-- Nuova entità PreservationProject -->
-            <entity name="PreservationProject">
+                <entity name="Videogame">
+                    <attribute name="Category" mandatory="false" datatype="select" multiple="true"> <!-- MODIFICA: Attributo Category con valori multipli -->
+                        <value name="FPS" />
+                        <value name="TPS" />
+                        <value name="Sandbox" />
+                        <value name="Sport" />
+                        <value name="RPG" />
+                        <value name="MMORPG" />
+                        <value name="RTS" />
+                        <value name="TBS" />
+                        <value name="MOBA" />
+                        <value name="Racing" />
+                        <value name="Fighting" />
+                        <value name="Platformer" />
+                        <value name="Survival" />
+                        <value name="Horror" />
+                        <value name="Puzzle" />
+                        <value name="Simulation" />
+                        <value name="Adventure" />
+                        <value name="Metroidvania" />
+                        <value name="Roguelike" />
+                        <value name="VisualNovel" />
+                        <value name="PartyGame" />
+                        <value name="Stealth" />
+                    </attribute>
+                </entity>
+            </entity>
+            <entity name="PreservationProject"> <!-- MODIFICA: Nuova entità sotto Artifact -->
                 <attribute name="goal" mandatory="true" datatype="text" />
-                <attribute name="description" mandatory="false" datatype="text"/>
+                <attribute name="description" mandatory="false" datatype="text" />
             </entity>
         </entity>
-
         <entity name="Award">
             <attribute name="date" mandatory="false" datatype="date" />
             <entity name="Education" />
             <entity name="Prize" />
             <entity name="Record" />
         </entity>
-        
-        <entity name="Configuration">
-        </entity>
-        
+        <entity name="Configuration" />
         <entity name="Fix">
             <attribute name="item" mandatory="true" datatype="entity" target="Item" />
             <attribute name="description" mandatory="false" datatype="string" />
@@ -242,16 +241,13 @@
             <attribute name="endDate" mandatory="false" datatype="date" />
             <attribute name="faultyPart" mandatory="false" datatype="entity" target="Component" />
             <attribute name="replacement" mandatory="false" datatype="entity" target="Component" />
-            
-            <!-- Nuovi attributi per Fix -->
-            <attribute name="repairDifficulty" mandatory="false" datatype="select">
+            <attribute name="repairDifficulty" mandatory="false" datatype="select"> <!-- MODIFICA: Nuovo attributo -->
                 <value name="Beginner" />
                 <value name="Intermediate" />
                 <value name="Expert" />
             </attribute>
-            <attribute name="documentationLink" mandatory="false" datatype="url" /><!-- MODIFICA -->
+            <attribute name="documentationLink" mandatory="false" datatype="url" /> <!-- MODIFICA: Nuovo attributo -->
         </entity>
-        
         <entity name="Item">
             <attribute name="serialNo" mandatory="true" datatype="string" />
             <attribute name="description" mandatory="false" distinguishing="true" datatype="string" />
@@ -259,7 +255,6 @@
             <attribute name="working" mandatory="false" datatype="boolean" />
             <attribute name="complete" mandatory="false" datatype="boolean" />
             <attribute name="boxed" mandatory="false" datatype="boolean" />
-            
             <entity name="ComponentItem">
                 <attribute name="instanceOf" mandatory="true" datatype="entity" target="Component" />
             </entity>
@@ -276,47 +271,27 @@
                 <attribute name="instanceOf" mandatory="true" datatype="entity" target="System" />
             </entity>
         </entity>
-        
         <entity name="Package">
             <attribute name="description" mandatory="true" datatype="text" />
         </entity>
-        
         <entity name="System">
             <attribute name="type" mandatory="false" datatype="string" />
         </entity>
     </entities>
-
     <relationships>
-        <!-- Nuova relazione supports -->
-        <relationship name="supports" inverse="supportedBy">
-            <reference subject="Device" object="Software" />
-            <attribute name="compatibilityNotes" mandatory="false" datatype="text" />
-        </relationship>
-
-        <relationship name="compatibleWith" inverse="compatibleWith">
+        <relationship name="compatibleWith" inverse="compatibleWith"> <!-- MODIFICA: Estesa per Software-Component -->
             <reference subject="Component" object="Component" />
             <reference subject="Device" object="Device" />
             <reference subject="Software" object="Software" />
-            <reference subject="Software" object="Component" /><!-- MODIFICA: Aggiunto riferimento -->
+            <reference subject="Software" object="Component" />
         </relationship>
-
-        <!-- Nuova relazione per segnare su quale Sistema Operativo puo essere eseguto un videogioco-->
-        <relationship name="executes" inverse="executedBy">
-            <reference subject="Operating System" object="Videogame"/>
+        <!--Nuova relazione-->
+        <relationship name="supports" inverse="supportedBy">
+            <reference subject="OperatingSystem" object="Software" />             ì
+            <reference subject="Device" object="Software" /> 
+            <attribute name="compatibilityNotes" mandatory="false" datatype="text" />
         </relationship>
-
-
-        <!-- Nuova relazione per segnare su quale Console puo essere eseguto un videogioco-->
-        <relationship name="runs" inverse="runOn">
-            <reference subject="Console" object="Videogame"/>
-        </relationship>
-
-
-        <relationship name="executes" inverse="executedBy">
-            <reference subject="Operating System" object="Videogame"/>
-        </relationship>
-
-
+        <!-- Relazioni esistenti mantenute -->
         <relationship name="acquired" inverse="acquiredBy">
             <reference subject="Organization" object="Organization" />
             <attribute name="date" mandatory="false" datatype="date" />

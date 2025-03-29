@@ -1,8 +1,8 @@
-This is LuaHBTeX, Version 1.21.0 (MiKTeX 25.3) (format=lualatex 2025.3.19)  26 MAR 2025 22:29
+This is LuaHBTeX, Version 1.21.0 (MiKTeX 25.3) (format=lualatex 2025.3.29)  29 MAR 2025 10:10
  system commands enabled.
  file:line:error style messages enabled.
-**c:/Users/fonta/Desktop/Magistrale/Repo/FOAI/GraphBrain/main
-(c:/Users/fonta/Desktop/Magistrale/Repo/FOAI/GraphBrain/main.tex
+**c:/Users/fonta/Desktop/Uni/Repo/FOAI/GraphBrainDoc/main
+(c:/Users/fonta/Desktop/Uni/Repo/FOAI/GraphBrainDoc/main.tex
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
 Lua module: luaotfload 2024-12-03 v3.29 Lua based OpenType font support
@@ -96,7 +96,7 @@ Package: inputenc 2024/02/08 v1.3d Input encoding file
 Package inputenc Warning: inputenc package ignored with utf8 based engines.
 
 ) (C:/Users/fonta/AppData/Local/Programs/MiKTeX/tex/generic/babel/babel.sty
-Package: babel 2025/02/14 v25.4 The multilingual framework for pdfLaTeX, LuaLaT
+Package: babel 2025/03/10 v25.5 The multilingual framework for pdfLaTeX, LuaLaT
 eX and XeLaTeX
 
 (C:/Users/fonta/AppData/Local/Programs/MiKTeX/tex/generic/babel/luababel.def
@@ -242,7 +242,7 @@ File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 Package graphics Info: Driver file: luatex.def on input line 106.
 
 (C:/Users/fonta/AppData/Local/Programs/MiKTeX/tex/latex/graphics-def/luatex.def
-File: luatex.def 2022/09/22 v1.2d Graphics/color driver for luatex
+File: luatex.def 2024/04/13 v1.2e Graphics/color driver for luatex
 ))
 \Gin@req@height=\dimen150
 \Gin@req@width=\dimen151
@@ -1235,7 +1235,7 @@ File: hluatex.def 2024-11-05 v7.01l Hyperref driver for luaTeX
 )
 (C:/Users/fonta/AppData/Local/Programs/MiKTeX/tex/latex/l3backend/l3backend-lua
 tex.def
-File: l3backend-luatex.def 2024-01-04 L3 backend support: PDF output (LuaTeX)
+File: l3backend-luatex.def 2024-05-08 L3 backend support: PDF output (LuaTeX)
 \l__color_backend_stack_int=\count371
 Inserting `l3color' in `luaotfload.parse_color'.
 \l__pdf_internal_box=\box124
@@ -1410,15 +1410,15 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 )
 
 Here is how much of LuaTeX's memory you used:
- 39142 strings out of 475506
+ 39140 strings out of 475506
  100000,1648299 words of node,token memory allocated
  627 words of node memory still in use:
    7 hlist, 2 vlist, 2 rule, 6 glue, 4 kern, 1 glyph, 16 attribute, 67 glue_spec
 , 10 attribute_list, 2 write nodes
-   avail lists: 1:1,2:646,3:155,4:108,5:342,6:41,7:5327,8:2,9:239,10:9,11:639
- 61100 multiletter control sequences out of 65536+600000
+   avail lists: 1:1,2:640,3:155,4:108,5:343,6:41,7:5449,8:2,9:239,10:9,11:659
+ 61098 multiletter control sequences out of 65536+600000
  85 fonts using 5355751 bytes
- 87i,8n,88p,770b,449s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 87i,8n,88p,766b,449s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {C:/Users/fonta/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}{C:/U
 sers/fonta/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}<C:/Users
 /fonta/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><
@@ -1428,7 +1428,7 @@ Users/fonta/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Us
 ers/fonta/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr7.pfb><C:/Users
 /fonta/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/fo
 nta/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri12.pfb>
-Output written on main.pdf (6 pages, 425393 bytes).
+Output written on main.pdf (6 pages, 425294 bytes).
 
 PDF statistics: 138 PDF objects out of 1000 (max. 8388607)
  21 named destinations out of 1000 (max. 131072)

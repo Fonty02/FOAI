@@ -1,0 +1,115 @@
+{
+  "nodes": [
+    {
+      "id": "HCLE",
+      "type": "Collection",
+      "attributes": {
+        "name": "HCLE",
+        "ontology": "general"
+      }
+    },
+    {
+      "id": "person_John_Doe",
+      "type": "Person",
+      "attributes": {
+        "name": "John Doe",
+        "role": "Author",
+        "ontology": "general"
+      }
+    },
+    {
+      "id": "org_Tech_Corp",
+      "type": "Organization",
+      "attributes": {
+        "name": "Tech Corp",
+        "type": "Company",
+        "ontology": "general"
+      }
+    },
+    {
+      "id": "work_12345",
+      "type": "IntellectualWork",
+      "attributes": {
+        "title": "The History of Computing",
+        "date": "2020",
+        "ontology": "lam"
+      }
+    },
+    {
+      "id": "expression_12345",
+      "type": "Expression",
+      "attributes": {
+        "title": "The History of Computing (English Edition)",
+        "language": "English",
+        "edition": "First Edition",
+        "date": "2020",
+        "ontology": "lam"
+      }
+    },
+    {
+      "id": "document_12345",
+      "type": "Document",
+      "attributes": {
+        "title": "User Manual for The History of Computing",
+        "author": "John Doe",
+        "date": "2020",
+        "type": "User Manual",
+        "ontology": "retrocomputing"
+      }
+    },
+    {
+      "id": "item_12345",
+      "type": "Item",
+      "attributes": {
+        "serialNo": "SN12345",
+        "description": "Hardcover book, first edition",
+        "productionDate": "2020",
+        "working": true,
+        "complete": true,
+        "boxed": false,
+        "ontology": "lam"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "work_12345",
+      "target": "HCLE",
+      "type": "belongsTo",
+      "attributes": {
+        "number": "12345"
+      },
+      "ontology": "lam"
+    },
+    {
+      "source": "work_12345",
+      "target": "person_John_Doe",
+      "type": "createdBy",
+      "ontology": "general"
+    },
+    {
+      "source": "work_12345",
+      "target": "org_Tech_Corp",
+      "type": "relatedTo",
+      "ontology": "general"
+    },
+    {
+      "source": "expression_12345",
+      "target": "work_12345",
+      "type": "realizedAs",
+      "ontology": "lam"
+    },
+    {
+      "source": "document_12345",
+      "target": "expression_12345",
+      "type": "documents",
+      "ontology": "retrocomputing"
+    },
+    {
+      "source": "item_12345",
+      "target": "expression_12345",
+      "type": "instantiates",
+      "ontology": "lam"
+    }
+  ]
+}
