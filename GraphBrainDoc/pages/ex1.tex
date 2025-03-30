@@ -38,64 +38,316 @@ Several adjustments have been made to enhance the user interface:
 \end{itemize}
 
 
-\section{Exercise 2}
+\section{Exercise 2, with Cirilli Davide}
 
-Here I will provide a brief overview of the changes made the ontology. The modifications are divided by domains and, for each domain, they are divided into two sections: the first one is about the entities and the second one is about the reletionships
-\subsection{RETROCOMPUTING}
+\subsection{Overview}
 
-\subsubsection{Entities}
+This report describes the modification proposed for several ontologies and the Java code provided in the \texttt{CsvToJsonConverter} package. Its objective is to explain in detail the purpose of the code, its functionality, and provide a higher-level overview of its implementation. The code is designed to read data from a CSV file, interpret it according to specific logic, transform it into a structured data model (entities and relationships), and finally serialize this model into a JSON file.
+
+
+\subsection{Ontology Modifications}
+
+
+Here we will provide a brief overview of the changes made the ontology. The modifications are divided by domains and, for each domain, they are divided into two subsections: the first one is about the entities and the second one is about the reletionships
+\subsubsection{RETROCOMPUTING}
+
+\paragraph{Entities}
 \begin{itemize}
-    \item \textbf{StorageMedium}: I suggest to add a new value for \textit{StorageMedium} called \textit{SolidState}. This value will be used to represent all the solid state storage devices such as SSD, USB pen drive and so on.
-    \item \textbf{FPGA}: I suggest to add a new sub-class of \textit{Device} called \textit{FPGA}. This class will be used to represent all the FPGA devices, such as Microchip IGLOO Series
-    \item \textbf{Videogame}: Since a videogame can be classified into multiple categories, I suggest to add an attribute to videogame called \textit{Category} that will be a list of categorie such as FPS, Sport, RPG, MOBa and so on. The previously existing sub-classes of \textit{Videogame} have been removed.
-    \item \textbf{Preservation Project}: I suggest to add a new class called \textit{PreservationProject} sub-class of \textit{Artifact}. This class will be used to represent all the preservation projects that are related to retrocomputing for example \textit{Internet Archive} or \textit{MAME}. The new attributes are goal (mandatory) and description 
-    \item \textbf{Fix}: I suggest to introduce 2 new attributes to \textit{Fix} which are \textit{repairDifficulty} that can assume only 3 values (Beginner, Intermediate, Expert) and \textit{documentationLink} that is a link to the documentation of the fix.
+    \item \textbf{StorageMedium}: We suggest to add a new value for \textit{StorageMedium} called \textit{SolidState}. This value will be used to represent all the solid state storage devices such as SSD, USB pen drive and so on.
+    \item \textbf{FPGA}: We suggest to add a new sub-class of \textit{Device} called \textit{FPGA}. This class will be used to represent all the FPGA devices, such as Microchip IGLOO Series
+    \item \textbf{Videogame}: Since a videogame can be classified into multiple categories, We suggest to add an attribute to videogame called \textit{Category} that will be a list of categorie such as FPS, Sport, RPG, MOBa and so on. The previously existing sub-classes of \textit{Videogame} have been removed.
+    \item \textbf{Preservation Project}: We suggest to add a new class called \textit{PreservationProject} sub-class of \textit{Artifact}. This class will be used to represent all the preservation projects that are related to retrocomputing for example \textit{Internet Archive} or \textit{MAME}. The new attributes are goal (mandatory) and description 
+    \item \textbf{Fix}: We suggest to introduce 2 new attributes to \textit{Fix} which are \textit{repairDifficulty} that can assume only 3 values (Beginner, Intermediate, Expert) and \textit{documentationLink} that is a link to the documentation of the fix.
 \end{itemize}
 
-\subsubsection{Relationships}
+\paragraph{Relationships}
 \begin{itemize}
-\item \textbf{supports}: I suggest to add this new relationship between \textit{Device} (subject) and \textit{Software} (object). This relationship will be used to represent the software that is supported by a specific device. The attribute is compatibilityNotes
-\item \textbf{compatibleWith}: I suggest to add Software (subject) and Component (object). This relationship will be used to represent the software that is compatible with a specific component.
-\item \textbf{supports}: I suggest to add this new relationship between \textit{Device} / \textit{OperatingSystem} (subject)and \textit{Software} (object). This relationship will be used to represent the software that is supported by a specific device or operating system. The attribute is compatibilityNotes
+\item \textbf{supports}: We suggest to add this new relationship between \textit{Device} (subject) and \textit{Software} (object). This relationship will be used to represent the software that is supported by a specific device. The attribute is compatibilityNotes
+\item \textbf{compatibleWith}: We suggest to add Software (subject) and Component (object). This relationship will be used to represent the software that is compatible with a specific component.
+\item \textbf{supports}: We suggest to add this new relationship between \textit{Device} / \textit{OperatingSystem} (subject)and \textit{Software} (object). This relationship will be used to represent the software that is supported by a specific device or operating system. The attribute is compatibilityNotes
 \end{itemize}
 
-\subsection{FOOD}
-\subsubsection{Entities}
+\subsubsection{FOOD}
+\paragraph{Entities}
 \begin{itemize}
-    \item \textbf{Beverage}: I suggest to add a new attribute called \textit{Type} to indicate the type of beverage (alcoholic, non-alcoholic, etc.).
-    \item \textbf{Menu Item}: I suggest to add a new attribute called \textit{dietaryInfo} to indicate the dietary information of the menu item (vegan, vegetarian, gluten-free, etc.).
+    \item \textbf{Beverage}: We suggest to add a new attribute called \textit{Type} to indicate the type of beverage (alcoholic, non-alcoholic, etc.).
+    \item \textbf{Menu Item}: We suggest to add a new attribute called \textit{dietaryInfo} to indicate the dietary information of the menu item (vegan, vegetarian, gluten-free, etc.).
     \item \textbf{SensorialFeature}: Sensorial feature has been removed \footnote{Sensorial Feature may be described as attributes in a relationships without a specific class.}
-    \item \textbf{Restaurant}: I suggest to add the attribute \textit{type} to indicate the type of restaurant (fast food, fine dining, etc.).
-    \item \textbf{DietaryRestriction}: I suggest to add this new entity to represent the dietary restrictions that can be associated with a food item or menu item. The new attributes are name (mandatory) that can assume fixed values (vegan, vegetarian, gluten-free, etc.) 
-    \item \textbf{KitchenTool}: I suggest to add this new entity to represent the kitchen tools that can be used in the preparation of food. The new attributes are name (mandatory)
+    \item \textbf{Restaurant}: We suggest to add the attribute \textit{type} to indicate the type of restaurant (fast food, fine dining, etc.).
+    \item \textbf{DietaryRestriction}: We suggest to add this new entity to represent the dietary restrictions that can be associated with a food item or menu item. The new attributes are name (mandatory) that can assume fixed values (vegan, vegetarian, gluten-free, etc.) 
+    \item \textbf{KitchenTool}: We suggest to add this new entity to represent the kitchen tools that can be used in the preparation of food. The new attributes are name (mandatory)
 \end{itemize}
 
-\subsubsection{Relationships}
+\paragraph{Relationships}
 \begin{itemize}
-    \item \textbf{contains}: I suggest to add this new relationship between \textit{FoodBeverage} (subject) and \textit{Nutrient} (object). This relationship will be used to represent the nutrients that are contained in a specific food or beverage. The attribute is quantity (mandatory) that can assume fixed values (low, medium, high).
+    \item \textbf{contains}: We suggest to add this new relationship between \textit{FoodBeverage} (subject) and \textit{Nutrient} (object). This relationship will be used to represent the nutrients that are contained in a specific food or beverage. The attribute is quantity (mandatory) that can assume fixed values (low, medium, high).
     \item \textbf{requires}: The subject has been modified from \textit{Artifact} to \textit{KitchenTool}
     \item \textbf{describes}: New attributes have been added to express SensorialFeature 
 \end{itemize}
 
-\subsection{OpensScience}
+\subsubsection{OpensScience}
 
-I've added the instruction <import schema "retrocomputing"> to the ontology to import the retrocomputing schema
+We've added the instruction <import schema "retrocomputing"> to the ontology to import the retrocomputing schema
 
-\subsubsection{Entities}
+\paragraph{Entities}
 \begin{itemize}
-    \item \textbf{Dataset}: I suggest to add new attributes: creationDate,license,format
-    \item \textbf{Environment}: I suggest to add new attributes: type (whose values are Lab, Field or Virtual) and description
-    \item \textbf{Author}: I suggest to add \textit{Author} as a sub-class of \textit{Person}
+    \item \textbf{Dataset}: We suggest to add new attributes: creationDate,license,format
+    \item \textbf{Environment}: We suggest to add new attributes: type (whose values are Lab, Field or Virtual) and description
+    \item \textbf{Author}: We suggest to add \textit{Author} as a sub-class of \textit{Person}
 \end{itemize}
 
-\subsection{General}
-\subsubsection{Entities}
+\subsubsection{General}
+\paragraph{Entities}
 \begin{itemize}
-    \item \textbf{Material}: I suggest to add a new Category called \textit{Material} to represent the materials that can be used to describe Item.
-    \item \textbf{Document}: I suggest to add a new attribute called \textit{ToC} to represent the table of contents of the document.
-    \item \textbf{Item}: I suggest to add a new attribute called \textit{conditionNotes} to represent the condition of the item
+    \item \textbf{Material}: We suggest to add a new Category called \textit{Material} to represent the materials that can be used to describe Item.
+    \item \textbf{Document}: We suggest to add a new attribute called \textit{ToC} to represent the table of contents of the document.
+    \item \textbf{Item}: We suggest to add a new attribute called \textit{conditionNotes} to represent the condition of the item
 \end{itemize}
-\subsubsection{Relationships}
+\paragraph{Relationships}
 \begin{itemize}
-    \item \textbf{madeOf}: I suggest to add this new relationship between \textit{Item} (subject) and \textit{Material} (object)
+    \item \textbf{madeOf}: We suggest to add this new relationship between \textit{Item} (subject) and \textit{Material} (object)
 \end{itemize}
+
+
+
+% --- Purpose of the Code ---
+\subsection{Purpose of the Code}
+The primary purpose of the \texttt{CsvToJsonConverter} code is to convert a data catalog stored in a tabular CSV (Comma Separated Values) format into a hierarchical and structured JSON (JavaScript Object Notation) format.
+
+More specifically, the code aims to:
+\begin{itemize}
+    \item Read data from a specific CSV file (\texttt{HCLEcatalog.csv}).
+    \item Interpret each CSV row as representing an entity (such as a physical object, document, person, organization, etc.) or containing information that defines entities and relationships.
+    \item Extract and map data from CSV columns to the fields of well-defined Java objects
+    \item Classify the main entities into specific types (e.g., \texttt{Item}, \texttt{Document}, \texttt{Artifact}) based on the presence or format of certain fields in the CSV.
+    \item Identify and create related entities such as persons (\texttt{Person}), organizations (\texttt{Organization}), categories (\texttt{Category}), and materials (\texttt{Material}) from data in other columns (e.g., \texttt{Creator}, \texttt{SubjectTop}, \texttt{Material}).
+    \item Establish meaningful relationships between these entities (e.g., an \texttt{Item} "belongsTo" a collection, a \texttt{Document} is "developed by" a \texttt{Person}, an \texttt{Item} is "madeOf" a \texttt{Material}).
+    \item Ensure the uniqueness of the extracted entities and relationships (avoiding duplicates).
+    \item Generate a log file (\texttt{parsing.log}) that tracks the processing status and reports any errors or warnings for each CSV row.
+    \item Produce a final JSON file (\texttt{data.json}) representing all unique entities and their relationships in a well-defined structure, suitable for further processing, analysis, or integration with other systems (e.g., graph databases, web applications).
+\end{itemize}
+In summary, the code acts as a bridge between a tabular and potentially flat data format (CSV) and a structured, relational data format (JSON), applying domain-specific interpretation and classification logic based on the data within the CSV.
+
+% --- Main Functionality (What it Does) ---
+\subsection{Main Functionality (What it Does)}
+The code executes a series of logical steps to achieve its purpose:
+
+\begin{enumerate}
+    \item \textbf{CSV Reading and Parsing:}
+        \begin{itemize}
+            \item Opens the specified CSV file (\texttt{HCLEcatalog.csv}) using UTF-8 encoding.
+            \item Utilizes the Apache Commons CSV library to interpret the file.
+            \item Recognizes the first row as the header, ignoring case in column names.
+            \item Trims leading and trailing whitespace from each read value.
+            \item Iterates over each record (row) in the CSV file, excluding the header.
+        \end{itemize}
+
+    \item \textbf{Row Validation and Data Extraction:}
+        \begin{itemize}
+            \item For each row, extracts the value from the \texttt{IdNum} column. If it is missing or empty, the row is skipped, and an error is logged.
+            \item Extracts values from all other columns defined in the header and stores them in a map (\texttt{Map<String, String>}) for easy access.
+            \item Performs basic cleaning (e.g., removing residual quotation marks).
+        \end{itemize}
+
+    \item \textbf{Determining the Main Entity Type:}
+        \begin{itemize}
+            \item Checks if the row represents a \texttt{Document} by verifying the presence of non-null/empty/"None" values in the \texttt{ToC}, \texttt{Extent}, \texttt{SerialNum}, or \texttt{BibCit} columns.
+            \item If it is not a \texttt{Document}, checks if it is an \texttt{Item} by verifying that the \texttt{PartNum} column contains a non-null/empty/"None" value and that it is not a single digit.
+            \item If it meets neither the criteria for \texttt{Document} nor \texttt{Item}, it is classified as a generic \texttt{Artifact}.
+            \item Verifies the presence of the mandatory \texttt{Title} field. If missing, the row is discarded, and an error is logged.
+        \end{itemize}
+
+    \item \textbf{Creating the Main Entity Object:}
+        \begin{itemize}
+            \item Instantiates a Java object of the appropriate class (\texttt{Document}, \texttt{Item}, or \texttt{Artifact}).
+            \item Populates the object's fields with values extracted from the corresponding CSV columns (e.g., \texttt{title}, \texttt{description}, \texttt{partNum}, \texttt{toC}, \texttt{created}, etc.).
+            \item Applies specific logic for certain fields:
+                \begin{itemize}
+                    \item For \texttt{Document.created}, uses the value from \texttt{Created} if present, otherwise falls back to \texttt{DateCR}.
+                    \item For \texttt{Document.copyrighted}, converts 'y' to \texttt{true}, 'n' or '0' to \texttt{false}, leaving it \texttt{null} otherwise.
+                    \item Excludes fields if their value in the CSV is null, empty, or "None" (handled by \texttt{@JsonInclude(Include.NON\_NULL)} and \texttt{isNullOrNone} checks).
+                \end{itemize}
+        \end{itemize}
+
+    \item \textbf{Identifying and Creating Related Entities:}
+        \begin{itemize}
+            \item \textbf{Material:} If the \texttt{Material} column contains 'papr', 'digi', or 'mix', creates a \texttt{Material} object with the corresponding name ("paper", "digital", "mix"). Unrecognized codes are logged as warnings.
+            \item \textbf{Category:} If the \texttt{SubjectTop} column has a value, creates a \texttt{Category} object using that value as the name.
+            \item \textbf{Person/Organization (from Creator):}
+                \begin{itemize}
+                    \item Attempts to interpret the value of the \texttt{Creator} column as a person's name using a specific regex (\texttt{PERSON\_REGEX\_STRICT}) and the \texttt{parsePerson} method.
+                    \item If interpretation succeeds, creates a \texttt{Person} object with separate name and surname.
+                    \item Otherwise (if the regex does not match or parsing fails), creates an \texttt{Organization} object using the original value as the name.
+                \end{itemize}
+            \item \textbf{Person/Organization (from Contributor/AddlAuth):}
+                \begin{itemize}
+                    \item Uses a dedicated method (\texttt{processContributorField}) to handle the \texttt{Contributor} and \texttt{AddlAuth} columns.
+                    \item These fields can contain multiple names separated by commas, semicolons, "and", or "\&".
+                    \item The method identifies if the field contains a list of person names (\texttt{PERSON\_REGEX\_LIST}).
+                    \item If so, it splits the string and attempts to parse each part as a \texttt{Person}. If parsing fails for a part, it treats that part as an \texttt{Organization}.
+                    \item If the field does not resemble a list of persons, it treats the entire content as a single \texttt{Organization}.
+                    \item Creates the corresponding \texttt{Person} or \texttt{Organization} objects.
+                \end{itemize}
+        \end{itemize}
+
+    \item \textbf{Uniqueness Management:}
+        \begin{itemize}
+            \item Utilizes \texttt{HashSet} collections to store all entities (\texttt{Item}, \texttt{Document}, \texttt{Artifact}, \texttt{Person}, \texttt{Organization}, \texttt{Category}, \texttt{Material}) and relationships (\texttt{Relationship}).
+            \item Due to the correct implementation of \texttt{equals()} and \texttt{hashCode()} methods in the classes, adding an element to a \texttt{Set} only succeeds if an equal element does not already exist, thus ensuring uniqueness.
+        \end{itemize}
+
+    \item \textbf{Relationship Creation:}
+        \begin{itemize}
+            \item For every valid main entity extracted from a CSV row, creates a \textbf{\texttt{belongsTo}} relationship:
+                \begin{itemize}
+                    \item Subject: The fixed collection "HCLE" (Type: \texttt{Collection}).
+                    \item Object: The current entity (identified by title, or title + PartNum for Items). Type: \texttt{Item}, \texttt{Document}, or \texttt{Artifact}.
+                    \item Includes the original \texttt{IdNum} value in this relationship's \texttt{number} field.
+                \end{itemize}
+            \item If a \texttt{Material} is identified for an \texttt{Item}, creates a \textbf{\texttt{madeOf}} relationship:
+                \begin{itemize}
+                    \item Subject: The current Item. Type: \texttt{Item}.
+                    \item Object: The identified Material. Type: \texttt{Material}.
+                \end{itemize}
+            \item If a \texttt{Category} is identified for a \texttt{Document} or \texttt{Artifact}, creates a \textbf{\texttt{describe}} relationship:
+                \begin{itemize}
+                    \item Subject: The identified Category. Type: \texttt{Category}.
+                    \item Object: The current Document/Artifact. Type: \texttt{Document} or \texttt{Artifact}.
+                \end{itemize}
+            \item If a \texttt{Creator} is identified for a \texttt{Document} or \texttt{Artifact}:
+                \begin{itemize}
+                    \item If it is a \texttt{Person}, creates a \textbf{\texttt{developed}} relationship. Subject: Person, Object: Document/Artifact.
+                    \item If it is an \texttt{Organization}, creates a \textbf{\texttt{produced}} relationship. Subject: Organization, Object: Document/Artifact.
+                \end{itemize}
+            \item For each \texttt{Person} or \texttt{Organization} identified from the \texttt{Contributor} or \texttt{AddlAuth} fields, creates appropriate relationships:
+                \begin{itemize}
+                    \item From \texttt{Contributor}: Base type \textbf{\texttt{developed}} (becomes \textbf{\texttt{produced}} for Organizations). Subject: Person/Organization, Object: Current entity.
+                    \item From \texttt{AddlAuth}: Base type \textbf{\texttt{collaborated}}. Subject: Person/Organization, Object: Current entity.
+                \end{itemize}
+        \end{itemize}
+
+    \item \textbf{Logging:}
+        \begin{itemize}
+            \item Opens and writes to a log file (\texttt{parsing.log}) using UTF-8 encoding.
+            \item Logs the start of processing for each row, indicating the identified entity type, ID, and title.
+            \item Logs critical errors (e.g., missing \texttt{IdNum}, missing \texttt{Title}) that cause the row to be skipped.
+            \item Logs warnings (e.g., unrecognized \texttt{Material} code, failure to parse a name as a \texttt{Person}).
+            \item Logs the completion of processing for each row.
+            \item At the end, logs summary statistics on the number of unique entities and relationships found.
+        \end{itemize}
+
+    \item \textbf{JSON Output Generation:}
+        \begin{itemize}
+            \item Collects all unique entities from the \texttt{Set}s and organizes them into lists within an \texttt{Entities} object. This object also contains the collection information ("HCLE").
+            \item Collects all unique relationships from the relationship \texttt{Set}.
+            \item Filters the relationships, discarding those that lack valid (non-null and non-empty) values for essential fields (\texttt{ontology}, \texttt{type}, \texttt{subject}, \texttt{subjectType}, \texttt{object}, \texttt{objectType}). The \texttt{number} field can be null.
+            \item Creates a root \texttt{JsonOutput} object containing the \texttt{Entities} object and the filtered list of \texttt{Relationship}s.
+            \item Uses the Jackson library (\texttt{ObjectMapper}) to serialize the \texttt{JsonOutput} object into a JSON string.
+            \item Configures Jackson to produce formatted ("pretty-print") JSON output for better readability.
+            \item Writes the resulting JSON string to the specified output file (e.g., \texttt{data.json}) using UTF-8 encoding.
+        \end{itemize}
+
+    \item \textbf{Error Handling:}
+        \begin{itemize}
+            \item Uses try-with-resources blocks to ensure automatic closing of files (CSV, log, JSON).
+            \item Catches \texttt{IOException} that may occur during file I/O operations or CSV parsing.
+            \item Catches generic \texttt{Exception}s to handle unexpected errors during processing.
+            \item Prints error messages to the standard error console (\texttt{System.err}) in case of severe exceptions.
+        \end{itemize}
+\end{enumerate}
+
+% --- Implementation Overview (How it Works) ---
+\subsection{Implementation Overview (How it Works)}
+This subsection provides a high-level view of how the code achieves the described functionality.
+
+\begin{itemize}
+    \item \textbf{External Libraries:} The code relies on two main external libraries:
+        \begin{itemize}
+            \item \textbf{Apache Commons CSV:} Used for robust and configurable reading of CSV files, automatically handling headers, delimiters, quoting, and value trimming.
+            \item \textbf{Jackson Databind:} A powerful library for handling the JSON format in Java. It is used to serialize the Java objects into the desired JSON structure, managing the mapping between Java fields and JSON keys via annotations (\texttt{@JsonProperty}, \texttt{@JsonInclude}, \texttt{@JsonIgnore}) and \texttt{ObjectMapper} configuration.
+        \end{itemize}
+
+    \item \textbf{Structure:} The core of the data representation consists of Java Objects modeling the different entities (\texttt{Artifact}, \texttt{Item}, \texttt{Document}, \texttt{Person}, etc.) and relationships (\texttt{Relationship}). These classes contain public fields (or getters/setters, though omitted for brevity here) annotated with \texttt{@JsonProperty} to control JSON serialization. Inheritance (\texttt{Item} and \texttt{Document} extend \texttt{Artifact}, which extends \texttt{BaseEntity}) facilitates sharing common properties. The implementation of \texttt{equals()} and \texttt{hashCode()} is crucial for using \texttt{Set}s to ensure uniqueness.
+
+    \item \textbf{Main Class and Control Flow:} The \texttt{CsvToJsonConverter} class contains the \texttt{main} method, which orchestrates the entire process. The main flow involves a loop iterating over CSV records. Inside the loop, helper methods are invoked to perform specific tasks like safe value extraction (\texttt{getRecordValue}), validation (\texttt{isNullOrNone}, \texttt{isNullOrEmpty}), name parsing (\texttt{parsePerson}), and handling fields with multiple contributors (\texttt{processContributorField}).
+
+    \item \textbf{Conditional Logic and Regex:} Entity classification (Item vs. Document vs. Artifact) and the identification of Persons vs. Organizations rely on conditional logic (\texttt{if-else}) checking the presence and format of data in specific CSV columns. Regular expressions (Regex) are used purposefully (\texttt{PERSON\_REGEX\_STRICT}, \texttt{PERSON\_REGEX\_LIST}, \texttt{NAME\_SPLIT\_DELIMITER}) to identify specific patterns in person names and to split strings containing multiple names.
+
+    \item \textbf{Use of Standard Collections:} The code makes extensive use of standard Java collections:
+        \begin{itemize}
+            \item \texttt{Map<String, String>}: To store data from a CSV row accessible by header name.
+            \item \texttt{Set<E>}: Fundamental for collecting unique entities and relationships.
+            \item \texttt{List<E>}: Used in the final structure (\texttt{Entities}, \texttt{JsonOutput}) to hold the collections of entities and relationships for JSON serialization (Jackson works more naturally with lists for JSON arrays). Conversion from Set to List occurs before serialization.
+        \end{itemize}
+
+    \item \textbf{File and Resource Management:} The use of try-with-resources ensures that files and streams (readers, parsers, writers) are closed correctly even if errors occur, preventing resource leaks. Specifying UTF-8 encoding is important for handling special characters correctly.
+\end{itemize}
+
+\subsection{Estimation of the errors}
+The primary objective of this analysis was to perform a qualitative assessment of the data quality within the provided JSON file, identifying common error patterns, inconsistencies.
+\newline
+The assessment was conducted primarily through manual inspection and pattern analysis of the `Entities` and `Relationships` sections within the JSON data.
+
+\subsubsection{Creators and contributors}
+Here a resume about errors between Person and Organization
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|c|c|c|}
+        \hline
+        Classified as $\downarrow$ / Actual $\rightarrow$ & Person & Organization \\
+        \hline
+        Person &  \textcolor{green}{\textbf{n}} (Correct) & \textcolor{red}{\textbf{13}} (Incorrect) \\
+        \hline
+        Organization & \textcolor{red}{\textbf{71}} (Incorrect) &  \textcolor{green}{\textbf{m}} (Correct) \\
+        \hline
+    \end{tabular}
+    \caption{Confusion matrix for People/Organizations classification}
+    \label{tab:people_org}
+\end{table}
+\newline
+This suggests a potential issue in the original data source.
+
+
+
+
+\subsubsection{Artifacts, Documents and Items}
+A significant lack of clarity and consistency exists in the application of the `Document` and `Artifact` entity types.
+\newline
+Some of the entities classified as \texttt{Artifacts} possess characteristics typically associated with documents.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|c|c|c|}
+        \hline
+        Classified as $\downarrow$ / Actual $\rightarrow$ & Document & Artifact \\
+        \hline
+        Document & \textcolor{green}{a} (Correct & \textcolor{red}{\textbf{5}} (Incorrect) \\
+        \hline
+        Artifact & \textcolor{red}{\textbf{50}} (Incorrect) & \textcolor{green}{b}  (Correct) \\
+        \hline
+    \end{tabular}
+    \caption{Confusion matrix for Artifact/Document classification}
+    \label{tab:artifact_doc}
+\end{table}
+
+This suggests a potential issue in the original data source
+
+\subsubsection{Documents Representing Non-Documentary Items}
+Conversely, several items classified as \texttt{Documents} clearly represent physical hardware or software media. Examples include:
+\begin{itemize}
+    \item \texttt{"Apple II Power Supply"}
+    \item \texttt{"Apple II Plus Computer Assembly"}
+    \item \texttt{"Apple Monitor III"}
+    \item \texttt{"Hitachi Color Display"}
+\end{itemize}
+These are clear misclassifications based on the absence of values in the CSV file
+
+
+\subsubsection{Summary}
+\begin{itemize}
+    \item \textbf{Entity Misclassification (People/Orgs):} 84 instances error estimated.
+    \item \textbf{Entity Misclassification (Doc/Artifact):} 55 instances error estimated..
+    \item \textbf{Placeholder/Incomplete Data:} Affects dozens to hundreds of records.
+    \item \textbf{Formatting Inconsistencies:} Pervasive across relevant fields and records.
+\end{itemize}
+Overall, while the People/Organization categorization errors are numerous, the inconsistent application of `Document` vs. `Artifact` and the widespread formatting/completeness issues represent major structural data quality challenges.

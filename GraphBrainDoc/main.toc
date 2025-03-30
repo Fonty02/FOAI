@@ -1,18 +1,27 @@
-\babel@toc {italian}{}\relax 
-\babel@toc {italian}{}\relax 
+\babel@toc {english}{}\relax 
 \contentsline {section}{\numberline {2}Exercise 1}{2}{section.2}%
 \contentsline {subsection}{\numberline {2.1}Overview}{2}{subsection.2.1}%
 \contentsline {subsection}{\numberline {2.2}Data Upload Details}{2}{subsection.2.2}%
 \contentsline {subsection}{\numberline {2.3}Interface Improvements}{3}{subsection.2.3}%
-\contentsline {section}{\numberline {3}Exercise 2}{3}{section.3}%
-\contentsline {subsection}{\numberline {3.1}RETROCOMPUTING}{3}{subsection.3.1}%
-\contentsline {subsubsection}{\numberline {3.1.1}Entities}{3}{subsubsection.3.1.1}%
-\contentsline {subsubsection}{\numberline {3.1.2}Relationships}{4}{subsubsection.3.1.2}%
-\contentsline {subsection}{\numberline {3.2}FOOD}{4}{subsection.3.2}%
-\contentsline {subsubsection}{\numberline {3.2.1}Entities}{4}{subsubsection.3.2.1}%
-\contentsline {subsubsection}{\numberline {3.2.2}Relationships}{5}{subsubsection.3.2.2}%
-\contentsline {subsection}{\numberline {3.3}OpensScience}{5}{subsection.3.3}%
-\contentsline {subsubsection}{\numberline {3.3.1}Entities}{5}{subsubsection.3.3.1}%
-\contentsline {subsection}{\numberline {3.4}General}{5}{subsection.3.4}%
-\contentsline {subsubsection}{\numberline {3.4.1}Entities}{5}{subsubsection.3.4.1}%
-\contentsline {subsubsection}{\numberline {3.4.2}Relationships}{6}{subsubsection.3.4.2}%
+\contentsline {section}{\numberline {3}Exercise 2, with Cirilli Davide}{3}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Overview}{3}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Ontology Modifications}{3}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}RETROCOMPUTING}{3}{subsubsection.3.2.1}%
+\contentsline {paragraph}{Entities}{3}{section*.2}%
+\contentsline {paragraph}{Relationships}{4}{section*.3}%
+\contentsline {subsubsection}{\numberline {3.2.2}FOOD}{4}{subsubsection.3.2.2}%
+\contentsline {paragraph}{Entities}{4}{section*.4}%
+\contentsline {paragraph}{Relationships}{4}{section*.5}%
+\contentsline {subsubsection}{\numberline {3.2.3}OpensScience}{5}{subsubsection.3.2.3}%
+\contentsline {paragraph}{Entities}{5}{section*.6}%
+\contentsline {subsubsection}{\numberline {3.2.4}General}{5}{subsubsection.3.2.4}%
+\contentsline {paragraph}{Entities}{5}{section*.7}%
+\contentsline {paragraph}{Relationships}{5}{section*.8}%
+\contentsline {subsection}{\numberline {3.3}Purpose of the Code}{5}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Main Functionality (What it Does)}{6}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Implementation Overview (How it Works)}{9}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Estimation of the errors}{10}{subsection.3.6}%
+\contentsline {subsubsection}{\numberline {3.6.1}Creators and contributors}{11}{subsubsection.3.6.1}%
+\contentsline {subsubsection}{\numberline {3.6.2}Artifacts, Documents and Items}{11}{subsubsection.3.6.2}%
+\contentsline {subsubsection}{\numberline {3.6.3}Documents Representing Non-Documentary Items}{11}{subsubsection.3.6.3}%
+\contentsline {subsubsection}{\numberline {3.6.4}Summary}{12}{subsubsection.3.6.4}%
