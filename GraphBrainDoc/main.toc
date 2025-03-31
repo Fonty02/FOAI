@@ -19,9 +19,8 @@
 \contentsline {paragraph}{Relationships}{5}{section*.8}%
 \contentsline {subsection}{\numberline {3.3}Purpose of the Code}{5}{subsection.3.3}%
 \contentsline {subsection}{\numberline {3.4}Main Functionality (What it Does)}{6}{subsection.3.4}%
-\contentsline {subsection}{\numberline {3.5}Implementation Overview (How it Works)}{9}{subsection.3.5}%
-\contentsline {subsection}{\numberline {3.6}Estimation of the errors}{10}{subsection.3.6}%
-\contentsline {subsubsection}{\numberline {3.6.1}Creators and contributors}{11}{subsubsection.3.6.1}%
-\contentsline {subsubsection}{\numberline {3.6.2}Artifacts, Documents and Items}{11}{subsubsection.3.6.2}%
-\contentsline {subsubsection}{\numberline {3.6.3}Documents Representing Non-Documentary Items}{11}{subsubsection.3.6.3}%
-\contentsline {subsubsection}{\numberline {3.6.4}Summary}{12}{subsubsection.3.6.4}%
+\contentsline {subsection}{\numberline {3.5}Implementation Overview (How it Works)}{8}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Definition of Entities and Relationships}{9}{subsection.3.6}%
+\contentsline {subsection}{\numberline {3.7}Estimation of the errors}{9}{subsection.3.7}%
+\contentsline {subsubsection}{\numberline {3.7.1}Creators and contributors}{10}{subsubsection.3.7.1}%
+\contentsline {subsubsection}{\numberline {3.7.2}Summary}{10}{subsubsection.3.7.2}%

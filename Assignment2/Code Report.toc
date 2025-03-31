@@ -1,0 +1,9 @@
+\babel@toc {english}{}\relax 
+\contentsline {section}{\numberline {1}Introduction}{1}{section.1}%
+\contentsline {section}{\numberline {2}Purpose of the Code}{1}{section.2}%
+\contentsline {section}{\numberline {3}Main Functionality (What it Does)}{2}{section.3}%
+\contentsline {section}{\numberline {4}Implementation Overview (How it Works)}{4}{section.4}%
+\contentsline {section}{\numberline {5}Definition of Entities and Relationships}{4}{section.5}%
+\contentsline {section}{\numberline {6}Estimation of the errors}{5}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Creators and contributors}{5}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Summary}{5}{subsection.6.2}%

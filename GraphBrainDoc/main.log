@@ -1,8 +1,8 @@
-This is LuaHBTeX, Version 1.21.0 (MiKTeX 25.3) (format=lualatex 2025.3.29)  30 MAR 2025 11:16
+This is LuaHBTeX, Version 1.21.0 (MiKTeX 25.3) (format=lualatex 2025.3.19)  31 MAR 2025 12:42
  system commands enabled.
  file:line:error style messages enabled.
-**c:/Users/fonta/Desktop/Uni/Repo/FOAI/GraphBrainDoc/main
-(c:/Users/fonta/Desktop/Uni/Repo/FOAI/GraphBrainDoc/main.tex
+**c:/Users/fonta/Desktop/Magistrale/Repo/FOAI/GraphBrainDoc/main
+(c:/Users/fonta/Desktop/Magistrale/Repo/FOAI/GraphBrainDoc/main.tex
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
 Lua module: luaotfload 2024-12-03 v3.29 Lua based OpenType font support
@@ -68,7 +68,7 @@ Package: inputenc 2024/02/08 v1.3d Input encoding file
 Package inputenc Warning: inputenc package ignored with utf8 based engines.
 
 ) (C:/Users/fonta/AppData/Local/Programs/MiKTeX/tex/generic/babel/babel.sty
-Package: babel 2025/03/10 v25.5 The multilingual framework for pdfLaTeX, LuaLaT
+Package: babel 2025/02/14 v25.4 The multilingual framework for pdfLaTeX, LuaLaT
 eX and XeLaTeX
 
 (C:/Users/fonta/AppData/Local/Programs/MiKTeX/tex/generic/babel/luababel.def
@@ -235,7 +235,7 @@ File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 Package graphics Info: Driver file: luatex.def on input line 106.
 
 (C:/Users/fonta/AppData/Local/Programs/MiKTeX/tex/latex/graphics-def/luatex.def
-File: luatex.def 2024/04/13 v1.2e Graphics/color driver for luatex
+File: luatex.def 2022/09/22 v1.2d Graphics/color driver for luatex
 ))
 \Gin@req@height=\dimen150
 \Gin@req@width=\dimen151
@@ -1324,7 +1324,7 @@ File: lstlang1.sty 2024/09/23 1.10c listings language file
 )
 (C:/Users/fonta/AppData/Local/Programs/MiKTeX/tex/latex/l3backend/l3backend-lua
 tex.def
-File: l3backend-luatex.def 2024-05-08 L3 backend support: PDF output (LuaTeX)
+File: l3backend-luatex.def 2024-01-04 L3 backend support: PDF output (LuaTeX)
 \l__color_backend_stack_int=\count393
 Inserting `l3color' in `luaotfload.parse_color'.
 \l__pdf_internal_box=\box124
@@ -1440,7 +1440,7 @@ Package hyperref Info: Link coloring ON on input line 59.
 File: lstlang1.sty 2024/09/23 1.10c listings language file
 )
 (./pages/front.tex
-<images/uniba-logo.png, id=82, 869.2475pt x 289.08pt>
+<images/uniba-logo.png, id=78, 869.2475pt x 289.08pt>
 File: images/uniba-logo.png Graphic file (type png)
 <use images/uniba-logo.png>
 Package luatex.def Info: images/uniba-logo.png  used on input line 3.
@@ -1489,102 +1489,90 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 
 
 [4]
-Overfull \hbox (38.07384pt too wide) in paragraph at lines 123--124
+LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <12> not available
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 118.
+
+
+[5]
+Overfull \hbox (38.07384pt too wide) in paragraph at lines 121--122
 []\T1/lmr/m/n/12 Iden-tify and cre-ate re-lated en-ti-ties such as per-sons (\T
 1/lmtt/m/n/12 Person\T1/lmr/m/n/12 ), or-ga-ni-za-tions (\T1/lmtt/m/n/12 Organiz
 ation\T1/lmr/m/n/12 ),
  []
 
 
-
-[5]
-Overfull \hbox (7.57011pt too wide) in paragraph at lines 124--125
+Overfull \hbox (7.57011pt too wide) in paragraph at lines 122--123
 \T1/lmr/m/n/12 a col-lec-tion, a \T1/lmtt/m/n/12 Document \T1/lmr/m/n/12 is "de-
 vel-oped by" a \T1/lmtt/m/n/12 Person\T1/lmr/m/n/12 , an \T1/lmtt/m/n/12 Item \
-T1/lmr/m/n/12 is "madeOf" a \T1/lmtt/m/n/12 Material\T1/lmr/m/n/12 ). 
+T1/lmr/m/n/12 is "madeOf" a \T1/lmtt/m/n/12 Material\T1/lmr/m/n/12 ).
  []
 
 
 
 [6]
-Overfull \hbox (12.49057pt too wide) in paragraph at lines 162--163
-[]\T1/lmr/m/n/12 In-stan-ti-ates a Java ob-ject of the ap-pro-pri-ate class (\T
-1/lmtt/m/n/12 Document\T1/lmr/m/n/12 , \T1/lmtt/m/n/12 Item\T1/lmr/m/n/12 , or 
-\T1/lmtt/m/n/12 Artifact\T1/lmr/m/n/12 ). 
+Overfull \hbox (95.97813pt too wide) in paragraph at lines 178--179
+\T1/lmr/m/n/12 re-mains the same as pre-vi-ous de-scrip-tion (us-ing regex, \T1
+/lmtt/m/n/12 parsePerson\T1/lmr/m/n/12 , \T1/lmtt/m/n/12 processContributorField
+\T1/lmr/m/n/12 )
  []
 
 
-Overfull \hbox (30.92897pt too wide) in paragraph at lines 180--181
-[]\T1/lmr/m/n/12 Oth-er-wise (if the regex does not match or pars-ing fails), cr
-e-ates an \T1/lmtt/m/n/12 Organization
- []
-
-
-Overfull \hbox (41.25487pt too wide) in paragraph at lines 184--185
-[]\T1/lmr/m/n/12 Uses a ded-i-cated method (\T1/lmtt/m/n/12 processContributorFi
-eld\T1/lmr/m/n/12 ) to han-dle the \T1/lmtt/m/n/12 Contributor
- []
-
-
-Overfull \hbox (60.50865pt too wide) in paragraph at lines 186--187
-[]\T1/lmr/m/n/12 The method iden-ti-fies if the field con-tains a list of per-so
-n names (\T1/lmtt/m/n/12 PERSON_REGEX_LIST\T1/lmr/m/n/12 ). 
+Overfull \hbox (22.50635pt too wide) in paragraph at lines 183--184
+[]\T1/lmr/m/n/12 Uti-lizes \T1/lmtt/m/n/12 HashSet \T1/lmr/m/n/12 col-lec-tions for \T1/lmtt/m/n/12 Item\T1/lmr/m/n/12 , \T1/lmtt/m/n/12 Document\T1/lmr/m/n/12 , \T1/lmtt/m/n/12 Person\T1/lmr/m/n/12 , \T1/lmtt/m/n/12 Organization\T1/lmr/m/n/12 , \T1/lmtt/m/n/12 Category\T1/lmr/m/n/12 ,
  []
 
 
 
 [7]
-Overfull \hbox (12.10657pt too wide) in paragraph at lines 195--196
-\T1/lmtt/m/n/12 Person\T1/lmr/m/n/12 , \T1/lmtt/m/n/12 Organization\T1/lmr/m/n/
-12 , \T1/lmtt/m/n/12 Category\T1/lmr/m/n/12 , \T1/lmtt/m/n/12 Material\T1/lmr/m
-/n/12 ) and re-la-tion-ships (\T1/lmtt/m/n/12 Relationship\T1/lmr/m/n/12 ). 
+Overfull \hbox (3.27252pt too wide) in paragraph at lines 190--191
+[]\T1/lmtt/b/n/12 madeOf \T1/lmr/m/n/12 (Item -> Ma-te-rial): Cre-ated only for \T1/lmtt/m/n/12 Item\T1/lmr/m/n/12 s with an iden-ti-fied \T1/lmtt/m/n/12 Material\T1/lmr/m/n/12 . 
  []
 
-LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <12> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 201.
 
-Overfull \hbox (3.81401pt too wide) in paragraph at lines 222--223
-[]\T1/lmr/m/n/12 For each \T1/lmtt/m/n/12 Person \T1/lmr/m/n/12 or \T1/lmtt/m/n
-/12 Organization \T1/lmr/m/n/12 iden-ti-fied from the \T1/lmtt/m/n/12 Contributo
-r \T1/lmr/m/n/12 or \T1/lmtt/m/n/12 AddlAuth
+Overfull \hbox (25.22806pt too wide) in paragraph at lines 193--194
+[]\T1/lmr/bx/n/12 Con-trib-u-tor/Add-lAuth Re-la-tion-ships \T1/lmr/m/n/12 (\T1
+/lmtt/m/n/12 developed\T1/lmr/m/n/12 /\T1/lmtt/m/n/12 produced\T1/lmr/m/n/12 /\
+T1/lmtt/m/n/12 collaborated\T1/lmr/m/n/12 ):
+ []
+
+
+Overfull \hbox (4.3056pt too wide) in paragraph at lines 204--205
+[]\T1/lmr/m/n/12 Col-lects unique \T1/lmtt/m/n/12 Item\T1/lmr/m/n/12 s and \T1/
+lmtt/m/n/12 Document\T1/lmr/m/n/12 s (and other en-tity types) into the \T1/lmt
+t/m/n/12 Entities
  []
 
 
 
 [8]
-
-[9]
-Overfull \hbox (39.397pt too wide) in paragraph at lines 274--275
-\T1/lmr/m/n/12 lar ex-pres-sions (Regex) are used pur-pose-fully (\T1/lmtt/m/n/
-12 PERSON_REGEX_STRICT\T1/lmr/m/n/12 , \T1/lmtt/m/n/12 PERSON_REGEX_LIST\T1/lmr
-/m/n/12 ,
+Overfull \hbox (0.80339pt too wide) in paragraph at lines 242--243
+[]\T1/lmtt/b/n/12 Document\T1/lmr/m/n/12 : Sub-class of \T1/lmtt/m/n/12 Artifact
+\T1/lmr/m/n/12 . Rep-re-sents a doc-u-ment. \T1/lmtt/m/n/12 toC\T1/lmr/m/n/12 , \T1/lmtt/m/n/12 extent\T1/lmr/m/n/12 , \T1/lmtt/m/n/12 serialNum\T1/lmr/m/n/12 ,
  []
 
 
 
-[10]
+[9])
 
-[11])
-
-[12] (./main.aux)
+[10] (./main.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 8424F52234DC756475294BEC884926D0;3135.
+(rerunfilecheck)             Checksum: C229D98A4FA1732659059D57D0AFD70A;2881.
 )
 
 Here is how much of LuaTeX's memory you used:
- 39954 strings out of 475506
+ 39952 strings out of 475506
  100000,1648299 words of node,token memory allocated
  593 words of node memory still in use:
    6 hlist, 2 vlist, 2 rule, 3 glue, 4 kern, 1 glyph, 15 attribute, 67 glue_spec
 , 9 attribute_list, 2 write nodes
-   avail lists: 2:1042,3:206,4:156,5:451,6:59,7:6421,8:2,9:335,10:9,11:497
- 61830 multiletter control sequences out of 65536+600000
+   avail lists: 2:967,3:191,4:148,5:428,6:56,7:5825,8:2,9:319,10:9,11:462
+ 61832 multiletter control sequences out of 65536+600000
  82 fonts using 5335311 bytes
- 87i,10n,88p,1195b,609s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 87i,10n,88p,1202b,540s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {C:/Users/fonta/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}{C:/U
 sers/fonta/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc}{C:/Us
 ers/fonta/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}<C:/Users/
@@ -1597,9 +1585,9 @@ ta/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri12.pfb><C:/Users/fonta/AppDat
 a/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/fonta/AppData
 /Local/Programs/MiKTeX/fonts/type1/public/lm/lmtk10.pfb><C:/Users/fonta/AppData/
 Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt12.pfb>
-Output written on main.pdf (13 pages, 508003 bytes).
+Output written on main.pdf (11 pages, 503408 bytes).
 
-PDF statistics: 228 PDF objects out of 1000 (max. 8388607)
- 53 named destinations out of 1000 (max. 131072)
- 168 words of extra memory for PDF output out of 10000 (max. 100000000)
+PDF statistics: 214 PDF objects out of 1000 (max. 8388607)
+ 49 named destinations out of 1000 (max. 131072)
+ 160 words of extra memory for PDF output out of 10000 (max. 100000000)
 
