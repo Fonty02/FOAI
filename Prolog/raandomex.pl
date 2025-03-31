@@ -131,3 +131,78 @@ insertAt(X,[H|T],P,N):-
     insertAt(X,T,P1,N2),
     append([H],N2,N).
  
+duplicateElement([],[]).
+duplicateElement([H|T],L):-
+    duplicateElement(T,PL),
+    append([H],PL,PL2),
+    append([H],PL2,L).
+
+
+
+duplication(L,0,[]).
+duplication(H,N,L):-
+    N>0,
+    N1 is N-1,
+    duplication(H,N1,PL),
+    append([H],PL,L).
+
+
+duplicateNumber([],_,[]).
+duplicateNumber([H|T],N,L):-
+    duplication(H,N,PH),
+    duplicateNumber(T,N,PT),
+    append(PH,PT,L).
+
+drop([],_,[]).
+drop([H|T],N,L):-
+    N=1,
+    L=T.
+drop([H|T],N,L):-
+    N>1,
+    N1 is N-1,
+    drop(T,N1,PL),
+    append([H],PL,L).
+
+
+splitN([],_,[],[]).
+splitN([H|T],N,L1,L2):-
+    N>0,
+    N1 is N-1,
+    splitN(T,N1,PL1,L2),
+    append([H],PL1,L1).
+splitN([H|T],N,L1,L2):-
+    N =< 0,
+    N1 is N-1,
+    splitN(T,N1,L1,PL2),
+    append([H],PL2,L2).
+
+
+slice([],I,K,[]).
+slice(L1,I,K,L):-
+    sliceMod(L1,I,K,L,1).
+
+
+sliceMod([H|T],I,K,L,N):-
+    N<I,
+    N1 is N+1,
+    sliceMod(T,I,K,L,N1).
+
+sliceMod([H|T],I,K,L,N):-
+    (N>=I,N<K),
+    N1 is N+1,
+    sliceMod(T,I,K,PL,N1),
+    append([H],PL,L).
+
+sliceMod([H|T],I,K,[H],N):-
+    N=K.
+
+
+
+range(A,B,L):-
+    A1 is A+1,
+    A=<B,
+    !,
+    range(A1,B,PL),
+    append([A],PL,L).
+
+range(_,_,[]).
