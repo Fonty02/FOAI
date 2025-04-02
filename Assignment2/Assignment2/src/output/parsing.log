@@ -1,3 +1,5 @@
+Starting CSV to JSON conversion...
+Created Collection node 'HCLE' with identity 0
 Row 1 -> Type: Document -> ID: 1001, Title: Computing Activities in Secondary Education -> Processing...
 Row 1 -> Completed processing.
 Row 2 -> Type: Item -> ID: 1620, Title: Hunt the Wumpus Instructions (partial) -> Processing...
@@ -466,7 +468,7 @@ Row 208 WARNING -> Unrecognized Material code: 'na'
 Row 208 -> Completed processing.
 Row 209 -> Type: Document -> ID: 1082, Title: FIND THIS ARTIFACT: HUNTINGTON I Application Programs -- Mathematics -> Processing...
 Row 209 WARNING -> Unrecognized Material code: 'na'
-Row 209 -> Treating 'Jr' (from 'Ludwig Braun and Marian Visich, Jr') as Organization after failed person parse.
+Row 209 -> Treating 'Jr' (from list 'Ludwig Braun and Marian Visich, Jr') as Organization after failed person parse.
 Row 209 -> Completed processing.
 Row 210 -> Type: Document -> ID: 1083, Title: BASIC Application Programs -- Mathematics II -> Processing...
 Row 210 -> Completed processing.
@@ -948,7 +950,7 @@ Row 414 -> Type: Document -> ID: 1281, Title: Theoretically Paper No. 43 A CONCE
 Row 414 -> Completed processing.
 Row 415 -> Type: Document -> ID: 1282, Title: HUNTINGTON I Application Programs -- Mathematics -> Processing...
 Row 415 WARNING -> Unrecognized Material code: 'na'
-Row 415 -> Treating 'Jr' (from 'Ludwig Braun and Marian Visich, Jr') as Organization after failed person parse.
+Row 415 -> Treating 'Jr' (from list 'Ludwig Braun and Marian Visich, Jr') as Organization after failed person parse.
 Row 415 -> Completed processing.
 Row 416 -> Type: Document -> ID: 1283, Title: Sensory-Motor Integration Paper by Marsha O Allen -> Processing...
 Row 416 -> Completed processing.
@@ -4713,7 +4715,20 @@ Row 2158 -> Completed processing.
 Row 2159 -> Type: Item -> ID: 3207, Title: Some Free Bullentin boards and Message Networks -> Processing...
 Row 2159 -> Completed processing.
 Finished processing 2159 data rows.
-Found 603 unique Items, 673 unique Documents.
-Found 116 unique People, 170 unique Organizations.
-Found 97 unique Categories, 3 unique Materials.
-Created 3156 unique Relationships.
+Total Nodes Written: 1628
+Nodes by Type:
+  Item: 592
+  Category: 97
+  Organization: 170
+  Collection: 1
+  Material: 3
+  Document: 649
+  Person: 116
+Total Relationships Written: 3206
+Relationships by Type:
+  madeOf: 524
+  describe: 127
+  collaborated: 46
+  developed: 96
+  belongsTo: 2159
+  produced: 254
