@@ -11,7 +11,7 @@
 \usepackage{lmodern}        % Use Latin Modern font (better than Computer Modern)
 \usepackage{listings}       % For including source code (configured but not actively used to show code)
 \usepackage{datetime}       % For the current date
-\usepackage{xcolor}         % Required for listings colors
+\usepackage{xcolor}         % Required for listings colors and text color
 
 % --- Page Settings ---
 \geometry{
@@ -49,7 +49,7 @@
 % --- Document Information ---
 \title{Analysis Report: Java Code \texttt{CsvToJsonConverter} }
 % \author{Project Team} % Or remove entirely
-\date{\today}
+\date{\today} % Uses current date
 
 \begin{document}
 
@@ -65,25 +65,26 @@
 
 % --- Introduction ---
 \section{Introduction}
-This report describes the Java code provided in the \texttt{converter} package (\texttt{CsvToJsonConverter}). Its objective is to explain in detail the purpose of the code, its functionality, and provide a higher-level overview of its implementation based on the latest provided version. The code is designed to read data from a CSV file, interpret it according to specific business logic, transform it into a structured data model comprising specific entities (\texttt{Item}, \texttt{Document}, and related types) and relationships, and finally serialize this model into a JSON file. It incorporates logic to handle missing or invalid data by assigning the string literal `"N/A"` to specific fields under defined conditions.
+This report documents the Java code within the \texttt{converter} package, specifically the \texttt{CsvToJsonConverter} class. Its objective is to explain in detail the purpose of the code, its functionality, and provide a higher-level overview of its implementation. The code is designed to read data from a CSV file (\texttt{HCLEcatalog.csv}), interpret it according to specific business logic, transform it into a structured data model comprising specific entities (\texttt{Item}, \texttt{Document}, and related types) and relationships, and finally serialize this model into a \textbf{JSON Lines} file (\texttt{data.json}). This format, where each line is a valid JSON object representing a node or a relationship, is specifically intended for bulk import into graph databases like Neo4j. It incorporates logic to handle missing or invalid data by assigning the string literal \textbf{\texttt{"N/A"}} to \textit{specific} fields under defined conditions, while other invalid fields might be omitted from the final JSON output.
 
 % --- Purpose of the Code ---
 \section{Purpose of the Code}
-The primary purpose of the \texttt{CsvToJsonConverter} code is to convert a data catalog stored in a tabular CSV (Comma Separated Values) format into a hierarchical and structured JSON (JavaScript Object Notation) format.
+The \texttt{CsvToJsonConverter} code has been developed with the primary purpose of converting a data catalog stored in a tabular CSV (Comma Separated Values) format into a \textbf{JSON Lines} format suitable for graph database ingestion, particularly Neo4j.
 
-More specifically, the code aims to:
+More specifically, the code is designed to:
 \begin{itemize}
     \item Read data from a specific CSV file (\texttt{HCLEcatalog.csv}).
-    \item Interpret each CSV row as representing a primary entity, classifying it definitively as either an \textbf{\texttt{Item}} or a \textbf{\texttt{Document}} based on specific criteria.
-    \item Extract and map data from CSV columns to the fields of well-defined Java objects (POJOs - Plain Old Java Objects), representing Items, Documents, Persons, Organizations, Categories, and Materials.
-    \item Apply data validation logic: If certain fields required for \texttt{Document} or \texttt{Item} identification or common fields are invalid or missing (null/empty/"None"), assign the literal string \textbf{\texttt{"N/A"}} to specific target fields (\texttt{toC}, \texttt{extent}, \texttt{serialNum}, \texttt{bibCit}, \texttt{created} for Documents; \texttt{partNum} for Items). Other fields are populated only if valid, otherwise left null.
+    \item Interpret each CSV row as representing a primary entity, classifying it definitively as either an \textbf{\texttt{Item}} or a \textbf{\texttt{Document}} based on the presence of specific fields (\texttt{ToC}, \texttt{Extent}, \texttt{SerialNum}, \texttt{BibCit}).
+    \item Extract and map data from CSV columns to the fields of well-defined Java objects, representing Items, Documents, Persons, Organizations, Categories, and Materials.
+    \item Apply data validation logic: If certain fields required for \texttt{Document} or \texttt{Item} identification are invalid or missing (null/empty/"None"), assign the literal string \textbf{\texttt{"N/A"}} to specific target fields (\texttt{toc}, \texttt{extent}, \texttt{serialNum}, \texttt{bibCit}, \texttt{created} for Documents; \texttt{partNum} for Items). Other fields (like common fields \texttt{description}, \texttt{wherMade}, or \texttt{Item.conditionNts}) are populated only if valid, otherwise the Java object field remains \texttt{null} and is omitted from the JSON output via Jackson's \texttt{NON\_NULL} setting.
     \item Identify and create related entities such as persons (\texttt{Person}), organizations (\texttt{Organization}), categories (\texttt{Category}), and materials (\texttt{Material}) from data in other columns (e.g., \texttt{Creator}, \texttt{SubjectTop}, \texttt{Material}).
-    \item Establish meaningful relationships between these entities (e.g., an \texttt{Item} "belongsTo" a collection, a \texttt{Document} is "developed by" a \texttt{Person}, an \texttt{Item} is "madeOf" a \texttt{Material}). Note that relationship identifiers involving Items now incorporate the \texttt{partNum}, which might be "N/A".
-    \item Ensure the uniqueness of the extracted entities and relationships (avoiding duplicates) using Java Sets.
+    \item Establish meaningful relationships between these entities (e.g., an \texttt{Item} "belongsTo" a \texttt{Collection}, a \texttt{Document} is "developed by" a \texttt{Person}, an \texttt{Item} is "madeOf" a \texttt{Material}). Note that relationship identifiers involving \texttt{Item}s incorporate the \texttt{partNum}, which might be \texttt{"N/A"}. Relationships are represented as distinct JSON objects in the JSON Lines output.
+    \item Ensure the uniqueness of the extracted entities (avoiding duplicates) by using a \textbf{\texttt{Map}} (\texttt{entityToIdentityMap}) keyed by the entity objects (relying on their \texttt{equals()} and \texttt{hashCode()} methods). Each unique entity is assigned a unique integer ID.
+    \item Create an initial root node representing the collection (\texttt{label: "Collection", name: "HCLE"}) before processing the CSV data.
     \item Generate a log file (\texttt{parsing.log}) that tracks the processing status and reports any errors or warnings for each CSV row.
-    \item Produce a final JSON file (\texttt{data.json}) representing all unique entities (Items, Documents, Persons, etc.) and their relationships in a well-defined structure, suitable for further processing, analysis, or integration with other systems.
+    \item Produce a final JSON Lines file (\texttt{data.json}), where each line is a self-contained JSON object representing either a unique node (\texttt{jtype: "node"}) or a relationship (\texttt{jtype: "relationship"}) in a structure optimized for Neo4j import. The JSON is formatted with spaces after colons and commas. Fields explicitly assigned the value \texttt{"N/A"} are included as strings in the output.
 \end{itemize}
-In summary, the code acts as a bridge between a tabular CSV format and a structured JSON format, applying domain-specific classification logic (Item vs. Document) and specific rules for handling missing/invalid data ("N/A" assignment).
+In summary, the code acts as a bridge between a tabular CSV format and a graph-database-ready JSON Lines format, applying domain-specific classification logic (Item vs. Document) and specific rules for handling missing/invalid data (assigning \texttt{"N/A"} to certain fields, omitting others).
 
 % --- Main Functionality (What it Does) ---
 \section{Main Functionality (What it Does)}
@@ -94,130 +95,241 @@ The code executes a series of logical steps to achieve its purpose:
         \begin{itemize}
             \item Opens the specified CSV file (\texttt{HCLEcatalog.csv}) using UTF-8 encoding.
             \item Utilizes the Apache Commons CSV library to interpret the file.
-            \item Recognizes the first row as the header, ignoring case in column names.
-            \item Trims leading and trailing whitespace from each read value.
+            \item Recognizes the first row as the header, ignoring case in column names \\
+            (\texttt{withHeader().withIgnoreHeaderCase()}).
+            \item Trims leading and trailing whitespace from each read value (\texttt{withTrim()}).
             \item Iterates over each record (row) in the CSV file, excluding the header.
+        \end{itemize}
+
+    \item \textbf{Initial Node Creation:}
+        \begin{itemize}
+            \item Before processing CSV rows, creates and writes a JSON Line object for the root collection node (\texttt{label: "Collection", name: "HCLE", identity: 0}).
+            \item Initializes the identity counter for subsequent nodes/relationships.
         \end{itemize}
 
     \item \textbf{Row Validation and Data Extraction:}
         \begin{itemize}
-            \item For each row, extracts the value from the \texttt{IdNum} column. If it is missing or effectively empty, the row is skipped, and an error is logged.
+            \item For each row, extracts the value from the \texttt{IdNum} column. If it is missing or effectively empty (\texttt{isNullOrEmpty}), the row is skipped, and an error is logged.
             \item Extracts values from all other columns defined in the header and stores them in a map (\texttt{Map<String, String>}) for easy access. Values are stored as extracted (null if missing).
         \end{itemize}
 
     \item \textbf{Determining the Main Entity Type (Document or Item):}
         \begin{itemize}
-            \item By checking \textit{ToC}, \textit{Extent}, \textit{SerialNum}, \textit{BibCit} and \textit{PartNum} we are able to determine if the row represents a \texttt{Document} or an \texttt{Item}. 
+           \item Checks if any of the Document-specific fields (\texttt{ToC}, \texttt{Extent}, \texttt{SerialNum}, \texttt{BibCit}) have a non-null/non-"None" value in the row data (\texttt{!isNullOrNone}).
+            \item If any of these fields are present and valid, the entity type is determined to be \texttt{Document}. Otherwise, it is classified as \texttt{Item}.
         \end{itemize}
 
     \item \textbf{Creating the Main Entity Object (Document or Item):}
         \begin{itemize}
             \item Instantiates a Java object of the determined class (\texttt{Document} or \texttt{Item}).
-            \item Populates the object's fields with values extracted from the corresponding CSV columns, applying specific "N/A" logic:
+            \item Populates the object's fields with values extracted from the corresponding CSV columns, applying specific logic for handling invalid/missing values:
                 \begin{itemize}
                     \item \textbf{For Documents:}
                         \begin{itemize}
-                        \item Sets \texttt{toC}, \texttt{extent}, \texttt{serialNum}, \texttt{bibCit} fields to the string \textbf{\texttt{"N/A"}} if the corresponding CSV value is null, empty, or "None". Otherwise, uses the valid CSV value.
-                        \item Sets \texttt{created} field: Uses the value from \texttt{Created}, falls back to \texttt{DateCR}, then sets to \textbf{\texttt{"N/A"}} if the resulting value is null, empty, or "None". Otherwise, uses the valid date string.
-                        \item Sets \texttt{copyrighted} field: Converts 'y' to \texttt{true}, 'n' or '0' to \texttt{false}. If the value is missing, invalid, or "None", the field remains \texttt{null} (no "N/A" applied).
+                        \item Sets \texttt{toC}, \texttt{extent}, \texttt{serialNum}, \texttt{bibCit} fields to the string \textbf{\texttt{"N/A"}} if the corresponding CSV value is null, empty, or "None" (\texttt{isNullOrNone}). Otherwise, uses the valid CSV value.
+                        \item Sets \texttt{created} field: Uses the value from \texttt{Created}, falls back to \texttt{DateCR} if the former is invalid, then sets the field to \textbf{\texttt{"N/A"}} if the final resulting value is null, empty, or "None". Otherwise, uses the valid date string.
+                        \item Sets \texttt{copyrighted} field: Converts 'y' to \texttt{true}, 'n' or '0' to \texttt{false}. If the value is missing, invalid, or "None", the field remains \texttt{null} and is \textbf{omitted} from the JSON output (no "N/A" applied).
                         \end{itemize}
                     \item \textbf{For Items:}
                         \begin{itemize}
-                        \item Sets \texttt{partNum} field: Sets to the string \textbf{\texttt{"N/A"}} if the corresponding CSV value is null, empty, "None", or consists of only a single digit. Otherwise, uses the valid CSV value.
-                        \item Sets \texttt{conditionNts} field only if the corresponding CSV value is valid (not null, empty, or "None"). 
+                        \item Sets \texttt{partNum} field: Sets to the string \textbf{\texttt{"N/A"}} if the corresponding CSV value is null, empty, "None", or consists of only a single digit (\texttt{matches("\^{}\textbackslash{}d\$")}). Otherwise, uses the valid CSV value.
+                        \item Sets \texttt{conditionNts} field only if the corresponding CSV value is valid (not null, empty, or "None"). If invalid, the field remains \texttt{null} and is \textbf{omitted} from the JSON output.
                         \end{itemize}
-                    \item \textbf{For Common Fields (Description, DescComment, WherMade):} Populates these fields on the \texttt{Document} or \texttt{Item} object only if the corresponding CSV value is valid (not null, empty, or "None").
+                    \item \textbf{For Common Fields (Description, DescComment, WherMade):} Populates these fields on the \texttt{Document} or \texttt{Item} object only if the corresponding CSV value is valid (not null, empty, or "None"). If invalid, the fields remain \texttt{null} and are \textbf{omitted} from the JSON output.
                 \end{itemize}
         \end{itemize}
 
     \item \textbf{Identifying and Creating Related Entities:}
         \begin{itemize}
-            \item \textbf{Material:} If the \texttt{Material} column contains 'papr', 'digi', or 'mix', creates a \texttt{Material} object ("paper", "digital", "mix").
-            \item \textbf{Category:} If the \texttt{SubjectTop} column has a valid value, creates a \texttt{Category} object.
-            \item \textbf{Person/Organization (from Creator, Contributor, AddlAuth):} Logic remains the same as previous description (using regex, \texttt{parsePerson}, \texttt{processContributorField}) to create \texttt{Person} or \texttt{Organization} objects.
+            \item \textbf{Material:} If the \texttt{Material} column contains 'papr', 'digi', or 'mix', creates a \texttt{Material} object ("paper", "digital", "mix"). Unrecognized non-empty values are logged as warnings.
+            \item \textbf{Category:} If the \texttt{SubjectTop} column has a valid value (\texttt{!isNullOrNone}), creates a \texttt{Category} object.
+            \item \textbf{Person/Organization (from Creator, Contributor, AddlAuth):} Uses regex and helper methods (\texttt{parsePerson}, \texttt{processContributorField}) to attempt parsing strings as \texttt{Person} objects. If parsing fails or the string doesn't match the person pattern, it's treated as an \texttt{Organization}. Handles lists of names separated by delimiters.
         \end{itemize}
 
-    \item \textbf{Uniqueness Management:}
+    \item \textbf{Uniqueness Management and ID Assignment:}
         \begin{itemize}
-            \item Utilizes \texttt{HashSet} collections for \texttt{Item}, \texttt{Document}, \texttt{Person}, \texttt{Organization}, \texttt{Category}, \texttt{Material}, and \texttt{Relationship}.
-            \item Ensures uniqueness based on the \texttt{equals()} and \texttt{hashCode()} methods in the POJO classes.
+            \item Uses a \textbf{\texttt{HashMap<BaseEntity, Integer> entityToIdentityMap}} to track unique entities already processed and assigned an ID, relying on the \texttt{equals()} and \texttt{hashCode()} methods in the Java object classes.
+            \item Uses an \texttt{AtomicInteger identityCounter} to assign sequential, unique integer IDs (\texttt{identity}) to each new, unique entity.
+            \item The \texttt{getOrCreateEntityIdentity} method manages this process, ensuring each unique entity is written as a node object exactly once.
         \end{itemize}
 
     \item \textbf{Relationship Creation:}
         \begin{itemize}
-            \item \textbf{\texttt{belongsTo}} (Collection -> Entity): Created for every valid \texttt{Item} or \texttt{Document}. The object identifier includes the title and, for Items, the \texttt{partNum} .
-            \item \textbf{\texttt{madeOf}} (Item -> Material): Created only for \texttt{Item}s with an identified \texttt{Material}.
+            \item \textbf{\texttt{belongsTo}} (Entity -> Collection): Created for every valid \texttt{Item} or \texttt{Document}, linking to the "HCLE" node. The object identifier includes the title and, for Items, the potentially \texttt{"N/A"} \texttt{partNum}. The original \texttt{IdNum} is stored as a property.
+            \item \textbf{\texttt{madeOf}} (Item -> Material): Created only for \texttt{Items} with an identified \texttt{Material}.
             \item \textbf{\texttt{describe}} (Category -> Document): Created \textbf{only} if the main entity is a \texttt{Document} and a \texttt{Category} was identified.
             \item \textbf{Creator Relationships} (\texttt{developed} / \texttt{produced}): Created \textbf{only} if the main entity is a \texttt{Document} and a \texttt{Creator} (Person/Organization) was identified.
-            \item \textbf{Contributor/AddlAuth Relationships} (\texttt{developed}/\texttt{produced}/\texttt{collaborated}): Created for both \texttt{Item}s and \texttt{Document}s if contributors/authors are identified.
+            \item \textbf{Contributor/AddlAuth Relationships} (\texttt{developed}/\texttt{produced}/\texttt{collaborated}): Created for both \texttt{Item}s and \texttt{Document}s if contributors/authors are identified via \\
+            \texttt{processContributorField}.
+            \item Relationships are written as distinct JSON Line objects using the \texttt{writeRelationship} method.
         \end{itemize}
 
     \item \textbf{Logging:}
         \begin{itemize}
-            \item Continues to log processing status, errors (missing IdNum/Title), and warnings (unrecognized Material code, failed person parsing) to \texttt{parsing.log}.
-            \item The summary log at the end
+            \item Logs processing status, errors (missing IdNum/Title), and warnings (unrecognized Material code, failed person parsing) to \texttt{output/parsing.log}.
+            \item Logs a summary at the end with node and relationship counts by type.
         \end{itemize}
 
     \item \textbf{JSON Output Generation:}
         \begin{itemize}
-            \item Collects unique \texttt{Item}s and \texttt{Document}s (and other entity types) into the \texttt{Entities} container.
-            \item Filters relationships based on the validity of essential fields (as before).
-            \item Creates the root \texttt{JsonOutput} object.
-            \item Serializes the \texttt{JsonOutput} object to \texttt{data.json} using Jackson, producing formatted JSON. Fields with `"N/A"` values are included as strings.
+            \item Writes output to \texttt{output/data.json} in \textbf{JSON Lines} format.
+            \item Each line represents a single node (\texttt{jtype: "node"}) or relationship (\texttt{jtype: "relationship"}) object.
+            \item Uses Jackson's \texttt{ObjectMapper} (configured with \texttt{JsonInclude.Include.NON\_NULL}) for serialization, omitting fields that were left \texttt{null} in the Java objects.
+            \item Fields explicitly assigned the string \textbf{\texttt{"N/A"}} in the Java objects (\texttt{toC}, \texttt{extent}, \texttt{serialNum}, \texttt{bibCit}, \texttt{created}, \texttt{partNum} under specific conditions) are included in the JSON output as string values.
+            \item Uses \texttt{formatJsonString} to add spaces after colons and commas for readability.
         \end{itemize}
 
     \item \textbf{Error Handling:}
         \begin{itemize}
-            \item Continues to use try-with-resources and catch blocks for robust file handling and error reporting.
+            \item Uses try-with-resources and standard exception handling (\texttt{IOException}, \texttt{Exception}, \texttt{UncheckedIOException}) for robust file processing and error reporting.
         \end{itemize}
 \end{enumerate}
 
 % --- Implementation Overview (How it Works) ---
 \section{Implementation Overview (How it Works)}
-This section provides a high-level view of how the code achieves the updated functionality.
+This section provides a high-level view of how the code achieves its functionality.
 
 \begin{itemize}
-    \item \textbf{External Libraries:} Still relies on Apache Commons CSV and Jackson Databind.
+    \item \textbf{External Libraries:} The implementation relies on Apache Commons CSV for parsing the CSV file and Jackson Databind for converting Java objects to JSON strings.
 
-    \item \textbf{POJO-Based Structure:} The data model uses POJOs (\texttt{Item}, \texttt{Document}, \texttt{Person}, etc.). The \texttt{Artifact} class now primarily serves as a \textbf{base class} providing common fields (like \texttt{title}, \texttt{description}) inherited by \texttt{Item} and \texttt{Document}. Specific fields in \texttt{Item} and \texttt{Document} are now defined to potentially hold the string `"N/A"`. \texttt{equals()}/\texttt{hashCode()} are essential for uniqueness in Sets.
+    \item \textbf{Java Object-Based Structure:} The data model uses Java object classes (\texttt{Item}, \texttt{Document}, \texttt{Person}, etc.). \texttt{Artifact} serves as a base class. Specific fields in \texttt{Item} and \texttt{Document} (\texttt{toC}, \texttt{extent}, \texttt{serialNum}, \texttt{bibCit}, \texttt{created}, \texttt{partNum}) are defined to potentially hold the string \textbf{\texttt{"N/A"}}. Other fields might be omitted if null via Jackson's \\
+    \texttt{@JsonInclude(JsonInclude.Include.NON\_NULL)} annotation. The \texttt{equals()} and \texttt{hashCode()} methods in these Java classes are crucial for ensuring entity uniqueness via the \texttt{entityToIdentityMap}.
 
-    \item \textbf{Main Class and Control Flow:} The \texttt{CsvToJsonConverter} class orchestrates the process. The core loop iterates through CSV records. The entity type determination logic is simplified to a binary choice (Document or Item). Logic for populating fields now includes checks for assigning `"N/A"` based on the rules.
+    \item \textbf{Main Class and Control Flow:} The \texttt{CsvToJsonConverter} class orchestrates the process. It writes the initial "HCLE" node, then loops through CSV records. Entity type determination is binary (Document or Item). Field population logic includes specific checks for assigning \texttt{"N/A"} based on the rules defined in Section 3, while other invalid fields are set to \texttt{null} for omission.
 
-    \item \textbf{Conditional Logic and Regex:} Entity classification is now based on the presence of specific Document-related fields. If not a Document, it's an Item. Part number validation for Items also uses a simple regex check (\texttt{\^{}\textbackslash{}d\$}). Regex for parsing person names remains the same.
+    \item \textbf{Uniqueness and ID Management:} A \texttt{HashMap<BaseEntity, Integer> entityToIdentityMap} and an \texttt{AtomicInteger identityCounter} manage unique entity IDs for the JSON Lines output. The \texttt{getOrCreateEntityIdentity} method ensures each unique entity is written as a node object exactly once.
 
-    \item \textbf{Use of Standard Collections:} Continues to use \texttt{Map} for row data, \texttt{Set} for uniqueness, and \texttt{List} for the final JSON structure.
+    \item \textbf{JSON Lines Output:} The code generates JSON Lines output suitable for Neo4j import. Nodes (\texttt{jtype: "node"}) and relationships (\texttt{jtype: "relationship"}) are written as separate JSON objects on each line using \texttt{writeNode} and \texttt{writeRelationship}.
 
-    \item \textbf{File and Resource Management:} Try-with-resources and UTF-8 encoding are maintained for proper resource handling and character support.
+    \item \textbf{JSON Formatting:} The \texttt{formatJsonString} method adds spaces after colons/commas to the serialized JSON strings for readability.
+
+    \item \textbf{Conditional Logic and Regex:} Entity classification is based on specific fields. Regex is used for person name parsing and \texttt{Item.partNum} validation (\texttt{\^{}\textbackslash{}d\$}).
+
+    \item \textbf{Use of Standard Collections:} Uses \texttt{Map<String, String>} for row data and \texttt{Map<BaseEntity, Integer>} for uniqueness/ID management.
+
+    \item \textbf{File and Resource Management:} Try-with-resources and UTF-8 encoding are employed for proper resource handling and character support.
 \end{itemize}
 
 % --- Definition of Entities and Relationships ---
 \section{Definition of Entities and Relationships}
-The code defines the following main data structures (POJOs), with modifications noted:
+The following main data structures (Java classes) were defined for the data model, which generates JSON Lines output based on these structures:
+
+\subsection*{Java Object Definitions}
+\begin{itemize}
+    \item \textbf{\texttt{BaseEntity}}: Abstract base class providing \texttt{entityType} and \texttt{getNodeLabel()} (\texttt{@JsonIgnore}).
+    \item \textbf{\texttt{Artifact}}: Base class for Item and Document, providing common fields (\texttt{title}, \texttt{description}, etc.). Annotated \texttt{@JsonInclude(Include.NON\_NULL)}.
+    \item \textbf{\texttt{Item}}: Subclass of \texttt{Artifact}. Represents a physical object. \texttt{partNum} field \textbf{can hold the string "N/A"}. \texttt{conditionNts} is omitted if null. \texttt{entityType} is "Item". Uses \texttt{title} and \texttt{partNum} for \texttt{equals}/\texttt{hashCode}.
+    \item \textbf{\texttt{Document}}: Subclass of \texttt{Artifact}. Represents a document. \texttt{toC}, \texttt{extent}, \texttt{serialNum}, \texttt{bibCit}, \texttt{created} fields \textbf{can hold the string "N/A"}. \texttt{copyrighted} (\texttt{Boolean}) field is omitted if null. \texttt{entityType} is "Document". Uses \texttt{title} for \texttt{equals}/\texttt{hashCode}.
+    \item \textbf{\texttt{Person}}: Represents a person (\texttt{name}, \texttt{surname}). \texttt{entityType} is "Agent:Person". Uses \texttt{name}, \texttt{surname} for \texttt{equals}/\texttt{hashCode}.
+    \item \textbf{\texttt{Organization}}: Represents an organization (\texttt{name}). \texttt{entityType} is "Agent:Organization". Uses \texttt{name} for \texttt{equals}/\texttt{hashCode}.
+    \item \textbf{\texttt{Category}}: Represents a category (\texttt{name}). \texttt{entityType} is "ContentDescription:Category". Uses \texttt{name} for \texttt{equals}/\texttt{hashCode}.
+    \item \textbf{\texttt{Material}}: Represents material (\texttt{name}). \texttt{entityType} is "Material". Uses \texttt{name} for \texttt{equals}/\texttt{hashCode}.
+\end{itemize}
+Jackson annotations (\texttt{@JsonInclude}, \texttt{@JsonProperty}, \texttt{@JsonIgnore}) control JSON serialization, including the omission of null fields (unless explicitly assigned "N/A") and JSON field naming. All Java classes extending \texttt{BaseEntity} effectively inherit or have the \texttt{@JsonInclude(Include.NON\_NULL)} setting applied by Jackson during serialization.
+
+\subsection*{JSON Lines Output Structure}
+The code generates a \texttt{data.json} file where each line is a separate JSON object representing either a node or a relationship for Neo4j import.
 
 \begin{itemize}
-    \item \textbf{\texttt{BaseEntity}}: Abstract base class (unchanged).
-    \item \textbf{\texttt{Artifact}}: Base class for Item and Document, providing common fields.
-    \item \textbf{\texttt{Item}}: Subclass of \texttt{Artifact}. Represents a physical object. \texttt{partNum} field \textbf{can hold the string "N/A"}. \texttt{entityType} is "Item".
-    \item \textbf{\texttt{Document}}: Subclass of \texttt{Artifact}. Represents a document. \texttt{toC}, \texttt{extent}, \texttt{serialNum}, \texttt{bibCit}, \texttt{created} fields \textbf{can hold the string "N/A"}. \texttt{entityType} is "Document".
-    \item \textbf{\texttt{Person}}: Represents a person (unchanged). \texttt{entityType} is "Agent:Person".
-    \item \textbf{\texttt{Organization}}: Represents an organization (unchanged). \texttt{entityType} is "Agent:Organization".
-    \item \textbf{\texttt{Category}}: Represents a category (unchanged). \texttt{entityType} is "ContentDescription:Category".
-    \item \textbf{\texttt{Material}}: Represents material (unchanged). \texttt{entityType} is "Material".
-    \item \textbf{\texttt{Relationship}}: Represents a connection. Identifiers for Item subjects/objects now incorporate the potentially "N/A" \texttt{partNum}.
-    \item \textbf{\texttt{CollectionInfo}}: Represents collection info (unchanged).
-    \item \textbf{\texttt{Entities}}: Container grouping lists of entities.
-    \item \textbf{\texttt{JsonOutput}}: Root object for JSON output (unchanged structure).
+    \item \textbf{Node Object Structure Example:}
+    % Use lstlisting instead of verbatim for better line breaking
+    \begin{lstlisting}[breaklines=true]
+    {"jtype": "node", "identity": 1, "label": "Document", "properties": {"title": "...", "toc": "N/A", "created": "..."}}
+    \end{lstlisting}
+     (Note: \texttt{extent}, \texttt{serialNum}, etc., might be omitted if null, or present with value \texttt{"N/A"})
+    \begin{itemize}
+            \item \texttt{jtype} is always "node".
+            \item \texttt{identity} is a unique integer.
+            \item \texttt{label} is the Neo4j node label (e.g., "Item", "Document", "Person").
+            \item \texttt{properties} contains the relevant fields. Fields assigned \texttt{"N/A"} appear as strings. Fields left \texttt{null} in Java are omitted. All values are converted to strings.
+        \end{itemize}
+
+    \item \textbf{Relationship Object Structure Example:}
+    % Use lstlisting instead of verbatim for better line breaking
+    \begin{lstlisting}[breaklines=true]
+    {"jtype": "relationship", "subject": 1, "object": 0, "name": "belongsTo", "properties": {"originalIdNum": "1288"}}
+    \end{lstlisting}
+    \begin{itemize}
+            \item \texttt{jtype} is always "relationship".
+            \item \texttt{subject} is the source node ID.
+            \item \texttt{object} is the target node ID.
+            \item \texttt{name} is the relationship type.
+            \item \texttt{properties} contains relationship properties (as strings). Empty \texttt{\{\}} if none.
+        \end{itemize}
 \end{itemize}
-Jackson annotations control JSON serialization, including the omission of null fields and the inclusion of fields containing `"N/A"`.
+The generated JSON is formatted using \texttt{formatJsonString} to include spaces after colons and commas.
 
+% --- Ontology Modifications ---
+\section{Proposed Ontology Modifications}
+\label{sec:ontology}
+To effectively represent the data converted by the \texttt{CsvToJsonConverter} and capture the nuances present in the source CSV, the following modifications to the target ontology are proposed:
 
+\begin{itemize}
+    \item Add an entity \texttt{General:Material} with an attribute \texttt{Name} (expandable if needed).
+    \item Add a relationship \texttt{General:MadeOf} between \texttt{Item} and \texttt{Material}.
+    \item Add an attribute \texttt{General:Item:conditionNotes}.
+    \item Add an attribute \texttt{General:Document:ToC}.
+\end{itemize}
+These additions allow for the explicit modeling of material composition, condition details for items, and table of contents information for documents, as extracted by the converter.
+
+% --- Field Mapping and Relationships ---
+\section{CSV Field Mapping and Relationships}
+\label{sec:mapping}
+This section details how the source CSV fields are mapped to the proposed ontology attributes and how relationships are established by the converter.
+
+\subsection{Field Mapping (CSV $\rightarrow$ Ontology)}
+The mapping of CSV fields to ontology attributes is defined as follows:
+
+\begin{itemize}
+    \item \texttt{Title} $\rightarrow$ \texttt{General:Document:Title} or \texttt{General:Item/Artifact:Name}
+    \item \texttt{Description} $\rightarrow$ \texttt{description} of the entity (for both \texttt{General:Document} and \texttt{General:Item/Artifact}).
+    \item \texttt{DescComment} $\rightarrow$ \texttt{Notes} (for both \texttt{General:Document} and \texttt{General:Item/Artifact}).
+    \item \texttt{SubjectTop} $\rightarrow$ \texttt{name} of \texttt{General:ContentDescription:Category}.
+    \item \texttt{DonorNotes} $\rightarrow$ Ignored.
+    \item \texttt{WherMade} $\rightarrow$
+        \begin{itemize}
+            \item \texttt{General:Item:madeIn} if Item
+            \item \texttt{General:Document:Place} if General:Document
+            \item Not applicable if General:Artifact (Note: The code classifies as Item or Document, so this case might not occur directly from the primary entity logic).
+        \end{itemize}
+    \item \texttt{Color} $\rightarrow$ Foreign key to an external table; unusable without the original table. (Ignored by converter).
+    \item \texttt{Material} $\rightarrow$ \texttt{General:Material:name} (after reformatting, e.g., ”papr” $\rightarrow$ ”paper”).
+    \item \texttt{ItemCondition} $\rightarrow$ Foreign key to an external table; unusable without the original table. (Ignored by converter).
+    \item \texttt{ConditionNts} $\rightarrow$ \texttt{General:Item:conditionNotes}.
+    \item \texttt{Fragility} $\rightarrow$ Foreign key to an external table; unusable without the original table. (Ignored by converter).
+    \item \texttt{Functional} $\rightarrow$ Ignored.
+    \item \texttt{Power} $\rightarrow$ Ignored.
+    \item \texttt{ToC} $\rightarrow$ \texttt{ToC} of the Document (\texttt{General:Document:ToC}). Set to "N/A" if invalid.
+    \item \texttt{Creator} $\rightarrow$ \texttt{General:Agent:Person} or \texttt{Organization} (regex-based).
+    \item \texttt{Publisher} $\rightarrow$ \texttt{General:Agent:Organization} (\texttt{name}). (Note: Converter logic currently processes this via \texttt{processContributorField}, potentially creating \texttt{Person} or \texttt{Organization}).
+    \item \texttt{Contributor} $\rightarrow$ \texttt{General:Agent:Person} or \texttt{Organization}.
+    \item \texttt{AddlAuth} $\rightarrow$ \texttt{General:Agent:Person} or \texttt{Organization}.
+    \item \texttt{Created} $\rightarrow$ \texttt{General:Document:date}. Set to "N/A" if invalid (after checking \texttt{DateCR}).
+    \item \texttt{Copyrighted} $\rightarrow$ Boolean (False for ”0” or ”n”, True for ”y”; otherwise, empty/omitted). Maps to \texttt{General:Document:useRights}. (Note: Converter stores as Boolean, omits if null).
+    \item \texttt{DateCR} $\rightarrow$ \texttt{General:Document:date} when \texttt{Created} is unknown/invalid.
+\end{itemize}
+Fields beyond this point in the CSV are either predominantly empty or deemed of limited interest for this conversion process. Note that the converter logic assigns "N/A" to \texttt{Extent}, \texttt{SerialNum}, and \texttt{BibCit} for Documents if the source is invalid, and to \texttt{PartNum} for Items under specific invalid conditions. These correspond conceptually to ontology attributes but the "N/A" value signifies missing/invalid source data.
+
+\subsection{Relationships}
+The relationships established between entities by the converter are as follows:
+
+\begin{itemize}
+    \item \texttt{IdNum} is stored as an attribute (\texttt{originalIdNum}) of the \textbf{\texttt{belongsTo}} relationship connecting each \texttt{Item} or \texttt{Document} to the root \texttt{HCLE} \texttt{Collection} node.
+    \item \textbf{\texttt{describe}} between \texttt{ContentDescription:Category} and \texttt{Document}.
+    \item \textbf{\texttt{madeOf}} between \texttt{Item} and \texttt{Material}.
+    \item \textbf{\texttt{developed}} between \texttt{Person} and \texttt{Document} (derived from \texttt{Creator}, \texttt{Contributor}, or \texttt{AddlAuth} if identified as a Person).
+    \item \textbf{\texttt{produced}} between \texttt{Organization} and \texttt{Document} (derived from \texttt{Creator}, \texttt{Contributor}, or \texttt{AddlAuth} if identified as an Organization).
+    \item \textbf{\texttt{collaborated}} between \texttt{Person} or \texttt{Organization} and \texttt{Item} or \texttt{Document} (derived from \texttt{Contributor} or \texttt{AddlAuth} fields). The specific relationship type (\texttt{developed}, \texttt{produced}, \texttt{collaborated}) depends on the source field and the identified agent type.
+\end{itemize}
+
+% --- Estimation of the errors ---
 \section{Estimation of the errors}
-The primary objective of this analysis was to perform a qualitative assessment of the data quality within the provided JSON file, identifying common error patterns, inconsistencies.
+A qualitative assessment of the data quality within the generated JSON file (\texttt{data.json}) was performed as part of the development process to identify potential error patterns or inconsistencies arising from the source data or conversion logic.
 \newline
-The assessment was conducted primarily through manual inspection and pattern analysis of the `Entities` and `Relationships` sections within the JSON data.
+This assessment involved manual inspection and pattern analysis of the node and relationship objects within the JSON data.
 
 \subsection{Creators and contributors}
-Here a resume about errors between Person and Organization
+Analysis of the classification logic for creators and contributors indicated potential errors in distinguishing between Person and Organization entities based solely on name patterns present in the source CSV. The following resume summarizes the estimated classification accuracy based on tests run during development:
 \begin{table}[h]
     \centering
     \begin{tabular}{|c|c|c|}
@@ -229,23 +341,18 @@ Here a resume about errors between Person and Organization
         Organization & \textcolor{red}{\textbf{71}} (Incorrect) &  \textcolor{green}{\textbf{m}} (Correct) \\
         \hline
     \end{tabular}
-    \caption{Confusion matrix for People/Organizations classification}
+    \caption{Confusion matrix for People/Organizations classification. Placeholders n, m represent counts estimated during testing.}
     \label{tab:people_org}
 \end{table}
 \newline
-This suggests a potential issue in the original data source.
-
-
-
-
+This suggests potential limitations in relying solely on name format (via regex) to distinguish between people and organizations in the source data fields (\texttt{Creator}, \texttt{Contributor}, \texttt{AddlAuth}), likely originating from inconsistencies in the source CSV.
 
 \subsection{Summary}
+Based on the development process and analysis of the generated \texttt{data.json} file:
 \begin{itemize}
-    \item \textbf{Entity Misclassification (People/Orgs):} 84 instances error estimated.
-    \item \textbf{Placeholder/Incomplete Data:} Affects dozens to hundreds of records.
-    \item \textbf{Formatting Inconsistencies:} Pervasive across relevant fields and records.
+    \item \textbf{Entity Misclassification (People/Orgs):} Testing estimated approximately 84 instances of potential misclassification when distinguishing between Persons and Organizations based on name patterns.
+    \item \textbf{Placeholder/Incomplete Data:} The design includes assigning the string \texttt{"N/A"} to specific fields (\texttt{toc}, \texttt{extent}, \texttt{serialNum}, \texttt{bibCit}, \texttt{created}, \texttt{partNum}) when source data is invalid according to defined rules. Other fields with invalid source data are omitted entirely from the JSON. This selective approach reflects the completeness and validity of the source data for those specific fields, affecting dozens to hundreds of records.
+    \item \textbf{Formatting Inconsistencies:} While the code includes logic (\texttt{formatJsonString}) to standardize JSON formatting per line, potential inconsistencies might still exist within field values inherited directly from the source data (e.g., variations in date formats if not fully normalized by the `created` field logic, or inconsistencies in free-text fields).
 \end{itemize}
-
-
 
 \end{document}

@@ -3,7 +3,11 @@
 \contentsline {section}{\numberline {2}Purpose of the Code}{1}{section.2}%
 \contentsline {section}{\numberline {3}Main Functionality (What it Does)}{2}{section.3}%
 \contentsline {section}{\numberline {4}Implementation Overview (How it Works)}{4}{section.4}%
-\contentsline {section}{\numberline {5}Definition of Entities and Relationships}{4}{section.5}%
-\contentsline {section}{\numberline {6}Estimation of the errors}{5}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Creators and contributors}{5}{subsection.6.1}%
-\contentsline {subsection}{\numberline {6.2}Summary}{5}{subsection.6.2}%
+\contentsline {section}{\numberline {5}Definition of Entities and Relationships}{5}{section.5}%
+\contentsline {section}{\numberline {6}Proposed Ontology Modifications}{6}{section.6}%
+\contentsline {section}{\numberline {7}CSV Field Mapping and Relationships}{7}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Field Mapping (CSV $\rightarrow $ Ontology)}{7}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Relationships}{8}{subsection.7.2}%
+\contentsline {section}{\numberline {8}Estimation of the errors}{8}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Creators and contributors}{8}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Summary}{9}{subsection.8.2}%

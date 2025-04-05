@@ -334,13 +334,13 @@ public class CsvToJsonConverter {
                  if ("Document".equals(entityType)) {
                     Document doc = new Document();
                     doc.title = title;
-                    doc.toC = isNullOrNone(tocVal) ? null : tocVal; // Store null if N/A initially
-                    doc.extent = isNullOrNone(extentVal) ? null : extentVal;
-                    doc.serialNum = isNullOrNone(serialNumVal) ? null : serialNumVal;
-                    doc.bibCit = isNullOrNone(bibCitVal) ? null : bibCitVal;
+                    doc.toC = isNullOrNone(tocVal) ? "N/A" : tocVal;
+                    doc.extent = isNullOrNone(extentVal) ? "N/A" : extentVal;
+                    doc.serialNum = isNullOrNone(serialNumVal) ? "N/A" : serialNumVal;
+                    doc.bibCit = isNullOrNone(bibCitVal) ? "N/A" : bibCitVal;
                     String createdRaw = rowData.get("Created");
                     if (isNullOrNone(createdRaw)) createdRaw = rowData.get("DateCR");
-                    doc.created = isNullOrNone(createdRaw) ? null : createdRaw; // Store null if N/A
+                    doc.created = isNullOrNone(createdRaw) ? "N/A" : createdRaw;
                     String copyrightedStr = rowData.get("Copyrighted");
                     if (!isNullOrNone(copyrightedStr)) {
                         // Parse boolean but keep the field as Boolean
@@ -360,7 +360,7 @@ public class CsvToJsonConverter {
                     item.title = title;
                     String partNumRaw = rowData.get("PartNum");
                     // Store null if N/A or single digit initially
-                    item.partNum = (!isNullOrNone(partNumRaw) && !partNumRaw.trim().matches("^\\d$")) ? partNumRaw.trim() : null;
+                    item.partNum = (!isNullOrNone(partNumRaw) && !partNumRaw.trim().matches("^\\d$")) ? partNumRaw.trim() : "N/A";
                     String conditionNts = rowData.get("ConditionNts");
                     if (!isNullOrNone(conditionNts)) item.conditionNts = conditionNts;
                     String description = rowData.get("Description");
