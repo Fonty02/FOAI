@@ -1,0 +1,15 @@
+TODO in quest ordine
+
+
+Entity.java
+Relationship.java che estende Entity.java
+DomainData.java e RecordData.java  -> usano classi precedenti e sono una rottura di coglioni probabilmente per le librerie
+TranslatorAPIProlog.java (usa tutte quelle di sopra)
+
+
+NOTES
+HallComparator.java inutile in python teoricamente
+
+
+OPTIONAL
+Se vuoi dare n'occhiata a cosa ho gia fatto e correggere eventuali errori (annotameli qui)
