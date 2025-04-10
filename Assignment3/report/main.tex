@@ -82,14 +82,12 @@ Particular attention was given to the implementation of Java's \texttt{equals()}
 \subsection{UType Class}
 The \texttt{UType} class presents an interesting case of inheritance without additional fields or methods. In both Java and Python implementations, \texttt{UType} inherits directly from \texttt{Attribute} without extending the functionality, effectively serving as a specialized type marker.
 
-This transformation demonstrates the concept of preserving class structure even when the derived class does not add functional elements, an important aspect of maintaining the semantic model of the domain.
 
 \subsection{HallUser and HallComparator Classes}
 The transformation of \texttt{HallUser} and \texttt{HallComparator} illustrates the adaptation of Java's comparator pattern to Python's comparison protocol. The \texttt{HallUser} class was implemented in Python with equivalent fields and methods, preserving the original data structure and functionality.
 
 The Java \texttt{HallComparator} class, which implements the \texttt{Comparator<HallUser>} interface to define comparison logic, was transformed by integrating its functionality directly into the Python \texttt{HallUser} class through the special methods \texttt{\_\_lt\_\_()} and \texttt{\_\_eq\_\_()}. This approach leverages Python's rich comparison protocol, allowing instances to be naturally sorted according to the original comparison rules (descending order by \texttt{usageStatistic}, then by \texttt{trustIndex}).
 
-This transformation demonstrates how Java's separate comparator pattern can be elegantly mapped to Python's object-oriented comparison protocol, eliminating the need for a distinct comparator class while preserving the original sorting behavior.
 
 \subsection{Instance Class}
 The \texttt{Instance} class transformation involved mapping complex data structures and comparison logic from Java to Python. Private fields \texttt{type}, \texttt{selectedInstanceId}, \texttt{attributeValues} (of type \texttt{Map<String,String>}), and \texttt{shortDescription} were implemented as public attributes in Python, with \texttt{attributeValues} specifically mapped to a typed dictionary (\texttt{Dict[str, str]}).
@@ -128,13 +126,493 @@ The hierarchy manipulation methods, including \texttt{addChild()}, \texttt{detac
 
 The transformation of the \texttt{Entity} class demonstrates the importance of deep understanding of both source and target languages, as differences in programming paradigms require informed decisions to maintain the original semantics while adopting the conventions of the new language.
 
+\subsection{Relationship Class}
+
+The \texttt{Relationship} class, which extends \texttt{Entity}, presented several interesting challenges during the transformation from Java to Python. This class represents connections between entities, forming a central part of GraphBrain's semantic network model.
+
+In the Python implementation, the inheritance relationship with \texttt{Entity} was preserved, while the specialized fields for relationship management were adapted appropriately. The private Java fields \texttt{inverse}, \texttt{references}, \texttt{children}, \texttt{parent}, and \texttt{symmetric} were mapped to attributes with underscore prefixes in Python, following the convention for protected status.
+
+A significant aspect of the transformation was managing the multiple constructors in Java. These were consolidated into a single \texttt{\_\_init\_\_} method in Python using optional parameters:
+
+\begin{verbatim}
+def __init__(self, name: str, domain: Optional[str] = None, inverse: Optional[str] = None,
+             parent: Optional[Relationship] = None, symmetric: bool = False,
+             attributes: Optional[List[Attribute]] = None):
+    super().__init__(name, domain)
+    self._inverse: Optional[str] = inverse
+    self._references: List[Reference] = []
+    self._parent: Optional[Relationship] = None
+    self._symmetric: bool = symmetric
+\end{verbatim}
+
+The transformation required careful type hinting to address potential circular import issues, employing the \texttt{TYPE\_CHECKING} flag from the typing module to avoid runtime import errors while maintaining code clarity.
+
+Managing the hierarchical relationship structure was particularly challenging. Methods like \texttt{setParentRelationship()}, \texttt{addChildrenRelationship()}, and \texttt{isTopRelationship()} were implemented with special attention to maintaining proper bidirectional parent-child references, which required overriding some \texttt{Entity} behaviors.
+
+References management methods, including \texttt{addReference()}, \texttt{getReference()}, and relationship operations like \texttt{getSubj\_Objs()} and \texttt{getObj\_Subjs()}, were implemented with the same functionality as the original. The Python implementation employed set comprehensions and list operations to provide equivalent collection handling to the Java original.
+
+The transformation of the \texttt{Relationship} class demonstrates the complexities involved when mapping classes with both inheritance and composition relationships, requiring careful consideration of type safety and object relationship integrity across the language boundary.
+
+% Inserisci dopo la sezione sulla classe Relationship e prima della Conclusion
+
+\subsection{RelationshipSite Class}
+The transformation of the \texttt{RelationshipSte} class to \texttt{RelationshipSite} in Python provides an interesting example of adapting a simpler relationship-focused class with fewer inheritance relationships. Unlike the more complex \texttt{Relationship} class, which extends \texttt{Entity}, \texttt{RelationshipSte} is a standalone class in Java.
+
+In the Python implementation, the Java private fields \texttt{name}, \texttt{inverse}, \texttt{symmetric}, \texttt{attributes}, and \texttt{relationships} were mapped to public attributes, following Python's convention of relying on naming conventions rather than access modifiers. The constructor logic was preserved in the \texttt{\_\_init\_\_} method, initializing all attributes with their corresponding parameters.
+
+A notable improvement in the Python implementation was the addition of comprehensive docstring documentation, enhancing code readability and maintainability:
+
+\begin{verbatim}
+def getSubj_Objs(self, subject: str) -> List[str]:
+    """
+    Returns a list of objects related to the given subject.
+    
+    Args:
+        subject: The subject to find related objects for
+        
+    Returns:
+        A list of objects related to the subject
+    """
+\end{verbatim}
+
+The relationship retrieval methods (\texttt{getSubjects()}, \texttt{getObjects()}, \texttt{getSubj\_Objs()}, and \texttt{getObj\_Subjs()}) were implemented with equivalent functionality as their Java counterparts. The Python implementation maintained the same sorting logic for collections and list operations to provide consistent behavior.
+
+Type hints were added throughout the Python code to improve code clarity and assist with static type checking:
+
+\begin{verbatim}
+def __init__(self, name: str, inverse: str, symmetric: bool, attributes: List[Attribute]):
+    self.name: str = name
+    self.inverse: str = inverse
+    self.symmetric: bool = symmetric
+    self.attributes: List[Attribute] = attributes
+    self.relationships: List[Reference] = []
+\end{verbatim}
+
+
+\subsection{RelationTriple Class}
+The \texttt{RelationTriple} class represents a fundamental semantic structure in GraphBrain's knowledge representation - a triple consisting of subject, relation, and object instances. This straightforward class was transformed from Java to Python with additions that enhance code quality and maintainability.
+
+In the Python implementation, the Java private fields \texttt{subject}, \texttt{relation}, and \texttt{object} were mapped to public attributes, as is conventional in Python. Unlike Java's reliance on access modifiers, Python follows the "we're all consenting adults" philosophy regarding attribute access.
+
+The class constructors were transformed with attention to Python's idioms:
+
+\begin{verbatim}
+def __init__(self, subject: Instance = None, relation: Instance = None, object: Instance = None):
+    """
+    Initialize a RelationTriple object.
+    
+    Args:
+        subject: The subject Instance
+        relation: The relation Instance
+        object: The object Instance
+    """
+    self.subject: Instance = subject
+    self.relation: Instance = relation
+    self.object: Instance = object
+\end{verbatim}
+
+A significant enhancement in the Python implementation is the addition of comprehensive type hints, which were not present in the Java code. Each attribute and method includes appropriate type annotations indicating that they work with \texttt{Instance} objects, improving code clarity and facilitating static type checking.
+
+The getter and setter methods were preserved with identical names to maintain the original API contract, while adding detailed docstrings that document their purpose - an improvement over the Java implementation which lacked method documentation:
+
+\begin{verbatim}
+def getSubject(self) -> Instance:
+    """Get the subject instance."""
+    return self.subject
+    
+def setSubject(self, subject: Instance) -> None:
+    """Set the subject instance."""
+    self.subject = subject
+\end{verbatim}
+
+The class-level docstring provides a clear description of the class's purpose, another enhancement not present in the original Java code:
+
+\begin{verbatim}
+"""Class representing a triple of subject-relation-object instances."""
+\end{verbatim}
+
+
+\subsection{Union Class}
+The \texttt{Union} class represents a specialized domain tag that contains a set of values. This class extends \texttt{DomainTag} in both Java and Python implementations, preserving the inheritance hierarchy of the original model.
+
+In the Python implementation, the private field \texttt{values} from Java was mapped to a protected attribute \texttt{\_values} in Python, using the underscore prefix to indicate protected status according to Python conventions. Both implementations use a set data structure, with the Python version leveraging type annotations for improved code clarity:
+
+\begin{verbatim}
+# Java: private Set<String> values;
+# Python:
+self._values: Set[str] = values
+\end{verbatim}
+
+The constructor implementation in Python calls the parent class constructor before initializing its own attributes, maintaining proper initialization order:
+
+\begin{verbatim}
+def __init__(self, name: str, domain: str, values: Set[str]) -> None:
+    """
+    Constructs a Union object with the specified name, domain, and values.
+    
+    Args:
+        name: the name of the Union
+        domain: the domain of the Union
+        values: the set of values in the Union
+    """
+    super().__init__()
+    self.name = name
+    self.domain = domain
+    self._values = values
+\end{verbatim}
+
+The Python implementation adds a \texttt{get\_domain\_type()} method that returns the string "Union", which helps with type identification - a useful addition not present in the Java version:
+
+\begin{verbatim}
+def get_domain_type(self) -> str:
+    """
+    Returns the type of the domain tag.
+    
+    Returns:
+        str: The type of this domain tag ("Union").
+    """
+    return "Union"
+\end{verbatim}
+
+Getter and setter methods were preserved with identical names to maintain API compatibility:
+
+\begin{verbatim}
+def getValues(self) -> Set[str]:
+    """
+    Returns the set of values in the Union.
+    
+    Returns:
+        the set of values
+    """
+    return self._values
+\end{verbatim}
+
+Java's \texttt{equals()} and \texttt{hashCode()} methods were transformed into Python's special methods \texttt{\_\_eq\_\_()} and \texttt{\_\_hash\_\_()}, maintaining the same comparison logic based on the \texttt{name} attribute. This ensures consistent behavior in collections and equality operations:
+
+\begin{verbatim}
+def __eq__(self, obj: object) -> bool:
+    """
+    Indicates whether some other object is "equal to" this one.
+    
+    Args:
+        obj: the reference object with which to compare
+        
+    Returns:
+        True if the two Unions have the same name; False otherwise
+    """
+    if self is obj:
+        return True
+    if obj is None or type(self) != type(obj):
+        return False
+    union = obj  # type: Union
+    return self.name == union.name
+\end{verbatim}
 
 
 
-\section{Conclusion}
-The transformation of GraphBrain's domain package from Java to Python required a systematic approach to mapping classes, fields, methods, and inheritance relationships while preserving the original semantic model.
+\subsection{DomainData Class}
+The transformation of the \texttt{DomainData} class represents one of the most complex mapping challenges due to its central role in the GraphBrain domain model and extensive functionality. This class is responsible for loading and parsing \textit{.gbs} files, as well as storing and manipulating domain information including entities, relationships, attributes, unions, and axioms.
+
+In transforming this critical class from Java to Python, careful attention was given to preserving its extensive data structures and processing logic while adapting to Python's idioms and type system. The class required considerable refactoring to maintain functional equivalence while leveraging Python's strengths.
+
+The complex field structure of the Java implementation was mapped to typed attributes in Python, with special attention to collection types:
+
+\begin{verbatim}
+# Java: private Vector<Attribute> types = new Vector<>();
+types: List[Attribute]  
+
+# Java: private HashSet<Union> unions = new HashSet<>();
+unions: Set[Union]  
+
+# Java: private Map<String,Vector<String>> subjRels = new HashMap<>();
+subjRels: Dict[str, List[str]]  
+\end{verbatim}
+
+Java's overloaded constructors were consolidated into a single, flexible \texttt{\_\_init\_\_} method in Python that mimics all the original constructor variants through optional parameters and type checking:
+
+\begin{verbatim}
+def __init__(self,
+             path_or_bytearray: str | bytes | None = None,
+             webInfFolder: str | None = None,
+             domainName: str | None = None,
+             file: str | Path | None = None):
+    """
+    Initializes the DomainData object. Mimics Java overloaded constructors.
+    """
+\end{verbatim}
+
+One of the most significant challenges was adapting Java's XML parsing logic, which uses DOM (Document Object Model), to Python's ElementTree approach. The Python implementation carefully reconstructs the validation and traversal logic:
+
+\begin{verbatim}
+def validateTag(self, tag: ET.Element, validTags: List[str]) -> None:
+    """
+    Validates a tag against a list of valid tags.
+    Raises ValueError if the tag is not found in the list of valid tags.
+    """
+    if tag.tag not in validTags:
+        raise ValueError(
+            f"Invalid tag <{tag.tag}> found where one of {validTags} was expected"
+        )
+\end{verbatim}
+
+The complex recursive parsing methods, such as \texttt{parseEntities}, \texttt{parseRelationships}, and \texttt{parseReferences}, were transformed with particular attention to maintaining exact equivalence in tree construction and inheritance logic. These methods handle the hierarchical relationships between domain elements:
+
+\begin{verbatim}
+def parseEntities(self, parentNode: ET.Element, root: Entity, domainName: str) -> None:
+    """
+    Recursively parses entities from the given parent node and adds them to the entity tree.
+    """
+\end{verbatim}
+
+Python's type hints were extensively used throughout the class to improve code clarity and maintainability, a significant enhancement over the Java version. This is particularly evident in helper methods:
+
+\begin{verbatim}
+def addValue(self, map_dict: Dict[str, List[str]], key: str, value: str) -> None:
+    """
+    Adds a value to a list within a dictionary, ensuring no duplicates in the list.
+    Sorts the list.
+    """
+\end{verbatim}
+
+A notable enhancement in the Python implementation is improved error handling, with more specific error messages and graceful fallbacks when operations can't be completed:
+
+\begin{verbatim}
+except AttributeError:
+    print(f"Warning: Relationship class missing 'getSubjects'. Cannot check "
+          f"subject involvement for '{entity_name}' in '{rel.getName()}'.")
+\end{verbatim}
+
+\subsection{RecordData Class}
+
+The transformation of the \texttt{RecordData} class represents one of the most comprehensive examples of language mapping in the project, as this class serves as a central data repository for domain information. The class is responsible for loading, parsing, and managing domain metadata including entities, relationships, attributes, axioms, and relationship triples.
+
+In the Python implementation, the extensive field structure of the Java class was carefully mapped using Python's type annotations to preserve both type safety and semantic meaning:
+
+\begin{verbatim}
+# Java: private Vector<String> subjects = new Vector<String>();
+subjects: List[str]
+
+# Java: private HashSet<Union> unions = new HashSet<>();
+unions: Set[Union]
+
+# Java: private Map<String,Vector<String>> subjRel_Objs = new HashMap<>();
+subjRel_Objs: Dict[str, List[str]]
+\end{verbatim}
+
+A notable improvement in the Python implementation was the use of more appropriate Python data structures. For instance, Java's \texttt{HashMap} with vectors was transformed into Python's \texttt{defaultdict(list)}, which automatically initializes new keys with empty lists:
+
+\begin{verbatim}
+# Initialize collections with defaultdict for automatic creation of empty lists
+self.subjRels = defaultdict(list)
+self.relSubjs = defaultdict(list)
+self.objRels = defaultdict(list)
+\end{verbatim}
+
+The Java class's complex XML parsing logic, which used the DOM API, was reimplemented using Python's ElementTree, requiring significant adaptation of the traversal and validation mechanisms:
+
+\begin{verbatim}
+def _parseFile(self, file_path: Path) -> ET.ElementTree:
+    """Parses the given file path and returns an ElementTree object."""
+    try:
+        tree = ET.parse(file_path)
+        return tree
+    except ET.ParseError as e:
+        print(f"XML Parse Error in file {file_path}: {e}")
+        raise
+\end{verbatim}
+
+Java's method overloading was consolidated into single methods with optional parameters, leveraging Python's more flexible parameter handling:
+
+\begin{verbatim}
+def __init__(self,
+             path_or_bytearray: Optional[Union[str, bytes]] = None,
+             webInfFolder: Optional[str] = None,
+             domainName: Optional[str] = None,
+             file: Optional[Union[str, Path]] = None):
+    """
+    Initializes the RecordData object. Mimics Java overloaded constructors.
+    """
+\end{verbatim}
+
+The recursive traversal methods for building entity and relationship hierarchies were reimplemented with particular attention to maintaining the same inheritance and composition relationships, while adapting to Python's iteration patterns:
+
+\begin{verbatim}
+def _parseEntities(self, parentNode: ET.Element, root: Entity, domainName: str) -> None:
+    """
+    Recursively parses entities from the given parent node and adds them to the entity tree.
+    """
+\end{verbatim}
+
+Error handling was significantly enhanced in the Python implementation, providing more specific exception types and descriptive error messages:
+
+\begin{verbatim}
+try:
+    domain_name_attr = root_element.get("name")
+    if domain_name_attr is None:
+        raise ValueError("Domain tag missing required name attribute")
+except ValueError as e:
+    print(f"Error validating domain structure: {e}")
+    raise
+\end{verbatim}
+
+The Python version also includes thorough documentation through docstrings, which weren't present in the original Java code:
+
+\begin{verbatim}
+def _addValue(self, map_dict: Dict[str, List[str]], key: str, value: str) -> None:
+    """
+    Adds a value to a list within a dictionary, ensuring no duplicates in the list.
+    Sorts the list after addition.
+    
+    Args:
+        map_dict: Dictionary mapping strings to lists of strings
+        key: Dictionary key to add the value to
+        value: String value to add to the list
+    """
+\end{verbatim}
+
+Collection operations that used Java's sorting and filtering methods were reimplemented using Python's list comprehensions and set operations, providing more concise and readable code while maintaining the same functionality:
+
+\begin{verbatim}
+def getSubjsFromRel(self, relationship_name: str) -> Set[str]:
+    """Returns the set of subjects participating in the given relationship."""
+    try:
+        return set(self.relSubjs.get(relationship_name, []))
+    except Exception as e:
+        print(f"Warning: Error getting subjects for '{relationship_name}': {e}")
+        return set()
+\end{verbatim}
+
+\subsection{TranslatorAPIProlog Class}
+
+The transformation of the \texttt{TranslatorAPIProlog} class represents an interesting case study in adapting specialized domain-specific functionality from Java to Python. This utility class, responsible for converting domain objects into Prolog facts, demonstrates the language-agnostic nature of knowledge representation transformations.
+
+In the Python implementation, the Java class's private fields (\texttt{attributes}, \texttt{attributesRel}, \texttt{domainName}, and \texttt{recur}) were mapped to class attributes with appropriate type annotations:
+
+\begin{verbatim}
+serialVersionUID: int = 1  # Placeholder for Java's serialVersionUID
+attributes: Optional[Dict[str, List[Attribute]]] = None
+attributesRel: Optional[Dict[str, List[Attribute]]] = None
+domainName: Optional[str] = None
+recur: str = ""
+\end{verbatim}
+
+The Java constructor was transformed into a Python \texttt{\_\_init\_\_} method, maintaining the same functionality of generating Prolog facts from a \texttt{DomainData} object. However, the Python implementation adds stronger error checking:
+
+\begin{verbatim}
+def __init__(self, domain: DomainData):
+    """
+    Initializes the TranslatorAPIProlog instance and generates Prolog facts.
+    Mirrors the Java constructor.
+    """
+    if domain.getDomain() is None:
+        raise ValueError("Domain name cannot be None")
+    # ...
+\end{verbatim}
+
+A notable adaptation was the transformation of Java's static methods to Python's \texttt{@staticmethod} decorated functions. This preserved the original design pattern while adapting to Python's syntax:
+
+\begin{verbatim}
+@staticmethod
+def writeFactsWithId(content: str, id_prefix: str) -> str:
+    """
+    Adds a unique ID to each fact string.
+    Mirrors the Java static method.
+    """
+    # Implementation
+\end{verbatim}
+
+The core string processing methods (\texttt{createEntities}, \texttt{writeEntity}, and \texttt{createRelationships}) underwent significant refactoring to adapt Java's string concatenation approach to Python's formatting capabilities, while maintaining identical output formats:
+
+\begin{verbatim}
+# Java: values += "entity(" + entity.getDomain().toLowerCase() + ", " + 
+#        entity.getName().toLowerCase() + ").\n";
+
+# Python:
+values += f"entity({domain_lower}, {name_lower}).\n"
+\end{verbatim}
+
+The Python implementation adds comprehensive error handling and null-safety throughout the string generation process:
+
+\begin{verbatim}
+domain_lower = entity.getDomain().lower() if entity.getDomain() else "unknown_domain"
+name_lower = entity.getName().lower() if entity.getName() else "unknown_entity"
+\end{verbatim}
+
+Methods working with tree structures (\texttt{getClassi}, \texttt{recursiveTree}, and \texttt{recursiveTreeTax}) were preserved but required adaptation to Python's different approach to collections and iteration:
+
+\begin{verbatim}
+def recursiveTree(self, node: 'TreeNode') -> List[str]:
+    """
+    Recursively collects the string representation of all nodes in a subtree.
+    Requires a TreeNode implementation.
+    """
+    classi: List[str] = []
+    children = node.getChildren()
+    if children:
+        for child_node in children:
+            classi.append(str(child_node))
+            classi.extend(self.recursiveTree(child_node))
+    return classi
+\end{verbatim}
+
+The private helper method \texttt{createList} in Java was transformed into a Python private method using the underscore prefix convention (\texttt{\_createList}), maintaining Python's naming conventions while preserving the method's utility function status.
+
+A significant improvement in the Python implementation is the addition of comprehensive docstrings, which enhance code readability and provide clear documentation for each method:
+
+\begin{verbatim}
+def getDomainName(self) -> Optional[str]:
+    """Returns the domain name for this translator."""
+    return self.domainName
+\end{verbatim}
+
+\section{Additional classes}
+\textit{TreeNode} and \textit{DefaultTreeNode} classes don't have a direct equivalent in the Java code, so we created them in Python from scratch.
+
+\subsection{TreeNode Class}
+The \texttt{TreeNode} class was created from scratch in Python, inspired by \texttt{org.primefaces.model.TreeNode} from the Java PrimeFaces library. Since GraphBrain's Java implementation utilized this external library class without modifications, we needed to implement an equivalent functionality in our Python conversion.
+
+Our Python implementation maintains all the essential functionality of the original Java class, including methods for managing parent-child relationships, node data, and display state. The class provides a comprehensive API that includes:
+
+\begin{itemize}
+    \item Data management: \texttt{getData()}, \texttt{setData()}
+    \item Parent-child relationship management: \texttt{getParent()}, \texttt{setParent()}, \texttt{getChildren()}, \texttt{addChild()}, \texttt{removeChild()}
+    \item State management: \texttt{isExpanded()}, \texttt{setExpanded()}, \texttt{isSelected()}, \texttt{setSelected()}
+    \item Tree navigation: \texttt{getChild\_count()}, \texttt{isLeaf()}
+    \item Type information: \texttt{getType()}, \texttt{setType()}
+\end{itemize}
+
+Additionally, the Python implementation includes Pythonic enhancements that weren't present in the original Java class:
+
+\begin{itemize}
+    \item String representation methods (\texttt{\_\_str\_\_} and \texttt{\_\_repr\_\_}) for easier debugging
+    \item Bidirectional relationship management in \texttt{setParent()} to ensure consistency between parent and child nodes
+    \item A \texttt{clearParent()} helper method to simplify relationship management
+\end{itemize}
 
 
+
+\subsection{DefaultTreeNode Class}
+The \texttt{DefaultTreeNode} class extends \texttt{TreeNode} and provides a concrete implementation with enhanced constructor flexibility. This class was created to mirror \texttt{org.primefaces.model.DefaultTreeNode} from the Java PrimeFaces library, which was used in the original GraphBrain implementation.
+
+
+\begin{itemize}
+    \item \texttt{DefaultTreeNode()} - Creates an empty node
+    \item \texttt{DefaultTreeNode(data)} - Creates a node with specified data
+    \item \texttt{DefaultTreeNode(data, parent)} - Creates a node with specified data and parent
+    \item \texttt{DefaultTreeNode(type, data, parent)} - Creates a node with specified type, data, and parent
+\end{itemize}
+
+The constructor implementation uses Python's optional parameters and type checking to determine which Java constructor variant is being emulated:
+
+\begin{verbatim}
+def __init__(self, type_or_data=None, data_or_parent=None, parent=None):
+    """
+    Initializes a DefaultTreeNode. Mimics PrimeFaces constructors.
+    """
+    # Logic to determine which constructor variant to emulate
+\end{verbatim}
+
+The class also maintains automatic parent-child relationship management, ensuring that when a node is created with a parent, it is automatically added to that parent's children collection - preserving the behavior of the original Java implementation.
 
 \end{document}
 
