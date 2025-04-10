@@ -1,4 +1,4 @@
-package domain;
+package domain;  
 
 public class Attachment {
 	private String progr;

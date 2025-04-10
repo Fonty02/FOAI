@@ -1,0 +1,141 @@
+\documentclass[12pt,a4paper]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{authblk} % Package for multiple authors
+\usepackage{booktabs} % For better tables
+\usepackage{listings} % For code snippets
+\usepackage{xcolor} % For colored text
+\usepackage{biblatex} % For bibliography management
+
+% Title and author information
+\title{Language Transformation Analysis: Java to Python Conversion of GraphBrain Domain Package}
+\author[1]{Cirilli Davide}
+\author[2]{Fontana Emanuele}
+\affil[1,2]{Department of Computer Science, Università degli Studi di Bari}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+This assignment focuses on the implementation of a parser for the Java package \textit{domain} of GraphBrain, recreating its functionality in Python. The domain package constitutes the core model of GraphBrain, containing classes that represent Entities and Relationships, as well as functionality to extract these from \textit{.gbs} files. This language transformation exercise required careful consideration of both language-specific features and object-oriented design principles to ensure functional equivalence between the original Java implementation and the resulting Python code.
+
+The primary objectives of this work were to:
+\begin{itemize}
+    \item Accurately translate the class hierarchy and inheritance relationships
+    \item Preserve method functionality and interface contracts
+    \item Adapt Java-specific constructs to idiomatic Python patterns
+    \item Maintain the original semantic model of the domain
+\end{itemize}
+
+
+\section{Class Transformations}
+
+\subsection{Attachment Class}
+The transformation of the \texttt{Attachment} class from Java to Python required mapping private fields to public attributes while maintaining the intended encapsulation through method interfaces. The Java class's private fields \texttt{progr}, \texttt{extension}, \texttt{description}, and \texttt{fileName} were represented as public attributes in Python, following Python's convention of relying on naming conventions rather than access modifiers.
+
+The constructor logic was preserved in the Python \texttt{\_\_init\_\_} method, initializing all attributes with their corresponding parameters. Additionally, getter methods were implemented with identical names and functionality, with particular attention to the \texttt{getFilename()} method, which replicates the string concatenation logic from the original Java implementation.
+
+\subsection{Tag Abstract Class}
+The abstract \texttt{Tag} class presented an interesting challenge in the transformation process. Java's abstract class concept was mapped to Python using the \texttt{abc.ABC} base class to enforce abstractness. The protected fields \texttt{name}, \texttt{description}, and \texttt{notes} from the Java implementation were represented as public attributes in Python, initialized to \texttt{None} in the constructor.
+
+All getter and setter methods were faithfully recreated in Python, maintaining the same method signatures and functionality. This approach preserves the original API contract while adapting to Python's conventions regarding attribute visibility.
+
+\subsection{DomainTag Abstract Class}
+Building upon the \texttt{Tag} class, the abstract \texttt{DomainTag} class extends the base functionality with domain-specific features. In the Python implementation, \texttt{DomainTag} inherits from both \texttt{Tag} and \texttt{abc.ABC}, preserving the inheritance hierarchy and abstract nature of the class.
+
+The protected field \texttt{domain} from Java was mapped to the attribute \texttt{\_domain} in Python, employing the underscore prefix as a conventional indication of protected status. Corresponding getter and setter methods were implemented to maintain the original interface while adapting to Python's attribute access patterns.
+
+\subsection{Attribute Class}
+The \texttt{Attribute} class represents one of the more complex transformations due to its numerous fields, multiple constructors, and diverse methods. Inheriting from \texttt{Tag} in both languages, the Python implementation preserves all public fields (\texttt{mandatory}, \texttt{distinguishing}, \texttt{display}) as public attributes with equivalent names.
+
+The Java class's private collection field \texttt{values} (of type \texttt{List<String>}) was implemented in Python as a typed list (\texttt{List[str]}), leveraging Python's type hints for improved code clarity. Similarly, the \texttt{dataType} field was mapped to \texttt{data\_type} with an \texttt{Optional[str]} type hint, acknowledging that this field might be uninitialized in some contexts.
+
+Java's overloaded constructors were consolidated into a single \texttt{\_\_init\_\_} method in Python, utilizing optional parameters and type checking to replicate the functionality of the multiple Java constructors. This approach maintains the flexibility of the original design while adapting to Python's constructor paradigm.
+
+The comprehensive set of methods in the Java class, including getters, setters, and utility functions, were faithfully recreated in Python with equivalent functionality. Special attention was given to the \texttt{clone()} method, which replicates the deep copying behavior of the Java original.
+
+\subsection{Author Class}
+The \texttt{Author} class transformation demonstrates the adaptation of naming conventions between Java and Python. The private fields in Java were mapped to public attributes in Python, with camelCase identifiers converted to snake\_case where appropriate (e.g., \texttt{attributeKey} to \texttt{attribute\_key}), following Python's style guidelines.
+
+A notable aspect of this transformation was the handling of Java's \texttt{Timestamp} type for the \texttt{creationDate} field, which was mapped to Python's \texttt{datetime} type, providing equivalent functionality while using Python's standard library.
+
+The Java class's implicit default constructor was represented by an \texttt{\_\_init\_\_} method in Python that initializes all attributes to \texttt{None}, preserving the original initialization behavior. Getter and setter methods were implemented with identical names, maintaining the original API contract.
+
+\subsection{Axiom Class}
+The \texttt{Axiom} class, which extends \texttt{DomainTag}, demonstrates the propagation of inheritance patterns across languages. In Python, the class inherits from \texttt{DomainTag}, preserving the original class hierarchy.
+
+Private fields \texttt{formalism} and \texttt{expression} were mapped to conventionally private attributes \texttt{\_formalism} and \texttt{\_expression} in Python, utilizing the underscore prefix naming convention. The constructor logic was preserved in the \texttt{\_\_init\_\_} method, which calls the superclass constructor before initializing the class's specific attributes.
+
+Particular attention was given to the implementation of Java's \texttt{equals()} and \texttt{hashCode()} methods, which were mapped to Python's special methods \texttt{\_\_eq\_\_()} and \texttt{\_\_hash\_\_()}. These methods maintain the original equality and hashing behavior based on the \texttt{name} attribute, ensuring that collections and comparison operations behave consistently across both languages.
+
+\subsection{UType Class}
+The \texttt{UType} class presents an interesting case of inheritance without additional fields or methods. In both Java and Python implementations, \texttt{UType} inherits directly from \texttt{Attribute} without extending the functionality, effectively serving as a specialized type marker.
+
+This transformation demonstrates the concept of preserving class structure even when the derived class does not add functional elements, an important aspect of maintaining the semantic model of the domain.
+
+\subsection{HallUser and HallComparator Classes}
+The transformation of \texttt{HallUser} and \texttt{HallComparator} illustrates the adaptation of Java's comparator pattern to Python's comparison protocol. The \texttt{HallUser} class was implemented in Python with equivalent fields and methods, preserving the original data structure and functionality.
+
+The Java \texttt{HallComparator} class, which implements the \texttt{Comparator<HallUser>} interface to define comparison logic, was transformed by integrating its functionality directly into the Python \texttt{HallUser} class through the special methods \texttt{\_\_lt\_\_()} and \texttt{\_\_eq\_\_()}. This approach leverages Python's rich comparison protocol, allowing instances to be naturally sorted according to the original comparison rules (descending order by \texttt{usageStatistic}, then by \texttt{trustIndex}).
+
+This transformation demonstrates how Java's separate comparator pattern can be elegantly mapped to Python's object-oriented comparison protocol, eliminating the need for a distinct comparator class while preserving the original sorting behavior.
+
+\subsection{Instance Class}
+The \texttt{Instance} class transformation involved mapping complex data structures and comparison logic from Java to Python. Private fields \texttt{type}, \texttt{selectedInstanceId}, \texttt{attributeValues} (of type \texttt{Map<String,String>}), and \texttt{shortDescription} were implemented as public attributes in Python, with \texttt{attributeValues} specifically mapped to a typed dictionary (\texttt{Dict[str, str]}).
+
+The constructor logic, which involves building a short description based on attribute values, was faithfully recreated in the Python \texttt{\_\_init\_\_} method. The private Java method \texttt{buildShortDescription} was implemented as a public method in Python, reflecting Python's more relaxed approach to method visibility while preserving the original functionality.
+
+The implementation of Java's \texttt{equals()} method as Python's \texttt{\_\_eq\_\_()} ensures that instance equality is determined by the \texttt{selectedInstanceId} attribute, as in the original Java code, maintaining consistent behavior in collections and comparison operations.
+
+\subsection{Reference Class}
+The final class examined, \texttt{Reference}, demonstrates the adaptation of Java's collection types to their Python equivalents. The private field \texttt{attributes} of type \texttt{Vector<Attribute>} in Java was mapped to \texttt{Optional[List[Attribute]]} in Python, acknowledging both the change in collection type and the possibility of null values.
+
+Java's overloaded constructors were consolidated into a single \texttt{\_\_init\_\_} method with an optional parameter for \texttt{attributes}, defaulting to \texttt{None}. This approach preserves the flexibility of the original design while adapting to Python's constructor paradigm.
+
+The getter and setter methods were implemented with identical names, maintaining the original API contract, and the \texttt{toString()} method was mapped to \texttt{\_\_str\_\_()}, providing a consistent string representation across both languages.
+
+\subsection{Entity Class}
+
+The \texttt{Entity} class, which extends \texttt{DomainTag}, represents one of the central elements in GraphBrain's domain model. Its transformation from Java to Python required particular attention due to the class's complexity, characterized by numerous fields, methods, and hierarchical relationships.
+
+In Python, the class maintains the same inheritance relationship, extending \texttt{DomainTag}. Java's private fields (\texttt{values}, \texttt{graphBrainID}, \texttt{attributes}, \texttt{children}, \texttt{parent}, \texttt{\_abstract}) were mapped to attributes with underscore prefixes in Python, following the convention for indicating protected or private attributes.
+
+A significant aspect of the transformation was adapting the type system: Python type annotations were utilized to improve code readability and maintainability. For example:
+
+\begin{verbatim}
+from typing import List, Optional, TYPE_CHECKING
+
+self._values: List[str] = []
+self._parent: Optional[Entity] = None
+\end{verbatim}
+
+Managing hierarchical relationships between entities required special attention. Methods such as \texttt{getAllAttributes()}, \texttt{getClassPath()}, and \texttt{getSubclassesTree()} were implemented maintaining the same recursive logic as the Java original, but adapted to Python conventions.
+
+Another challenge was implementing the entity comparison system: Java's \texttt{equals()} method was mapped to Python's \texttt{\_\_eq\_\_()} special method, while \texttt{toString()} was mapped to \texttt{\_\_str\_\_()}. This approach ensures that comparison and string representation operations work consistently across both languages.
+
+The hierarchy manipulation methods, including \texttt{addChild()}, \texttt{detach()}, and \texttt{removeAllAttributes()}, were implemented with the same behavior as the original, preserving the consistency of entity relationships during structural modification operations.
+
+The transformation of the \texttt{Entity} class demonstrates the importance of deep understanding of both source and target languages, as differences in programming paradigms require informed decisions to maintain the original semantics while adopting the conventions of the new language.
+
+
+
+
+\section{Conclusion}
+The transformation of GraphBrain's domain package from Java to Python required a systematic approach to mapping classes, fields, methods, and inheritance relationships while preserving the original semantic model.
+
+
+
+\end{document}
+
+

@@ -1,46 +1,46 @@
 class Attachment:
     def __init__(self, p: str, e: str, d: str, f: str):
-        self._progr: str = p
-        self._extension: str = e
-        self._description: str = d
-        self._fileName: str = f
+        self.progr: str = p
+        self.extension: str = e
+        self.description: str = d
+        self.fileName: str = f
     
-    @property
-    def progr(self) -> str:
+    
+    def getProgr(self) -> str:
         """
         Obtains the progressive number of the attachment.
         
         Returns:
             The progressive number of the attachment.
         """
-        return self._progr
+        return self.progr
     
-    @property
-    def extension(self) -> str:
+    
+    def getExtension(self) -> str:
         """
         Obtains the file extension.
         
         Returns:
             The file extension.
         """
-        return self._extension
+        return self.extension
     
-    @property
-    def description(self) -> str:
+    
+    def getDescription(self) -> str:
         """
         Obtains the description of the attachment.
         
         Returns:
             The description of the attachment.
         """
-        return self._description
+        return self.description
     
-    @property
-    def filename(self) -> str:
+    
+    def getFilename(self) -> str:
         """
         Obtains the file name with extension.
         
         Returns:
             The file name with extension.
         """
-        return self._fileName + self._extension
+        return self.fileName + self.extension
