@@ -42,6 +42,6 @@ class DefaultTreeNode(TreeNode):
 
         # Ensure parent relationship is correctly established if parent is provided
         if node_parent:
-            node_parent.add_child(self)
+            node_parent.addChild(self)
 
     # Inherits all other methods from TreeNode

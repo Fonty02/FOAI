@@ -11,16 +11,6 @@ class DomainTag(Tag, ABC):
         super().__init__()
         self._domain: str = "" 
 
-    @abstractmethod
-    def get_domain_type(self) -> str:
-        """
-        This abstract method ensures this class cannot be instantiated directly.
-        It must be implemented by all subclasses.
-        
-        Returns:
-            str: The type of the domain tag.
-        """
-        pass
     
     def getDomain(self) -> str:
         """

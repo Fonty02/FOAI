@@ -1,7 +1,7 @@
 from .Tag import Tag
 from .TreeNode import TreeNode
 from copy import copy
-from typing import List, Optional, Union
+from typing import List, Optional
 
 class Attribute(Tag):
     """
@@ -9,12 +9,12 @@ class Attribute(Tag):
     An attribute can have various properties such as mandatory, distinguishing, display, data type, and values.
     """
 
-    def __init__(self, name: Optional[str] = None, data_type: Optional[str] = None, 
-                 mandatory: Optional[Union[bool, str]] = None, distinguishing: bool = False, 
-                 display: bool = False, values: Optional[Union[List[str], TreeNode]] = None):
+    def __init__(self, name: str | None = None, data_type: str | None = None,
+                 mandatory: bool | str | None = None, distinguishing: bool = False,
+                 display: bool = False, values: List[str] | TreeNode | None = None):
         """
         Initializes a new Attribute object with flexible parameters to handle all constructor variants.
-        
+
         Args:
             name: The name of the attribute.
             data_type: The data type of the attribute.
@@ -24,22 +24,22 @@ class Attribute(Tag):
             values: List of strings or TreeNode containing values/sub-classes.
         """
         super().__init__()
-        self._name: Optional[str] = name
+        self._name: str | None = name
         self.distinguishing: bool = distinguishing
         self.display: bool = display
-        self._target: Optional[str] = None
-        self._sub_classes: Optional[TreeNode] = None
-        self._sub_classes_select: Optional[TreeNode] = None
+        self._target: str | None = None
+        self._sub_classes: TreeNode | None = None
+        self._sub_classes_select: TreeNode | None = None
         self.values: List[str] = []
-        self.data_type: Optional[str] = None
+        self.data_type: str | None = None
         self.mandatory: bool = False
-        
+
         # Handle mandatory parameter which can be bool or string
         if isinstance(mandatory, str):
             self.mandatory = mandatory.lower() == "true"
         else:
             self.mandatory = bool(mandatory) if mandatory is not None else False
-            
+
         # Handle values based on their type
         if isinstance(values, TreeNode):
             self._sub_classes = values
@@ -49,7 +49,7 @@ class Attribute(Tag):
             self.values = values if values is not None else []
             if data_type is None:
                 if values is not None:
-                    self.data_type = "select" 
+                    self.data_type = "select"
                 else:
                     self.data_type = None
             else:

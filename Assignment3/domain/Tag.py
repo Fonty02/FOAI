@@ -10,15 +10,6 @@ class Tag(ABC):
         self.description = None
         self.notes = None
     
-    @abstractmethod
-    def get_tag_type(self) -> str:
-        """
-        This ensures the class cannot be instantiated directly.
-        
-        Returns:
-            The type of the tag.
-        """
-        pass
 
     def getName(self) -> Optional[str]:
         """

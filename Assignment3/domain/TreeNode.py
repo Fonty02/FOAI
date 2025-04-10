@@ -14,70 +14,70 @@ class TreeNode:
         # Optional: Row key for UI identification
         self.row_key = None 
 
-    def get_data(self):
+    def getData(self):
         return self.data
 
-    def set_data(self, data):
+    def setData(self, data):
         self.data = data
 
-    def get_children(self):
+    def getChildren(self):
         return self.children
 
-    def get_parent(self):
+    def getParent(self):
         return self.parent
 
-    def set_parent(self, parent_node):
+    def setParent(self, parent_node):
         # Optional: Remove from previous parent's children list if exists
         if self.parent:
-            self.parent.remove_child(self)
+            self.parent.removeChild(self)
         self.parent = parent_node
         # Optional: Add to new parent's children list if not already there
         if parent_node is not None and self not in parent_node.children:
              parent_node.children.append(self)
 
 
-    def add_child(self, child_node):
+    def addChild(self, child_node):
         """Adds a child node and sets its parent to this node."""
-        child_node.set_parent(self) # Use set_parent to handle potential previous parent
+        child_node.setParent(self) # Use set_parent to handle potential previous parent
 
-    def remove_child(self, child_node):
+    def removeChild(self, child_node):
         """Removes a child node."""
         if child_node in self.children:
             self.children.remove(child_node)
             child_node.parent = None # Clear the child's parent reference
 
-    def get_child_count(self):
+    def getChild_count(self):
         return len(self.children)
 
-    def is_leaf(self):
+    def isLeaf(self):
         return self.get_child_count() == 0
 
-    def get_type(self):
+    def getType(self):
         return self.type
 
-    def set_type(self, node_type):
+    def setType(self, node_type):
         self.type = node_type
 
-    def is_expanded(self):
+    def isExpanded(self):
         return self.expanded
 
-    def set_expanded(self, expanded):
+    def setExpanded(self, expanded):
         self.expanded = expanded
 
-    def is_selected(self):
+    def isSelected(self):
         return self.selected
 
-    def set_selected(self, selected):
+    def setSelected(self, selected):
         self.selected = selected
         
-    def get_row_key(self):
+    def getRowKey(self):
         return self.row_key
 
-    def set_row_key(self, row_key):
+    def setRowKey(self, row_key):
         self.row_key = row_key
 
     # Optional: Method to clear parent relationship
-    def clear_parent(self):
+    def clearParent(self):
         self.parent = None
 
     # Optional: String representation for easier debugging
