@@ -18,9 +18,9 @@ class Axiom(DomainTag):
         """
         super().__init__()
         self.name = name
-        self._formalism = formalism
-        self._expression = expression
-        self._domain = domain
+        self.formalism = formalism
+        self.expression = expression
+        self.domain = domain
     
     def getFormalism(self) -> str:
         """
@@ -29,7 +29,7 @@ class Axiom(DomainTag):
         Returns:
             The formalism of the axiom.
         """
-        return self._formalism
+        return self.formalism
     
     def setFormalism(self, formalism: str) -> None:
         """
@@ -38,7 +38,7 @@ class Axiom(DomainTag):
         Args:
             formalism: the formalism to set
         """
-        self._formalism = formalism
+        self.formalism = formalism
     
     def getExpression(self) -> str:
         """
@@ -47,7 +47,7 @@ class Axiom(DomainTag):
         Returns:
             The expression of the axiom.
         """
-        return self._expression
+        return self.expression
     
     def setExpression(self, expression: str) -> None:
         """
@@ -56,7 +56,7 @@ class Axiom(DomainTag):
         Args:
             expression: the expression to set
         """
-        self._expression = expression
+        self.expression = expression
     
     def __eq__(self, other: object) -> bool:
         """

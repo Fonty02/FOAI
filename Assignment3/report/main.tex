@@ -5,19 +5,18 @@
 \usepackage[T1]{fontenc}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
-\usepackage{hyperref}
+\usepackage[hidelinks]{hyperref}
 \usepackage{authblk} % Package for multiple authors
 \usepackage{booktabs} % For better tables
 \usepackage{listings} % For code snippets
 \usepackage{xcolor} % For colored text
-\usepackage{biblatex} % For bibliography management
 
 % Title and author information
 \title{Language Transformation Analysis: Java to Python Conversion of GraphBrain Domain Package}
 \author[1]{Cirilli Davide}
 \author[2]{Fontana Emanuele}
 \affil[1,2]{Department of Computer Science, Università degli Studi di Bari}
-\date{\today}
+
 
 \begin{document}
 
@@ -46,8 +45,7 @@ The transformation of the \texttt{Attachment} class from Java to Python required
 
 The constructor logic was preserved in the Python \texttt{\_\_init\_\_} method, initializing all attributes with their corresponding parameters. Additionally, getter methods were implemented with identical names and functionality, with particular attention to the \texttt{getFilename()} method, which replicates the string concatenation logic from the original Java implementation.
 
-\subsection{Tag Abstract Class}
-The abstract \texttt{Tag} class presented an interesting challenge in the transformation process. Java's abstract class concept was mapped to Python using the \texttt{abc.ABC} base class to enforce abstractness. The protected fields \texttt{name}, \texttt{description}, and \texttt{notes} from the Java implementation were represented as public attributes in Python, initialized to \texttt{None} in the constructor.
+\subsection{Tag Abstract Class}Java's abstract class concept was mapped to Python using the \texttt{abc.ABC} base class to enforce abstractness. The protected fields \texttt{name}, \texttt{description}, and \texttt{notes} from the Java implementation were represented as public attributes in Python, initialized to \texttt{None} in the constructor.
 
 All getter and setter methods were faithfully recreated in Python, maintaining the same method signatures and functionality. This approach preserves the original API contract while adapting to Python's conventions regarding attribute visibility.
 
@@ -66,16 +64,16 @@ Java's overloaded constructors were consolidated into a single \texttt{\_\_init\
 The comprehensive set of methods in the Java class, including getters, setters, and utility functions, were faithfully recreated in Python with equivalent functionality. Special attention was given to the \texttt{clone()} method, which replicates the deep copying behavior of the Java original.
 
 \subsection{Author Class}
-The \texttt{Author} class transformation demonstrates the adaptation of naming conventions between Java and Python. The private fields in Java were mapped to public attributes in Python, with camelCase identifiers converted to snake\_case where appropriate (e.g., \texttt{attributeKey} to \texttt{attribute\_key}), following Python's style guidelines.
+The private fields in Java were mapped to public attributes in Python.
 
 A notable aspect of this transformation was the handling of Java's \texttt{Timestamp} type for the \texttt{creationDate} field, which was mapped to Python's \texttt{datetime} type, providing equivalent functionality while using Python's standard library.
 
 The Java class's implicit default constructor was represented by an \texttt{\_\_init\_\_} method in Python that initializes all attributes to \texttt{None}, preserving the original initialization behavior. Getter and setter methods were implemented with identical names, maintaining the original API contract.
 
 \subsection{Axiom Class}
-The \texttt{Axiom} class, which extends \texttt{DomainTag}, demonstrates the propagation of inheritance patterns across languages. In Python, the class inherits from \texttt{DomainTag}, preserving the original class hierarchy.
+The \texttt{Axiom} class inherits from \texttt{DomainTag}, preserving the original class hierarchy. Attributes of the Java class were mapped to Python attributes with the same type and name.
 
-Private fields \texttt{formalism} and \texttt{expression} were mapped to conventionally private attributes \texttt{\_formalism} and \texttt{\_expression} in Python, utilizing the underscore prefix naming convention. The constructor logic was preserved in the \texttt{\_\_init\_\_} method, which calls the superclass constructor before initializing the class's specific attributes.
+The constructor logic was preserved in the \texttt{\_\_init\_\_} method, which calls the superclass constructor before initializing the class's specific attributes.
 
 Particular attention was given to the implementation of Java's \texttt{equals()} and \texttt{hashCode()} methods, which were mapped to Python's special methods \texttt{\_\_eq\_\_()} and \texttt{\_\_hash\_\_()}. These methods maintain the original equality and hashing behavior based on the \texttt{name} attribute, ensuring that collections and comparison operations behave consistently across both languages.
 
@@ -90,14 +88,16 @@ The Java \texttt{HallComparator} class, which implements the \texttt{Comparator<
 
 
 \subsection{Instance Class}
-The \texttt{Instance} class transformation involved mapping complex data structures and comparison logic from Java to Python. Private fields \texttt{type}, \texttt{selectedInstanceId}, \texttt{attributeValues} (of type \texttt{Map<String,String>}), and \texttt{shortDescription} were implemented as public attributes in Python, with \texttt{attributeValues} specifically mapped to a typed dictionary (\texttt{Dict[str, str]}).
+Private fields \texttt{type}, \texttt{selectedInstanceId}, \texttt{attributeValues}
+
+\noindent(of type \texttt{Map<String,String>}), and \texttt{shortDescription} were implemented as public attributes in Python, with \texttt{attributeValues} specifically mapped to a typed dictionary (\texttt{Dict[str, str]}).
 
 The constructor logic, which involves building a short description based on attribute values, was faithfully recreated in the Python \texttt{\_\_init\_\_} method. The private Java method \texttt{buildShortDescription} was implemented as a public method in Python, reflecting Python's more relaxed approach to method visibility while preserving the original functionality.
 
 The implementation of Java's \texttt{equals()} method as Python's \texttt{\_\_eq\_\_()} ensures that instance equality is determined by the \texttt{selectedInstanceId} attribute, as in the original Java code, maintaining consistent behavior in collections and comparison operations.
 
 \subsection{Reference Class}
-The final class examined, \texttt{Reference}, demonstrates the adaptation of Java's collection types to their Python equivalents. The private field \texttt{attributes} of type \texttt{Vector<Attribute>} in Java was mapped to \texttt{Optional[List[Attribute]]} in Python, acknowledging both the change in collection type and the possibility of null values.
+ The private field \texttt{attributes} of type \texttt{Vector<Attribute>} in Java was mapped to \texttt{Optional[List[Attribute]]} in Python, acknowledging both the change in collection type and the possibility of null values.
 
 Java's overloaded constructors were consolidated into a single \texttt{\_\_init\_\_} method with an optional parameter for \texttt{attributes}, defaulting to \texttt{None}. This approach preserves the flexibility of the original design while adapting to Python's constructor paradigm.
 
@@ -156,157 +156,25 @@ The transformation of the \texttt{Relationship} class demonstrates the complexit
 % Inserisci dopo la sezione sulla classe Relationship e prima della Conclusion
 
 \subsection{RelationshipSite Class}
-The transformation of the \texttt{RelationshipSte} class to \texttt{RelationshipSite} in Python provides an interesting example of adapting a simpler relationship-focused class with fewer inheritance relationships. Unlike the more complex \texttt{Relationship} class, which extends \texttt{Entity}, \texttt{RelationshipSte} is a standalone class in Java.
 
 In the Python implementation, the Java private fields \texttt{name}, \texttt{inverse}, \texttt{symmetric}, \texttt{attributes}, and \texttt{relationships} were mapped to public attributes, following Python's convention of relying on naming conventions rather than access modifiers. The constructor logic was preserved in the \texttt{\_\_init\_\_} method, initializing all attributes with their corresponding parameters.
 
-A notable improvement in the Python implementation was the addition of comprehensive docstring documentation, enhancing code readability and maintainability:
-
-\begin{verbatim}
-def getSubj_Objs(self, subject: str) -> List[str]:
-    """
-    Returns a list of objects related to the given subject.
-    
-    Args:
-        subject: The subject to find related objects for
-        
-    Returns:
-        A list of objects related to the subject
-    """
-\end{verbatim}
 
 The relationship retrieval methods (\texttt{getSubjects()}, \texttt{getObjects()}, \texttt{getSubj\_Objs()}, and \texttt{getObj\_Subjs()}) were implemented with equivalent functionality as their Java counterparts. The Python implementation maintained the same sorting logic for collections and list operations to provide consistent behavior.
-
-Type hints were added throughout the Python code to improve code clarity and assist with static type checking:
-
-\begin{verbatim}
-def __init__(self, name: str, inverse: str, symmetric: bool, attributes: List[Attribute]):
-    self.name: str = name
-    self.inverse: str = inverse
-    self.symmetric: bool = symmetric
-    self.attributes: List[Attribute] = attributes
-    self.relationships: List[Reference] = []
-\end{verbatim}
 
 
 \subsection{RelationTriple Class}
 The \texttt{RelationTriple} class represents a fundamental semantic structure in GraphBrain's knowledge representation - a triple consisting of subject, relation, and object instances. This straightforward class was transformed from Java to Python with additions that enhance code quality and maintainability.
 
-In the Python implementation, the Java private fields \texttt{subject}, \texttt{relation}, and \texttt{object} were mapped to public attributes, as is conventional in Python. Unlike Java's reliance on access modifiers, Python follows the "we're all consenting adults" philosophy regarding attribute access.
-
-The class constructors were transformed with attention to Python's idioms:
-
-\begin{verbatim}
-def __init__(self, subject: Instance = None, relation: Instance = None, object: Instance = None):
-    """
-    Initialize a RelationTriple object.
-    
-    Args:
-        subject: The subject Instance
-        relation: The relation Instance
-        object: The object Instance
-    """
-    self.subject: Instance = subject
-    self.relation: Instance = relation
-    self.object: Instance = object
-\end{verbatim}
-
-A significant enhancement in the Python implementation is the addition of comprehensive type hints, which were not present in the Java code. Each attribute and method includes appropriate type annotations indicating that they work with \texttt{Instance} objects, improving code clarity and facilitating static type checking.
-
-The getter and setter methods were preserved with identical names to maintain the original API contract, while adding detailed docstrings that document their purpose - an improvement over the Java implementation which lacked method documentation:
-
-\begin{verbatim}
-def getSubject(self) -> Instance:
-    """Get the subject instance."""
-    return self.subject
-    
-def setSubject(self, subject: Instance) -> None:
-    """Set the subject instance."""
-    self.subject = subject
-\end{verbatim}
-
-The class-level docstring provides a clear description of the class's purpose, another enhancement not present in the original Java code:
-
-\begin{verbatim}
-"""Class representing a triple of subject-relation-object instances."""
-\end{verbatim}
+In the Python implementation, the Java private fields \texttt{subject}, \texttt{relation}, and \texttt{object} were mapped to public attributes, as is conventional in Python. 
 
 
 \subsection{Union Class}
 The \texttt{Union} class represents a specialized domain tag that contains a set of values. This class extends \texttt{DomainTag} in both Java and Python implementations, preserving the inheritance hierarchy of the original model.
 
-In the Python implementation, the private field \texttt{values} from Java was mapped to a protected attribute \texttt{\_values} in Python, using the underscore prefix to indicate protected status according to Python conventions. Both implementations use a set data structure, with the Python version leveraging type annotations for improved code clarity:
-
-\begin{verbatim}
-# Java: private Set<String> values;
-# Python:
-self._values: Set[str] = values
-\end{verbatim}
-
-The constructor implementation in Python calls the parent class constructor before initializing its own attributes, maintaining proper initialization order:
-
-\begin{verbatim}
-def __init__(self, name: str, domain: str, values: Set[str]) -> None:
-    """
-    Constructs a Union object with the specified name, domain, and values.
-    
-    Args:
-        name: the name of the Union
-        domain: the domain of the Union
-        values: the set of values in the Union
-    """
-    super().__init__()
-    self.name = name
-    self.domain = domain
-    self._values = values
-\end{verbatim}
-
-The Python implementation adds a \texttt{get\_domain\_type()} method that returns the string "Union", which helps with type identification - a useful addition not present in the Java version:
-
-\begin{verbatim}
-def get_domain_type(self) -> str:
-    """
-    Returns the type of the domain tag.
-    
-    Returns:
-        str: The type of this domain tag ("Union").
-    """
-    return "Union"
-\end{verbatim}
-
-Getter and setter methods were preserved with identical names to maintain API compatibility:
-
-\begin{verbatim}
-def getValues(self) -> Set[str]:
-    """
-    Returns the set of values in the Union.
-    
-    Returns:
-        the set of values
-    """
-    return self._values
-\end{verbatim}
+In the Python implementation, the private field \texttt{values} from Java was mapped to a protected attribute \texttt{\_values} in Python, using the underscore prefix to indicate protected status according to Python conventions. Both implementations use a set data structure.
 
 Java's \texttt{equals()} and \texttt{hashCode()} methods were transformed into Python's special methods \texttt{\_\_eq\_\_()} and \texttt{\_\_hash\_\_()}, maintaining the same comparison logic based on the \texttt{name} attribute. This ensures consistent behavior in collections and equality operations:
-
-\begin{verbatim}
-def __eq__(self, obj: object) -> bool:
-    """
-    Indicates whether some other object is "equal to" this one.
-    
-    Args:
-        obj: the reference object with which to compare
-        
-    Returns:
-        True if the two Unions have the same name; False otherwise
-    """
-    if self is obj:
-        return True
-    if obj is None or type(self) != type(obj):
-        return False
-    union = obj  # type: Union
-    return self.name == union.name
-\end{verbatim}
 
 
 

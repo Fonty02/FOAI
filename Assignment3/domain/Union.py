@@ -19,7 +19,7 @@ class Union(DomainTag):
         super().__init__()
         self.name = name
         self.domain=domain
-        self._values = values
+        self.values = values
 
     def get_domain_type(self) -> str:
         """
@@ -37,7 +37,7 @@ class Union(DomainTag):
         Returns:
             the set of values
         """
-        return self._values
+        return self.values
 
     def setValues(self, values: Set[str]) -> None:
         """
@@ -46,7 +46,7 @@ class Union(DomainTag):
         Args:
             values: the set of values to set
         """
-        self._values = values
+        self.values = values
 
     def __eq__(self, obj: object) -> bool:
         """

@@ -1,7 +1,6 @@
 class TreeNode:
     """
     Simple implementation of TreeNode inspired by org.primefaces.model.TreeNode.
-    Uses Pythonic conventions (snake_case).
     """
     def __init__(self, data=None, parent=None):
         self.data = data

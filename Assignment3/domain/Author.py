@@ -5,12 +5,12 @@ class Author:
         self.id: int = None
         self.graph_id: int = None
         self.type: str = None
-        self.attribute_key: str = None
-        self.attribute_value: str = None
+        self.attributeKey: str = None
+        self.attributeValue: str = None
         self.description: str = None
-        self.creation_date: datetime = None
+        self. creationDate: datetime = None
         self.username: str = None
-        self.is_active: bool = None
+        self.isActive: bool = None
     
     def getId(self) -> int:
         return self.id
@@ -31,16 +31,16 @@ class Author:
         self.type = type
         
     def getAttributeKey(self) -> str:
-        return self.attribute_key
+        return self.attributeKey
         
     def setAttributeKey(self, attribute_key: str) -> None:
-        self.attribute_key = attribute_key
+        self.attributeKey = attribute_key
         
     def getAttributeValue(self) -> str:
-        return self.attribute_value
+        return self.attributeValue
         
     def setAttributeValue(self, attribute_value: str) -> None:
-        self.attribute_value = attribute_value
+        self.attributeValue = attribute_value
         
     def getDescription(self) -> str:
         return self.description
@@ -49,10 +49,10 @@ class Author:
         self.description = description
         
     def getCreationDate(self) -> datetime:
-        return self.creation_date
+        return self.creationDate
         
     def setCreationDate(self, creation_date: datetime) -> None:
-        self.creation_date = creation_date
+        self.creationDate = creation_date
         
     def getUsername(self) -> str:
         return self.username
@@ -61,7 +61,7 @@ class Author:
         self.username = username
         
     def getIsActive(self) -> bool:
-        return self.is_active
+        return self.isActive
         
     def setIsActive(self, is_active: bool) -> None:
-        self.is_active = is_active
+        self.isActive = is_active
