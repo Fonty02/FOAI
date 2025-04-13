@@ -1,16 +1,4 @@
-TODO in quest ordine
+Controllare
 
-DomainData.java e RecordData.java  -> usano classi precedenti e sono una rottura di coglioni probabilmente per le librerie
-TranslatorAPIProlog.java (usa tutte quelle di sopra)
-
-
-NOTES
-TreeNode e DefaultTreeNode sono classi Java che non esistono in python, quindi le ho fatte implementare
-HallComparator.java inutile in python teoricamente
-
-
-OPTIONAL
-CONTROLLARE ALMENO
-    Entity.java
-    Relationship.java
-Se vuoi dare n'occhiata ad altro e correggere eventuali errori (annotameli qui)
+DomainData
+Entity
