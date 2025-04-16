@@ -488,7 +488,7 @@ class DomainData:
             if existing_union:
                  # Java logic: Error if same domain, merge if different domain
                  if existing_union.getDomain() == new_union.getDomain():
-                      # Java throws error, Python version previously warned and merged. Let's match Java.
+                      # Java throws error, let's match Java.
                       raise ValueError(f"Duplicate Union: \"{new_union.getName()}\" in domain \"{new_union.getDomain()}\"")
                  else:
                       # Different domains, merge values and update domain (overwriting)
@@ -1949,40 +1949,30 @@ class DomainData:
 
         subj_entity = self.findInTree(self.entityTree, subject) # Find entity for inheritance check
 
-        # Need to check all references in the relationship and its descendants
-        all_refs_in_rel_tree: List[Reference] = []
-        queue: List[Relationship] = [rel]
-        visited: Set[Relationship] = set()
-        while queue:
-             current_rel = queue.pop(0)
-             if current_rel in visited: continue
-             visited.add(current_rel)
-             all_refs_in_rel_tree.extend(current_rel.getReferences())
-             # Add children relationships to queue
-             try:
-                  # Assuming getChildrenRelationships returns List[Relationship]
-                  queue.extend(current_rel.getChildrenRelationships())
-             except AttributeError:
-                  # If getChildrenRelationships is missing, check getChildren and filter
-                  try:
-                      children_rels = [child for child in current_rel.getChildren() if isinstance(child, Relationship)]
-                      queue.extend(children_rels)
-                  except AttributeError:
-                      print(f"Warning: Relationship class missing 'getChildren' or 'getChildrenRelationships'. Inheritance check incomplete for '{current_rel.getName()}'.")
+        try:
+            direct_references = rel.getReferences()
+        except AttributeError:
+            print(f"Warning: Relationship class missing 'getReferences' for '{relName}'.")
+            return set()
+        # --- End Correction ---
 
-        for ref in all_refs_in_rel_tree:
+        for ref in direct_references: # Use direct_references now
             # Java check: ref.getSubject().equals(subject) || findInTree(parent, ref.getSubject())!=null
             # This means: is the ref subject the exact subject OR a descendant of the subject?
-            is_match = ref.getSubject().lower() == subject.lower()
-            if not is_match and subj_entity:
-                 # Check if ref.getSubject() is a descendant of subj_entity
-                 descendant_check = self.findInTree(subj_entity, ref.getSubject())
-                 is_match = descendant_check is not None
+            is_match = False
+            ref_subject_name = ref.getSubject() # Avoid multiple calls
+            if ref_subject_name: # Check if subject name is not None
+                is_match = ref_subject_name.lower() == subject.lower()
+                if not is_match and subj_entity:
+                    # Check if ref.getSubject() is a descendant of subj_entity
+                    # Ensure findInTree handles None gracefully if subj_entity is None
+                    descendant_check = self.findInTree(subj_entity, ref_subject_name)
+                    is_match = descendant_check is not None
 
             if is_match:
                 objects_set.add(ref.getObject())
 
-        # Return set (unordered), Java returns TreeSet (ordered). Sort if needed.
+        # Return set (unordered), Java returns TreeSet (ordered). Sort if needed for consistency.
         # return sorted(list(objects_set))
         return objects_set
 
@@ -1995,30 +1985,23 @@ class DomainData:
 
         obj_entity = self.findInTree(self.entityTree, object_ref) # Find entity for inheritance check
 
-        all_refs_in_rel_tree: List[Reference] = []
-        queue: List[Relationship] = [rel]
-        visited: Set[Relationship] = set()
-        while queue:
-             current_rel = queue.pop(0)
-             if current_rel in visited: continue
-             visited.add(current_rel)
-             all_refs_in_rel_tree.extend(current_rel.getReferences())
-             try:
-                  queue.extend(current_rel.getChildrenRelationships())
-             except AttributeError:
-                  try:
-                      children_rels = [child for child in current_rel.getChildren() if isinstance(child, Relationship)]
-                      queue.extend(children_rels)
-                  except AttributeError:
-                      print(f"Warning: Relationship class missing 'getChildren' or 'getChildrenRelationships'. Inheritance check incomplete for '{current_rel.getName()}'.")
+        try:
+            direct_references = rel.getReferences()
+        except AttributeError:
+            print(f"Warning: Relationship class missing 'getReferences' for '{relName}'.")
+            return set()
+        # --- End Correction ---
 
-
-        for ref in all_refs_in_rel_tree:
+        for ref in direct_references: # Use direct_references now
             # Java check: ref.getObject().equals(object) || findInTree(parent, ref.getObject())!=null
-            is_match = ref.getObject().lower() == object_ref.lower()
-            if not is_match and obj_entity:
-                 descendant_check = self.findInTree(obj_entity, ref.getObject())
-                 is_match = descendant_check is not None
+            is_match = False
+            ref_object_name = ref.getObject() # Avoid multiple calls
+            if ref_object_name: # Check if object name is not None
+                is_match = ref_object_name.lower() == object_ref.lower()
+                if not is_match and obj_entity:
+                    # Ensure findInTree handles None gracefully if obj_entity is None
+                    descendant_check = self.findInTree(obj_entity, ref_object_name)
+                    is_match = descendant_check is not None
 
             if is_match:
                 subjects_set.add(ref.getSubject())
@@ -2068,31 +2051,25 @@ class DomainData:
         for rel_name in relationships:
             rel = self.getRelationship(rel_name)
             if rel:
-                 # Need to check all references in the relationship and its descendants
-                 all_refs_in_rel_tree: List[Reference] = []
-                 queue: List[Relationship] = [rel]
-                 visited: Set[Relationship] = set()
-                 while queue:
-                      current_rel = queue.pop(0)
-                      if current_rel in visited: continue
-                      visited.add(current_rel)
-                      all_refs_in_rel_tree.extend(current_rel.getReferences())
-                      try:
-                           queue.extend(current_rel.getChildrenRelationships())
-                      except AttributeError:
-                           try:
-                               children_rels = [child for child in current_rel.getChildren() if isinstance(child, Relationship)]
-                               queue.extend(children_rels)
-                           except AttributeError: pass # Warning printed elsewhere
+                # --- Correction: Only iterate direct references of 'rel' ---
+                try:
+                    direct_references = rel.getReferences()
+                except AttributeError:
+                    print(f"Warning: Relationship class missing 'getReferences' for '{rel_name}'.")
+                    continue # Skip this relationship if it has no getReferences
+                # --- End Correction ---
 
-                 for ref in all_refs_in_rel_tree:
-                      # Java check: ref.getSubject().equals(subject) || findInTree(parent, ref.getSubject())!=null
-                      is_match = ref.getSubject().lower() == subject.lower()
-                      if not is_match and subj_entity:
-                           is_match = self.findInTree(subj_entity, ref.getSubject()) is not None
+                for ref in direct_references: # Use direct_references now
+                    # Java check: ref.getSubject().equals(subject) || findInTree(parent, ref.getSubject())!=null
+                    is_match = False
+                    ref_subject_name = ref.getSubject()
+                    if ref_subject_name:
+                        is_match = ref_subject_name.lower() == subject.lower()
+                        if not is_match and subj_entity:
+                            is_match = self.findInTree(subj_entity, ref_subject_name) is not None
 
-                      if is_match:
-                           objects_set.add(ref.getObject())
+                    if is_match:
+                        objects_set.add(ref.getObject())
 
         return sorted(list(objects_set)) # Return sorted list to mimic HashSet -> Vector
 
