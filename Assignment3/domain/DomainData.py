@@ -72,10 +72,10 @@ class DomainData:
 
     # Unified constructor mimicking Java overloaded constructors
     def __init__(self,
-                 path_or_bytearray: str | bytes | None = None,
-                 webInfFolder: str | None = None,
-                 domainName: str | None = None,
-                 file: str | Path | None = None):
+                 path_or_bytearray: Optional[Union[str, bytes]] = None,
+                 webInfFolder: Optional[str] = None,
+                 domainName: Optional[str] = None,
+                 file: Optional[Union[str, Path]] = None):
         """
         Initializes the DomainData object. Mimics Java overloaded constructors:
         1. DomainData(): Default constructor (call with no arguments).
@@ -130,7 +130,6 @@ class DomainData:
         self.attrsRel = defaultdict(list)
 
         # --- Constructor Logic ---
-        load_executed = False
         try:
             # Case 3: DomainData(byte[] byteArray, String webInfFolder)
             if isinstance(path_or_bytearray, bytes) and webInfFolder is not None:
@@ -146,7 +145,6 @@ class DomainData:
                 self.domain = domain_name_from_bytes # Set domain early like Java
                 # Java passes the extracted domain name as domainPath to loadFile
                 self.loadFile(doc, self.domain)
-                load_executed = True
 
             # Case 4: DomainData(String domainName, File file)
             elif domainName is not None and file is not None:
@@ -157,7 +155,6 @@ class DomainData:
                 doc = self.parseFile(file_path)
                 # Java passes the absolute path of the file
                 self.loadFile(doc, str(file_path.resolve()))
-                load_executed = True
 
             # Case 2: DomainData(String path)
             elif isinstance(path_or_bytearray, str):
@@ -183,12 +180,10 @@ class DomainData:
                      # Java passed 'path' (the domain name) as domainPath here.
                      # Let's pass the absolute path to loadFile for consistency in getFolderPath.
                      self.loadFile(doc, domain_path_for_load)
-                 load_executed = True
 
             # Case 1: DomainData() (Default constructor)
             elif path_or_bytearray is None and webInfFolder is None and domainName is None and file is None:
                 # Initializations already done, nothing more to do.
-                load_executed = True # Technically no load, but constructor finished.
                 pass
 
             else:

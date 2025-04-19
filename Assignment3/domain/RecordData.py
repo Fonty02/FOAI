@@ -155,7 +155,6 @@ class RecordData:
         self.attrsRel = defaultdict(list)
 
         # --- Constructor Logic ---
-        load_executed = False
         try:
             # Case 3: RecordData(byte[] byteArray, String webInfFolder)
             if isinstance(path_or_bytearray, bytes) and webInfFolder is not None:
@@ -171,7 +170,6 @@ class RecordData:
                 self.domain = domain_name_from_bytes # Set domain early like Java
                 # Java passes the extracted domain name as domainPath to loadFile
                 self._loadFile(doc, self.domain)
-                load_executed = True
 
             # Case 4: RecordData(String domainName, File file)
             elif domainName is not None and file is not None:
@@ -182,7 +180,6 @@ class RecordData:
                 doc = self._parseFile(file_path)
                 # Java passes the absolute path of the file
                 self._loadFile(doc, str(file_path.resolve()))
-                load_executed = True
 
             # Case 2: RecordData(String path)
             elif isinstance(path_or_bytearray, str):
@@ -209,12 +206,10 @@ class RecordData:
                      # Java passed 'path' (the domain name) as domainPath here.
                      # Pass the absolute path to loadFile for consistency in getFolderPath.
                      self._loadFile(doc, domain_path_for_load)
-                 load_executed = True
 
             # Case 1: RecordData() (Default constructor)
             elif path_or_bytearray is None and webInfFolder is None and domainName is None and file is None:
                 # Initializations already done, nothing more to do.
-                load_executed = True # Technically no load, but constructor finished.
                 pass
 
             else:
@@ -899,7 +894,7 @@ class RecordData:
 
             else:
                  # Relative path (likely just domain name), resolve against the folder of the *current* file
-                 import_file_path = folder / (schema_path_str + ".gbr")
+                 import_file_path = folder / (schema_path_str + ".gbr") # TODO: Java in this case uses still .gbs, but it seems wrong since for this class we always used .gbr
 
             abs_import_path_str = str(import_file_path.resolve())
 
@@ -1728,93 +1723,91 @@ class RecordData:
         return sorted(list(subjects_set)) # Return sorted list
 
     def getObjsFromSubjRel(self, subject: str, relName: str) -> Set[str]: # Java returns TreeSet
-        """Retrieves objects related to a subject via a specific relationship (considering inheritance)."""
-        objects_set: Set[str] = set()
-        subj_entity = self.findInTree(self.entityTree, subject) # Find entity for inheritance check
-        rel = self.getRelationship(relName)
-        if not rel: return set()
+     """
+     Retrieves objects related to a subject via DIRECT references
+     in a specific relationship (considering subject inheritance).
+     Corrected to match Java logic (no relationship hierarchy traversal).
+     """
+     objects_set: Set[str] = set()
+     subj_entity = self.findInTree(self.entityTree, subject) # Find entity for inheritance check
+     rel = self.getRelationship(relName) # Get the specific relationship
 
-        # Need to check all references in the relationship and its descendants
-        all_refs_in_rel_tree: List[Reference] = []
-        queue: List[Relationship] = [rel]
-        visited: Set[Relationship] = set()
+     if not rel:
+          print(f"Warning: Relationship '{relName}' not found in getObjsFromSubjRel.")
+          return set()
 
-        while queue:
-             current_rel = queue.pop(0)
-             if current_rel in visited: continue
-             visited.add(current_rel)
+     # --- Correction: Only iterate direct references of 'rel' ---
+     try:
+          direct_references = rel.getReferences() # Assume this returns List[Reference]
+     except AttributeError:
+          print(f"Warning: Relationship class missing 'getReferences' for '{relName}'. Cannot get objects.")
+          return set()
+     # --- End Correction ---
 
-             if hasattr(current_rel, 'getReferences'):
-                  all_refs_in_rel_tree.extend(current_rel.getReferences())
+     for ref in direct_references: # Iterate only direct references
+          if not hasattr(ref, 'getSubject') or not hasattr(ref, 'getObject'): continue
+          ref_subject = ref.getSubject()
 
-             # Add children relationships to the queue
-             if hasattr(current_rel, 'getChildren'):
-                  children_rels = [child for child in current_rel.getChildren() if isinstance(child, Relationship)]
-                  for child_rel in children_rels:
-                       if child_rel not in visited:
-                            queue.append(child_rel) # Add unseen children
+          # Java check: ref.getSubject().equals(subject) || findInTree(parent, ref.getSubject())!=null
+          # This means: is the ref subject the exact subject OR a descendant of the subject?
+          is_match = False
+          if ref_subject: # Check if subject name is not None
+               is_match = ref_subject.lower() == subject.lower()
+               if not is_match and subj_entity:
+                    # Check if ref.getSubject() is a descendant of subj_entity
+                    # Ensure findInTree handles None gracefully if subj_entity is None
+                    descendant_check = self.findInTree(subj_entity, ref_subject)
+                    is_match = descendant_check is not None
 
-        for ref in all_refs_in_rel_tree:
-            if not hasattr(ref, 'getSubject') or not hasattr(ref, 'getObject'): continue
-            ref_subject = ref.getSubject()
+          if is_match:
+               objects_set.add(ref.getObject())
 
-            # Java check: ref.getSubject().equals(subject) || findInTree(parent, ref.getSubject())!=null
-            is_match = ref_subject.lower() == subject.lower()
-            if not is_match and subj_entity:
-                 # Check if ref.getSubject() is a descendant of subj_entity
-                 descendant_check = self.findInTree(subj_entity, ref_subject)
-                 is_match = descendant_check is not None
-
-            if is_match:
-                objects_set.add(ref.getObject())
-
-        # Return set (unordered), Java returns TreeSet (ordered). Sort if needed.
-        # return sorted(list(objects_set))
-        return objects_set
+     # Return set (unordered), Java returns TreeSet (ordered). Sort if needed for consistency.
+     # return sorted(list(objects_set))
+     return objects_set
 
     def getSubjsFromObjRel(self, object_ref: str, relName: str) -> Set[str]: # Java returns TreeSet
-        """Retrieves subjects related to an object via a specific relationship (considering inheritance)."""
-        subjects_set: Set[str] = set()
-        obj_entity = self.findInTree(self.entityTree, object_ref) # Find entity for inheritance check
-        rel = self.getRelationship(relName)
-        if not rel: return set()
+     """
+     Retrieves subjects related to an object via DIRECT references
+     in a specific relationship (considering object inheritance).
+     Corrected to match Java logic (no relationship hierarchy traversal).
+     """
+     subjects_set: Set[str] = set()
+     obj_entity = self.findInTree(self.entityTree, object_ref) # Find entity for inheritance check
+     rel = self.getRelationship(relName) # Get the specific relationship
 
-        # Need to check all references in the relationship and its descendants
-        all_refs_in_rel_tree: List[Reference] = []
-        queue: List[Relationship] = [rel]
-        visited: Set[Relationship] = set()
+     if not rel:
+          print(f"Warning: Relationship '{relName}' not found in getSubjsFromObjRel.")
+          return set()
 
-        while queue:
-             current_rel = queue.pop(0)
-             if current_rel in visited: continue
-             visited.add(current_rel)
+     # --- Correction: Only iterate direct references of 'rel' ---
+     try:
+          direct_references = rel.getReferences() # Assume this returns List[Reference]
+     except AttributeError:
+          print(f"Warning: Relationship class missing 'getReferences' for '{relName}'. Cannot get subjects.")
+          return set()
+     # --- End Correction ---
 
-             if hasattr(current_rel, 'getReferences'):
-                  all_refs_in_rel_tree.extend(current_rel.getReferences())
+     for ref in direct_references: # Iterate only direct references
+          if not hasattr(ref, 'getSubject') or not hasattr(ref, 'getObject'): continue
+          ref_object = ref.getObject()
 
-             # Add children relationships to the queue
-             if hasattr(current_rel, 'getChildren'):
-                  children_rels = [child for child in current_rel.getChildren() if isinstance(child, Relationship)]
-                  for child_rel in children_rels:
-                       if child_rel not in visited:
-                            queue.append(child_rel) # Add unseen children
+          # Java check: ref.getObject().equals(object) || findInTree(parent, ref.getObject())!=null
+          # This means: is the ref object the exact object OR a descendant of the object?
+          is_match = False
+          if ref_object: # Check if object name is not None
+               is_match = ref_object.lower() == object_ref.lower()
+               if not is_match and obj_entity:
+                    # Ensure findInTree handles None gracefully if obj_entity is None
+                    descendant_check = self.findInTree(obj_entity, ref_object)
+                    is_match = descendant_check is not None
 
-        for ref in all_refs_in_rel_tree:
-            if not hasattr(ref, 'getSubject') or not hasattr(ref, 'getObject'): continue
-            ref_object = ref.getObject()
+          if is_match:
+               subjects_set.add(ref.getSubject())
 
-            # Java check: ref.getObject().equals(object) || findInTree(parent, ref.getObject())!=null
-            is_match = ref_object.lower() == object_ref.lower()
-            if not is_match and obj_entity:
-                 descendant_check = self.findInTree(obj_entity, ref_object)
-                 is_match = descendant_check is not None
-
-            if is_match:
-                subjects_set.add(ref.getSubject())
-
-        # Return set (unordered), Java returns TreeSet (ordered). Sort if needed.
-        # return sorted(list(subjects_set))
-        return subjects_set
+     # Return set (unordered), Java returns TreeSet (ordered). Sort if needed.
+     # return sorted(list(subjects_set))
+     return subjects_set
 
     def getRelFromSubjObj(self, subject: str, object_ref: str) -> Set[str]: # Java returns TreeSet
         """Retrieves top-level relationship names connecting a subject and object (considering inheritance)."""
@@ -1854,46 +1847,43 @@ class RecordData:
         return rels_set
 
     def getObjsFromSubRels(self, subject: str, relationships: List[str]) -> List[str]: # Java returns List (Vector)
-        """Retrieves unique objects related to a subject via a list of relationship names (considering inheritance)."""
-        # Java logic: find subject entity, use HashSet for uniqueness, iterate relationships, iterate refs, check subject inheritance, add object. Return Vector.
-        objects_set: Set[str] = set()
-        subj_entity = self.findInTree(self.entityTree, subject)
+     """
+     Retrieves unique objects related to a subject via DIRECT references
+     in a list of relationship names (considering subject inheritance).
+     Corrected to match Java logic (no relationship hierarchy traversal within each rel).
+     """
+     objects_set: Set[str] = set()
+     subj_entity = self.findInTree(self.entityTree, subject) # Find entity for inheritance check
 
-        for rel_name in relationships:
-            rel = self.getRelationship(rel_name)
-            if rel:
-                 # Need to check all references in the relationship and its descendants
-                 all_refs_in_rel_tree: List[Reference] = []
-                 queue: List[Relationship] = [rel]
-                 visited: Set[Relationship] = set()
-                 while queue:
-                      current_rel = queue.pop(0)
-                      if current_rel in visited: continue
-                      visited.add(current_rel)
+     for rel_name in relationships: # Iterate through the list of relationship names
+          rel = self.getRelationship(rel_name) # Get the specific relationship object
+          if rel:
+               # --- Correction: Only iterate direct references of this 'rel' ---
+               try:
+                    direct_references = rel.getReferences() # Assume this returns List[Reference]
+               except AttributeError:
+                    print(f"Warning: Relationship class missing 'getReferences' for '{rel_name}' in getObjsFromSubRels.")
+                    continue # Skip this relationship if it has no getReferences method
+               # --- End Correction ---
 
-                      if hasattr(current_rel, 'getReferences'):
-                           all_refs_in_rel_tree.extend(current_rel.getReferences())
+               for ref in direct_references: # Iterate only direct references
+                    if not hasattr(ref, 'getSubject') or not hasattr(ref, 'getObject'): continue
+                    ref_subject = ref.getSubject()
 
-                      # Add children relationships to the queue
-                      if hasattr(current_rel, 'getChildren'):
-                           children_rels = [child for child in current_rel.getChildren() if isinstance(child, Relationship)]
-                           for child_rel in children_rels:
-                                if child_rel not in visited:
-                                     queue.append(child_rel)
+                    # Java check: ref.getSubject().equals(subject) || findInTree(parent, ref.getSubject())!=null
+                    is_match = False
+                    if ref_subject:
+                         is_match = ref_subject.lower() == subject.lower()
+                         if not is_match and subj_entity:
+                              is_match = self.findInTree(subj_entity, ref_subject) is not None
 
-                 for ref in all_refs_in_rel_tree:
-                      if not hasattr(ref, 'getSubject') or not hasattr(ref, 'getObject'): continue
-                      ref_subject = ref.getSubject()
+                    if is_match:
+                         objects_set.add(ref.getObject())
+          else:
+               print(f"Warning: Relationship '{rel_name}' not found in getObjsFromSubRels.")
 
-                      # Java check: ref.getSubject().equals(subject) || findInTree(parent, ref.getSubject())!=null
-                      is_match = ref_subject.lower() == subject.lower()
-                      if not is_match and subj_entity:
-                           is_match = self.findInTree(subj_entity, ref_subject) is not None
 
-                      if is_match:
-                           objects_set.add(ref.getObject())
-
-        return sorted(list(objects_set)) # Return sorted list to mimic HashSet -> Vector
+     return sorted(list(objects_set)) # Return sorted list to mimic Java's HashSet -> Vector behavior
 
     def getObjsFromSubj(self, subject: str) -> Set[str]: # Java returns TreeSet
         """Retrieves unique objects related to a subject across all relationships (considering inheritance)."""
