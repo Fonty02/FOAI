@@ -178,25 +178,118 @@ Java's \texttt{equals()} and \texttt{hashCode()} methods were transformed into P
 
 
 
-% Replace subsection 2.14 in your main.txt
 \subsection{DomainData Class}
-The \texttt{DomainData} class is central to the GraphBrain domain model, orchestrating the loading, parsing, and manipulation of domain information from \textit{.gbs} files. Its responsibilities include managing entities, relationships, attributes, unions, and axioms. Translating this complex Java class into Python required careful consideration of data structures, parsing logic, and object relationships.
+The transformation of the \texttt{DomainData} class represents one of the most complex mapping challenges due to its central role in the GraphBrain domain model and extensive functionality. This class is responsible for loading and parsing \textit{.gbs} files, as well as storing and manipulating domain information including entities, relationships, attributes, unions, and axioms.
 
-The Python implementation maps the extensive field structure of the Java class to appropriately typed attributes, leveraging Python's type hinting system. Key adaptations include:
-\begin{itemize}
-    \item Java's \texttt{Vector<Attribute>} for \texttt{types} became Python's standard \texttt{List[Attribute]}.
-    \item Java's \texttt{HashSet<Union>} for \texttt{unions} corresponds to Python's \texttt{Set[Union]}.
-    \item Java's \texttt{Map<String,Vector<String>>} structures (e.g., \texttt{subjRels}) were implemented using Python's \texttt{defaultdict(list)} for conciseness and efficiency.
-\end{itemize}
+In transforming this critical class from Java to Python, careful attention was given to preserving its extensive data structures and processing logic while adapting to Python's idioms and type system. The class required considerable refactoring to maintain functional equivalence while leveraging Python's strengths.
+
+The complex field structure of the Java implementation was mapped to typed attributes in Python, with special attention to collection types:
 
 \begin{verbatim}
-# Example Python attribute definitions
-types: List[Attribute]
-unions: Set[Union]
-subjRels: Dict[str, List[str]] = defaultdict(list)
+# Java: private Vector<Attribute> types = new Vector<>();
+types: List[Attribute]  
+
+# Java: private HashSet<Union> unions = new HashSet<>();
+unions: Set[Union]  
+
+# Java: private Map<String,Vector<String>> subjRels = new HashMap<>();
+subjRels: Dict[str, List[str]]  
 \end{verbatim}
 
-Java's multiple overloaded constructors were unified into a single Python \texttt{\_\_init\_\_} method. This method utilizes optional parameters and type checking to provide the same initialization flexibility as the original Java constructors, allowing instantiation from file paths, byte arrays, or with default values.
+Java's overloaded constructors were consolidated into a single, flexible \texttt{\_\_init\_\_} method in Python that mimics all the original constructor variants through optional parameters and type checking:
+
+\begin{verbatim}
+def __init__(self,
+             path_or_bytearray: str | bytes | None = None,
+             webInfFolder: str | None = None,
+             domainName: str | None = None,
+             file: str | Path | None = None):
+    """
+    Initializes the DomainData object. Mimics Java overloaded constructors.
+    """
+\end{verbatim}
+
+One of the most significant challenges was adapting Java's XML parsing logic, which uses DOM (Document Object Model), to Python's ElementTree approach. The Python implementation carefully reconstructs the validation and traversal logic:
+
+\begin{verbatim}
+def validateTag(self, tag: ET.Element, validTags: List[str]) -> None:
+    """
+    Validates a tag against a list of valid tags.
+    Raises ValueError if the tag is not found in the list of valid tags.
+    """
+    if tag.tag not in validTags:
+        raise ValueError(
+            f"Invalid tag <{tag.tag}> found where one of {validTags} was expected"
+        )
+\end{verbatim}
+
+The complex recursive parsing methods, such as \texttt{parseEntities}, \texttt{parseRelationships}, and \texttt{parseReferences}, were transformed with particular attention to maintaining exact equivalence in tree construction and inheritance logic. These methods handle the hierarchical relationships between domain elements:
+
+\begin{verbatim}
+def parseEntities(self, parentNode: ET.Element, root: Entity, domainName: str) -> None:
+    """
+    Recursively parses entities from the given parent node and adds them to the entity tree.
+    """
+\end{verbatim}
+
+Python's type hints were extensively used throughout the class to improve code clarity and maintainability, a significant enhancement over the Java version. This is particularly evident in helper methods:
+
+\begin{verbatim}
+def addValue(self, map_dict: Dict[str, List[str]], key: str, value: str) -> None:
+    """
+    Adds a value to a list within a dictionary, ensuring no duplicates in the list.
+    Sorts the list.
+    """
+\end{verbatim}
+
+A notable enhancement in the Python implementation is improved error handling, with more specific error messages and graceful fallbacks when operations can't be completed:
+
+\begin{verbatim}
+except AttributeError:
+    print(f"Warning: Relationship class missing 'getSubjects'. Cannot check "
+          f"subject involvement for '{entity_name}' in '{rel.getName()}'.")
+\end{verbatim}
+
+\subsection{RecordData Class}
+
+The transformation of the \texttt{RecordData} class represents one of the most comprehensive examples of language mapping in the project, as this class serves as a central data repository for domain information. The class is responsible for loading, parsing, and managing domain metadata including entities, relationships, attributes, axioms, and relationship triples.
+
+In the Python implementation, the extensive field structure of the Java class was carefully mapped using Python's type annotations to preserve both type safety and semantic meaning:
+
+\begin{verbatim}
+# Java: private Vector<String> subjects = new Vector<String>();
+subjects: List[str]
+
+# Java: private HashSet<Union> unions = new HashSet<>();
+unions: Set[Union]
+
+# Java: private Map<String,Vector<String>> subjRel_Objs = new HashMap<>();
+subjRel_Objs: Dict[str, List[str]]
+\end{verbatim}
+
+A notable improvement in the Python implementation was the use of more appropriate Python data structures. For instance, Java's \texttt{HashMap} with vectors was transformed into Python's \texttt{defaultdict(list)}, which automatically initializes new keys with empty lists:
+
+\begin{verbatim}
+# Initialize collections with defaultdict for automatic creation of empty lists
+self.subjRels = defaultdict(list)
+self.relSubjs = defaultdict(list)
+self.objRels = defaultdict(list)
+\end{verbatim}
+
+The Java class's complex XML parsing logic, which used the DOM API, was reimplemented using Python's ElementTree, requiring significant adaptation of the traversal and validation mechanisms:
+
+\begin{verbatim}
+def _parseFile(self, file_path: Path) -> ET.ElementTree:
+    """Parses the given file path and returns an ElementTree object."""
+    try:
+        tree = ET.parse(file_path)
+        return tree
+    except ET.ParseError as e:
+        print(f"XML Parse Error in file {file_path}: {e}")
+        raise
+\end{verbatim}
+
+Java's method overloading was consolidated into single methods with optional parameters, leveraging Python's more flexible parameter handling:
 
 \begin{verbatim}
 def __init__(self,
@@ -204,42 +297,58 @@ def __init__(self,
              webInfFolder: Optional[str] = None,
              domainName: Optional[str] = None,
              file: Optional[Union[str, Path]] = None):
+    """
+    Initializes the RecordData object. Mimics Java overloaded constructors.
+    """
 \end{verbatim}
 
-Adapting the XML parsing logic required transitioning from Java's DOM API to Python's standard ElementTree library. The Python implementation includes helper methods (\texttt{parseFile}, \texttt{validateTag}, \texttt{validateTagAttributes}) to replicate the necessary validation and traversal steps performed by the Java code. While ElementTree is idiomatic Python, inherent differences from DOM (e.g., precise handling of comments and whitespace) might exist. Replicating file modification logic (\texttt{substitute}) accurately with ElementTree also presents challenges compared to DOM manipulation.
-
-The recursive parsing methods (\texttt{parseEntities}, \texttt{parseRelationships}, \texttt{parseReferences}) were implemented to construct the domain's hierarchical structure. The correct behavior of these methods relies significantly on the proper implementation of tree manipulation methods (\texttt{addChild}, \texttt{detach}, \texttt{getParent}, \texttt{hasAncestor}, etc.) within the Python \texttt{Entity} and \texttt{Relationship} classes.
-
-Methods that retrieve data based on relationship structures and inheritance (e.g., \texttt{getObjsFromSubjRel}, \texttt{getSubjsFromObjRel}, \texttt{getObjsFromSubRels}) were implemented to query the \textit{direct references} of the relevant relationship(s), consistent with the Java implementation's logic, while also incorporating necessary entity/object inheritance checks using \texttt{findInTree}.
-
-The Python implementation incorporates enhanced data integrity for removal operations. The \texttt{removeEntity} and \texttt{removeRelationship} methods utilize helper functions (\texttt{removeReferencesInvolving}, \texttt{cleanupRelationshipData}) to ensure that auxiliary data structures (like \texttt{subjRels}, \texttt{relObjs}) are comprehensively cleaned up when a primary element is removed, going beyond the simple \texttt{detach} call found in the Java version.
-
-Extensive use of Python's type hints and the addition of comprehensive docstrings enhance the readability and maintainability of the Python \texttt{DomainData} class compared to the original Java code.
-
-% Replace subsection 2.15 in your main.txt
-\subsection{RecordData Class}
-The \texttt{RecordData} class, much like \texttt{DomainData}, serves as a central repository for domain information but is specifically designed to handle \textit{.gbr} files. Its translation involved similar challenges and adaptations as the \texttt{DomainData} class, ensuring functional equivalence while adopting Pythonic practices.
-
-The Python implementation mirrors the Java \texttt{RecordData}'s field structure, using type annotations for clarity and employing Pythonic collection types. This includes using standard \texttt{List}, \texttt{Set} and \texttt{Dict}, leveraging \texttt{defaultdict(list)} for map-like structures requiring default list initialization.
+The recursive traversal methods for building entity and relationship hierarchies were reimplemented with particular attention to maintaining the same inheritance and composition relationships, while adapting to Python's iteration patterns:
 
 \begin{verbatim}
-# Example Python attribute definitions in RecordData
-subjects: List[str]
-unions: Set[Union]
-subjRel_Objs: Dict[str, List[str]] = defaultdict(list)
+def _parseEntities(self, parentNode: ET.Element, root: Entity, domainName: str) -> None:
+    """
+    Recursively parses entities from the given parent node and adds them to the entity tree.
+    """
 \end{verbatim}
 
-Java's overloaded constructors were consolidated into a flexible \texttt{\_\_init\_\_} method, supporting initialization from \textit{.gbr} file paths, byte arrays, or default settings.
+Error handling was significantly enhanced in the Python implementation, providing more specific exception types and descriptive error messages:
 
-The XML parsing logic was adapted from Java's DOM to Python's ElementTree library, with helper methods for file parsing and tag/attribute validation. A specific detail replicated from the Java \texttt{RecordData} is the behavior of the \texttt{\_parseImports} method: even though \texttt{RecordData} primarily handles \textit{.gbr} files, the import mechanism specifically looks for and loads \textit{.gbs} files referenced within the \texttt{<imports>} section, maintaining strict functional equivalence with the observed Java behavior.
+\begin{verbatim}
+try:
+    domain_name_attr = root_element.get("name")
+    if domain_name_attr is None:
+        raise ValueError("Domain tag missing required name attribute")
+except ValueError as e:
+    print(f"Error validating domain structure: {e}")
+    raise
+\end{verbatim}
 
-The recursive parsing methods (\texttt{\_parseEntities}, \texttt{\_parseRelationships}) were implemented to correctly build the entity and relationship hierarchies, relying on the supporting methods within the Python \texttt{Entity} and \texttt{Relationship} classes.
+The Python version also includes thorough documentation through docstrings, which weren't present in the original Java code:
 
-Attribute inheritance logic for \texttt{properties} and \texttt{propertiesRelation} was implemented correctly. This involves utilizing helper logic (e.g., within \texttt{Entity.getAllAttributes}) that incorporates the necessary stop condition to prevent inheriting attributes from the base "Entity" root node, matching the behavior observed in the Java \texttt{RecordData.propertiesCommon} method.
+\begin{verbatim}
+def _addValue(self, map_dict: Dict[str, List[str]], key: str, value: str) -> None:
+    """
+    Adds a value to a list within a dictionary, ensuring no duplicates in the list.
+    Sorts the list after addition.
+    
+    Args:
+        map_dict: Dictionary mapping strings to lists of strings
+        key: Dictionary key to add the value to
+        value: String value to add to the list
+    """
+\end{verbatim}
 
-Data retrieval methods involving relationship traversal and inheritance (e.g., \texttt{getObjsFromSubjRel}, \texttt{getSubjsFromObjRel}) query only the \textit{direct references} associated with the specified relationship(s), aligning with the Java implementation, while still correctly handling entity inheritance checks.
+Collection operations that used Java's sorting and filtering methods were reimplemented using Python's list comprehensions and set operations, providing more concise and readable code while maintaining the same functionality:
 
-Consistent with the approach in \texttt{DomainData}, the Python \texttt{RecordData} includes comprehensive type hints and docstrings, significantly improving code clarity and documentation. Error handling was also refined to provide more specific and informative feedback compared to the original Java code.
+\begin{verbatim}
+def getSubjsFromRel(self, relationship_name: str) -> Set[str]:
+    """Returns the set of subjects participating in the given relationship."""
+    try:
+        return set(self.relSubjs.get(relationship_name, []))
+    except Exception as e:
+        print(f"Warning: Error getting subjects for '{relationship_name}': {e}")
+        return set()
+\end{verbatim}
 
 \subsection{TranslatorAPIProlog Class}
 
