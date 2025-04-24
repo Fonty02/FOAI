@@ -199,11 +199,11 @@ subjRels: Dict[str, List[str]] = defaultdict(list)
 Java's multiple overloaded constructors were unified into a single Python \texttt{\_\_init\_\_} method. This method utilizes optional parameters and type checking to provide the same initialization flexibility as the original Java constructors, allowing instantiation from file paths, byte arrays, or with default values.
 
 \begin{verbatim}
-def __init__(self,
-             path_or_bytearray: Optional[Union[str, bytes]] = None,
-             webInfFolder: Optional[str] = None,
-             domainName: Optional[str] = None,
-             file: Optional[Union[str, Path]] = None):
+    def __init__(self,
+    path_or_bytearray: Optional[str | bytes] = None,
+    webInfFolder: Optional[str] = None,
+    domainName: Optional[str] = None,
+    file: Optional[str | Path] = None):
 \end{verbatim}
 
 Adapting the XML parsing logic required transitioning from Java's DOM API to Python's standard ElementTree library. The Python implementation includes helper methods (\texttt{parseFile}, \texttt{validateTag}, \texttt{validateTagAttributes}) to replicate the necessary validation and traversal steps performed by the Java code. While ElementTree is idiomatic Python, inherent differences from DOM (e.g., precise handling of comments and whitespace) might exist. Replicating file modification logic (\texttt{substitute}) accurately with ElementTree also presents challenges compared to DOM manipulation.

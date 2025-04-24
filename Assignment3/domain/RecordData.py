@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 import io
 import codecs
-from typing import List, Dict, Set, Optional, Tuple, Union, cast, Any
+from typing import List, Dict, Set, Optional, Tuple, cast, Any
 from collections import defaultdict
 import copy
 import traceback
@@ -90,11 +90,11 @@ class RecordData:
     attrsRel: Dict[str, List[Attribute]] # Java: Map<String, Vector<Attribute>>
 
     # --- Constructor ---
-    def __init__(self,
-                 path_or_bytearray: Optional[Union[str, bytes]] = None,
-                 webInfFolder: Optional[str] = None,
-                 domainName: Optional[str] = None,
-                 file: Optional[Union[str, Path]] = None):
+def __init__(self,
+                path_or_bytearray: Optional[str | bytes] = None,
+                webInfFolder: Optional[str] = None,
+                domainName: Optional[str] = None,
+                file: Optional[str | Path] = None):
         """
         Initializes the RecordData object. Mimics Java overloaded constructors:
         1. RecordData(): Default constructor (call with no arguments).

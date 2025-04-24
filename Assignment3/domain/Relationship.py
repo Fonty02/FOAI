@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import List, Optional, Set, TYPE_CHECKING, Union
+from typing import List, Optional, Set, TYPE_CHECKING
 
 # Use TYPE_CHECKING to avoid circular imports for type hints
 if TYPE_CHECKING:

@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 import io
 import codecs
-from typing import List, Dict, Set, Optional, Tuple, Union, cast, Any # Added Any for DefaultTreeNode compatibility
+from typing import List, Dict, Set, Optional, Tuple, cast, Any # Added Any for DefaultTreeNode compatibility
 from collections import defaultdict
 import copy
 import traceback
@@ -72,10 +72,10 @@ class DomainData:
 
     # Unified constructor mimicking Java overloaded constructors
     def __init__(self,
-                 path_or_bytearray: Optional[Union[str, bytes]] = None,
+                 path_or_bytearray: Optional[str | bytes] = None,
                  webInfFolder: Optional[str] = None,
                  domainName: Optional[str] = None,
-                 file: Optional[Union[str, Path]] = None):
+                 file: Optional[str | Path] = None):
         """
         Initializes the DomainData object. Mimics Java overloaded constructors:
         1. DomainData(): Default constructor (call with no arguments).
