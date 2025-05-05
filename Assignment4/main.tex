@@ -1,0 +1,271 @@
+\documentclass[12pt,a4paper]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+\usepackage{authblk} % Package for multiple authors
+\usepackage{booktabs} % For better tables
+\usepackage{listings} % For code snippets
+\usepackage{xcolor} % For colored text
+
+% Define Prolog language style for listings
+\definecolor{prologcomment}{rgb}{0.5,0.5,0.5} % Gray for comments
+\definecolor{prologkeyword}{rgb}{0,0,0.8}    % Blue for keywords/predicates
+\definecolor{prologstring}{rgb}{0.8,0,0}     % Red for strings/atoms
+\definecolor{prologvariable}{rgb}{0,0.5,0}   % Green for variables
+
+\lstdefinestyle{prologstyle}{
+    language=Prolog,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{prologkeyword}\bfseries,
+    commentstyle=\color{prologcomment},
+    stringstyle=\color{prologstring},
+    identifierstyle=\color{prologvariable}, % Style for variables
+    morekeywords={node, arc, edge, find_simple_cycles, generate_edges, find_all_elementary_cycles, dfs_find_cycle, filter_simple_cycles, is_simple_cycle, check_all_pairs_shortest_path, check_pairs_from_node, get_cycle_distance, shortest_path_length, bfs, add_neighbors_to_queue, normalize_cycle, find_min_node, rotate_list_to_start_with, print_cycles_list, member, length, writeln, write, nl, retractall, forall, assertz, findall, reverse, append, nth0, list_to_set, setof}, % Add Prolog built-ins and custom predicates
+    morecomment=[l]{//}, % Line comments starting with //
+    morecomment=[l]{\%}, % Line comments starting with %
+    morestring=[b]',    % Single quoted strings/atoms
+    morestring=[b]",    % Double quoted strings (less common in Prolog)
+    showstringspaces=false,
+    tabsize=2,
+    breaklines=true,
+    breakatwhitespace=true,
+    captionpos=b, % Position caption below the listing
+    frame=single % Add a frame around the code
+}
+
+% Title and author information
+\title{Finding Simple Cycles in a Graph using Prolog} % Corrected typo
+\author[1]{Cirilli Davide}
+\author[2]{Fontana Emanuele}
+\affil[1,2]{Department of Computer Science, Università degli Studi di Bari}
+
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This document describes a Prolog program designed to identify all "simple cycles" within a directed graph. The program first finds all elementary cycles and then filters them based on a specific shortest path criterion to determine simplicity. The implementation utilizes Depth-First Search (DFS) for cycle detection and Breadth-First Search (BFS) for shortest path calculations.
+\end{abstract}
+
+\tableofcontents
+
+\section{Introduction}
+
+A cycle in a directed graph is a path that starts and ends at the same node. An \textit{elementary cycle} is a cycle where no node (except the start/end node) appears more than once. This program aims to find a subset of elementary cycles termed "simple cycles".
+
+A cycle is defined as \textit{simple} if, for any two distinct nodes $u$ and $v$ within the cycle, the shortest path from $u$ to $v$ in the \textit{entire graph} is the path that follows the edges of the cycle itself. If a shorter path (a "shortcut") exists between $u$ and $v$ using edges outside the cycle, the cycle is not considered simple.
+
+This program implements this definition using Prolog, leveraging its backtracking capabilities for graph traversal.
+
+\section{Implementation Details}
+
+The Prolog program (\texttt{simpleCycle.pl}) begins with directives:
+\begin{verbatim}
+:- dynamic node/2.
+:- dynamic arc/4.
+:- dynamic edge/2.
+\end{verbatim}
+The \texttt{:- dynamic Predicate/Arity} directive declares that the facts for \texttt{node/2}, \texttt{arc/4}, and the helper \texttt{edge/2} can be added (\texttt{assertz}) or removed (\texttt{retractall}) during the program's execution. This is necessary because the graph data might be loaded or modified, and the \texttt{edge/2} facts are generated dynamically for efficiency.
+
+The program consists of several key components:
+
+\subsection{Graph Representation}
+The graph is defined using dynamic facts:
+\begin{itemize}
+    \item \texttt{node(NodeID, Type)}: Declares a node with a unique ID and an associated type. The type is not used in the cycle finding logic itself but is part of the data structure.
+    \item \texttt{arc(ArcID, Type, SourceNode, TargetNode)}: Declares a directed arc with a unique ID, type, source node, and target node.
+\end{itemize}
+For efficiency, a helper predicate \texttt{edge(Source, Target)} is dynamically generated.
+\begin{itemize}
+    \item \texttt{generate\_edges/0}: This predicate prepares the graph for traversal.
+        \begin{itemize}
+            \item It first calls \texttt{retractall(edge(\_, \_))} to remove any existing \texttt{edge/2} facts, ensuring a clean state. The underscores \texttt{\_} are anonymous variables, matching any term.
+            \item Then, \texttt{forall(arc(\_, \_, N, M), assertz(edge(N, M)))} iterates through all existing \texttt{arc/4} facts. For each \texttt{arc} fact, it extracts the source (\texttt{N}) and target (\texttt{M}) nodes and asserts a new fact \texttt{edge(N, M)} into the Prolog database using \texttt{assertz/1} (which adds the fact at the end). This provides faster lookups for direct connections during graph traversal compared to querying the \texttt{arc/4} facts repeatedly.
+        \end{itemize}
+\end{itemize}
+
+
+\subsection{Finding Elementary Cycles}
+Elementary cycles are found using a Depth-First Search (DFS) approach implemented by the predicates:
+\begin{itemize}
+    \item \texttt{find\_all\_elementary\_cycles/1}: The main predicate for this stage.
+        \begin{itemize}
+            \item It uses \texttt{findall(N, node(N, \_), Nodes)} to collect all \texttt{NodeID}s from the \texttt{node/2} facts into the list \texttt{Nodes}.
+            \item It then calls \texttt{find\_cycles\_starting\_from\_nodes/2} with this list.
+            \item The argument \texttt{Cycles} will be unified with the list of all elementary cycles found.
+        \end{itemize}
+    \item \texttt{find\_cycles\_starting\_from\_nodes/2}: Iterates through all nodes and initiates DFS from each.
+        \begin{itemize}
+            \item It uses \texttt{findall/3} again. The template is \texttt{Cycle}.
+            \item The goal is \texttt{(member(StartNode, Nodes), edge(StartNode, Neighbor), dfs\_find\_cycle(Neighbor, StartNode, [Neighbor, StartNode], Cycle))}.
+            \item \texttt{member(StartNode, Nodes)} iterates through each node in the graph as a potential starting point.
+            \item \texttt{edge(StartNode, Neighbor)} finds a node directly reachable from the \texttt{StartNode}.
+            \item \texttt{dfs\_find\_cycle/4} is then called to perform the DFS starting from this \texttt{Neighbor}, aiming to return to the \texttt{StartNode}.
+            \item \texttt{findall} collects all successful \texttt{Cycle} bindings found through backtracking into the final list \texttt{Cycles}.
+        \end{itemize}
+    \item \texttt{dfs\_find\_cycle/4}: Performs the recursive DFS. Its arguments are \texttt{dfs\_find\_cycle(CurrentNode, TargetNode, PathSoFar, Cycle)}.
+        \begin{itemize}
+            \item It looks for an edge from the \texttt{CurrentNode} to a \texttt{NextNode} using \texttt{edge(CurrentNode, NextNode)}.
+            \item **Base Case:** If \texttt{NextNode == TargetNode}, the starting node has been reached again. The cycle is complete. \texttt{Cycle} is unified with the path list, prepending the \texttt{TargetNode} (e.g., \texttt{[TargetNode | PathSoFar]}). The \texttt{==/2} operator checks for literal equality.
+            \item **Recursive Step:** If \texttt{NextNode} is not the \texttt{TargetNode}, it checks if \texttt{NextNode} is already in the \texttt{PathSoFar} using \texttt{\\+ memberchk(NextNode, PathSoFar)}. \texttt{\\+/1} is the negation operator (logical NOT), and \texttt{memberchk/2} efficiently checks for membership without leaving a choice point. If the node is not already visited in the current path (ensuring elementarity), the predicate calls itself recursively: \texttt{dfs\_find\_cycle(NextNode, TargetNode, [NextNode | PathSoFar], Cycle)}. The \texttt{NextNode} is added to the front of the path list.
+        \end{itemize}
+    \item The cycles found by DFS are returned in reverse order of traversal (e.g., \texttt{[a, d, c, b, a]} for a cycle a $\rightarrow$ b $\rightarrow$ c $\rightarrow$ d $\rightarrow$ a) because nodes are prepended to the path list during recursion.
+\end{itemize}
+
+\subsection{Filtering for Simple Cycles}
+The core logic for identifying simple cycles resides in:
+\begin{itemize}
+    \item \texttt{filter\_simple\_cycles/2}: Takes a list of elementary cycles (\texttt{ElementaryCycles}) and returns only those that satisfy the simplicity condition (\texttt{NormalizedSimpleCycles}).
+        \begin{itemize}
+            \item **Base Case:** If the input list is empty (\texttt{[]}), the result is also an empty list.
+            \item **Recursive Step 1 (Simple Cycle Found):** If the head of the list, \texttt{Cycle}, satisfies \texttt{is\_simple\_cycle(Cycle)}, the predicate proceeds. The cut \texttt{!} prevents backtracking into the next clause for this \texttt{Cycle}. It then normalizes the cycle using \texttt{normalize\_cycle(Cycle, NormalizedCycle)} and recursively calls \texttt{filter\_simple\_cycles} on the rest of the list (\texttt{RestCandidates}). The result is constructed as \texttt{[NormalizedCycle | SimpleRest]}.
+            \item **Recursive Step 2 (Not a Simple Cycle):** If \texttt{is\_simple\_cycle(Cycle)} fails, the second clause is tried. It simply ignores the current \texttt{\_Cycle} (using \texttt{\_} to indicate the variable is not used) and recursively calls \texttt{filter\_simple\_cycles} on the rest of the list.
+        \end{itemize}
+    \item \texttt{is\_simple\_cycle/1}: Checks if a single elementary cycle is simple.
+        \begin{itemize}
+            \item It first reverses the DFS cycle (e.g., \texttt{[a, d, c, b, a]}) to get the forward path (\texttt{[a, b, c, d, a]}) using \texttt{reverse/2}.
+            \item It decomposes the forward path \texttt{ForwardCycle} into the start node and the rest using pattern matching: \texttt{ForwardCycle = [Start | PathNodes]}.
+            \item It uses \texttt{append(PathNodesWithoutEnd, [Start], PathNodes)} to get the list of nodes in the cycle path excluding the repeated start/end node (e.g., \texttt{[b, c, d]}). \texttt{append/3} joins or splits lists.
+            \item It reconstructs the list of unique nodes in the cycle in forward order: \texttt{NodesInCycle = [Start | PathNodesWithoutEnd]} (e.g., \texttt{[a, b, c, d]}).
+            \item Finally, it calls \texttt{check\_all\_pairs\_shortest\_path/2} with the list of unique cycle nodes.
+        \end{itemize}
+    \item \texttt{check\_all\_pairs\_shortest\_path/2}: Iterates through all ordered pairs of distinct nodes $(u, v)$ within the cycle (\texttt{NodesInCycle}).
+        \begin{itemize}
+            \item **Base Case:** If the first list of nodes is empty (\texttt{[]}), all pairs starting from previous nodes have been checked, so it succeeds.
+            \item **Recursive Step:** Takes the first node \texttt{N1} from the list. It calls \texttt{check\_pairs\_from\_node(N1, OriginalCycleNodes, OriginalCycleNodes)} to check all pairs starting with \texttt{N1}. If that succeeds, it recursively calls itself with the rest of the list (\texttt{RestN1}).
+        \end{itemize}
+    \item \texttt{check\_pairs\_from\_node/3}: For a given node \texttt{N1}, iterates through all other nodes \texttt{N2} in the cycle (\texttt{OriginalCycleNodes}).
+        \begin{itemize}
+            \item **Base Case:** If the list of potential \texttt{N2} nodes is empty (\texttt{[]}), all pairs for \texttt{N1} have been checked successfully.
+            \item **Recursive Step:** Takes the head node \texttt{N2}.
+                \item If \texttt{N1 == N2}, it's the same node, so this pair is skipped (\texttt{true}).
+                \item Otherwise (\texttt{;}), it calculates the distance along the cycle path from \texttt{N1} to \texttt{N2} using \texttt{get\_cycle\_distance/4}, storing it in \texttt{CycleDist}.
+                \item It calculates the shortest path distance in the overall graph from \texttt{N1} to \texttt{N2} using \texttt{shortest\_path\_length/3}, storing it in \texttt{ShortestDist}.
+                \item It checks the simplicity condition:
+                    \item If \texttt{ShortestDist == -1} (meaning no path exists in the graph between \texttt{N1} and \texttt{N2} other than potentially the cycle path itself), the condition holds if \texttt{CycleDist > 0} (it's a valid forward path along the cycle). If \texttt{CycleDist} is not positive (shouldn't happen for distinct nodes in a cycle but handles edge cases), it fails using \texttt{!, fail}.
+                    \item Otherwise (a shortest path exists), the condition holds only if \texttt{ShortestDist >= CycleDist}. If a shorter path exists (\texttt{ShortestDist < CycleDist}), the cycle is not simple, and this check will fail.
+                \item If the check succeeds, a cut \texttt{!} is used to prevent backtracking for the current pair \texttt{(N1, N2)}, and the predicate recursively calls itself for \texttt{N1} and the rest of the nodes (\texttt{RestN2}).
+            \item **Failure Clause:** The final clause \texttt{check\_pairs\_from\_node(\_, \_, \_) :- !, fail.} ensures that if any pair fails the simplicity check, the entire predicate fails immediately due to the cut.
+        \end{itemize}
+    \item \texttt{get\_cycle\_distance/4}: Calculates the number of edges traversed when moving from node \texttt{NodeA} to node \texttt{NodeB} along the cycle path (\texttt{CycleNodes}).
+        \begin{itemize}
+            \item It finds the 0-based indices of \texttt{NodeA} and \texttt{NodeB} in the \texttt{CycleNodes} list using \texttt{nth0/3}.
+            \item It gets the total number of nodes (which equals the number of edges) in the cycle using \texttt{length/2}.
+            \item If \texttt{IndexB >= IndexA}, the distance is simply \texttt{IndexB - IndexA}.
+            \item Otherwise (the path wraps around), the distance is \texttt{Len - IndexA + IndexB}.
+            \item The result is unified with the \texttt{Distance} argument using the \texttt{is/2} operator for arithmetic evaluation.
+        \end{itemize}
+    \item \texttt{shortest\_path\_length/3}: Finds the length (\texttt{Length}) of the shortest path between \texttt{Start} and \texttt{End} nodes using Breadth-First Search (BFS).
+        \begin{itemize}
+            \item It calls \texttt{bfs/4} to perform the search. The initial call is \texttt{bfs([[Start, 0]], End, [Start], Length)}, starting the queue with the \texttt{Start} node at distance 0 and marking \texttt{Start} as visited.
+            \item A cut \texttt{!} is used after the \texttt{bfs/4} call. If BFS succeeds and finds a path, the cut prevents backtracking to the failure clause.
+            \item If \texttt{bfs/4} fails to find a path, the second clause \texttt{shortest\_path\_length(\_, \_, -1)} is executed, unifying \texttt{Length} with -1 to indicate no path exists.
+        \end{itemize}
+    \item \texttt{bfs/4}: The standard BFS implementation: \texttt{bfs(Queue, Target, Visited, Length)}.
+        \begin{itemize}
+            \item **Base Case 1 (Queue Empty):** \texttt{bfs([], \_, \_, \_) :- !, fail.} If the queue is empty, the target was not reachable. The cut \texttt{!} prevents backtracking, and the predicate fails.
+            \item **Base Case 2 (Target Found):** \texttt{bfs([[Target, Length] | \_], Target, \_, Length) :- !.} If the node at the front of the queue is the \texttt{Target}, the shortest path is found. Its \texttt{Length} is unified with the result, and the cut \texttt{!} stops the search.
+            \item **Recursive Step:** \texttt{bfs([[Current, Dist] | RestQueue], Target, Visited, Length) :- ...}
+                \item Dequeues the current node \texttt{Current} and its distance \texttt{Dist}.
+                \item Finds all unvisited neighbors: \texttt{findall(Next, (edge(Current, Next), \\+ member(Next, Visited)), Neighbors)}.
+                \item Calculates the distance for neighbors: \texttt{NewDist is Dist + 1}.
+                \item Adds neighbors to the back of the queue: \texttt{add\_neighbors\_to\_queue(Neighbors, NewDist, RestQueue, NewQueue)}.
+                \item Updates the visited list: \texttt{append(Visited, Neighbors, NewVisited)}, \texttt{list\_to\_set(NewVisited, UniqueVisited)}. Using \texttt{list\_to\_set/2} (from SWI-Prolog's \texttt{library(lists)}) efficiently removes duplicates from the visited list.
+                \item Recursively calls \texttt{bfs} with the new queue and visited list.
+        \end{itemize}
+     \item \texttt{add\_neighbors\_to\_queue/4}: Helper to format neighbors as \texttt{[Node, Distance]} pairs and add them to the queue.
+        \begin{itemize}
+            \item Uses \texttt{findall([N, Distance], member(N, Neighbors), NeighborEntries)} to create the list of pairs.
+            \item Uses \texttt{append(CurrentQueue, NeighborEntries, NewQueue)} to add the new entries to the end of the existing queue, maintaining the BFS order.
+        \end{itemize}
+\end{itemize}
+
+\subsection{Cycle Normalization}
+To ensure that cycles representing the same sequence of nodes but starting at different points are treated as identical, cycles are normalized:
+\begin{itemize}
+    \item \texttt{normalize\_cycle/2}: Takes a raw cycle (\texttt{RawCycle}) as found by DFS (e.g., \texttt{[a, d, c, b, a]}) and converts it into a standard representation (\texttt{NormalizedNodeList}).
+    \item The normalization process involves:
+        1. Deconstructing the raw cycle: \texttt{RawCycle = [Start | RevPathNodes]}.
+        2. Reversing the path part and removing the duplicate start/end node: \texttt{reverse(RevPathNodes, [\_ | ForwardPathNodes])}.
+        3. Reconstructing the forward cycle node list: \texttt{ForwardCycleNodes = [Start | ForwardPathNodes]} (e.g., \texttt{[a, b, c, d]}).
+        4. Finding the node with the "minimum" value using standard term comparison (\texttt{@<}) via \texttt{find\_min\_node/2}.
+        5. Rotating the list so that it starts with this minimum node using \texttt{rotate\_list\_to\_start\_with/3}. The result is unified with \texttt{NormalizedNodeList}.
+    \item Example: \texttt{[a, d, c, b, a]} $\rightarrow$ \texttt{[a, b, c, d]}. \texttt{[b, e, d, c, b]} $\rightarrow$ \texttt{[b, c, d, e]}.
+    \item \texttt{find\_min\_node/2}: Finds the minimum node in a list based on Prolog's standard term comparison (\texttt{@<}).
+        \begin{itemize}
+            \item **Base Case:** If the list has one element \texttt{[M]}, that element is the minimum.
+            \item **Recursive Step:** Compares the head \texttt{H} with the minimum of the tail \texttt{MinTail}. Uses conditional \texttt{( Condition -> Then ; Else )} syntax. If \texttt{H @< MinTail}, \texttt{Min} is \texttt{H}; otherwise, \texttt{Min} is \texttt{MinTail}.
+        \end{itemize}
+    \item \texttt{rotate\_list\_to\_start\_with/3}: Rotates \texttt{List} so that \texttt{Element} becomes the first element.
+        \begin{itemize}
+            \item Uses \texttt{append(Before, [Element | After], List)} to split the list into the part \texttt{Before} the \texttt{Element} and the part \texttt{After} (including the element itself). The cut \texttt{!} commits to the first successful split found.
+            \item Uses \texttt{append([Element | After], Before, RotatedList)} to rejoin the parts in the rotated order.
+            \item The second clause \texttt{rotate\_list\_to\_start\_with(List, \_, List)} handles the case where the element is already first (the first clause's \texttt{append} fails if \texttt{Before} is empty).
+        \end{itemize}
+\end{itemize}
+The final list of simple cycles is produced using \texttt{setof/3} on the normalized cycles. \texttt{setof(Template, Goal, Set)} finds all unique instances of \texttt{Template} for which \texttt{Goal} is true, sorts them, and collects them into \texttt{Set}. This guarantees both uniqueness and a canonical order.
+
+\subsection{Main Predicate and Output}
+\begin{itemize}
+    \item \texttt{find\_simple\_cycles/1}: The top-level predicate. It orchestrates the entire process:
+        1. Prints initialization messages using \texttt{write/1} and \texttt{nl/0} (newline).
+        2. Calls \texttt{generate\_edges/0}.
+        3. Calls \texttt{find\_all\_elementary\_cycles/1} to get \texttt{ElementaryCycles}.
+        4. Calculates and prints the number of elementary cycles using \texttt{length/2}.
+        5. Uses conditional execution \texttt{( Condition -> Then ; Else )}.
+        6. If \texttt{NumElementary > 0}:
+            \begin{itemize}
+                \item Prints the found elementary cycles using \texttt{print\_cycles\_list/2}.
+                \item Calls \texttt{filter\_simple\_cycles/2} to get potentially non-unique \texttt{NormalizedSimpleCycles}.
+                \item Uses \texttt{setof(NormCycle, Member\^(member(Member, NormalizedSimpleCycles), NormCycle = Member), SimpleCycles)} to get the final unique, sorted list of \texttt{SimpleCycles}. The \texttt{Member\^} syntax indicates that \texttt{Member} is an existentially quantified variable within the goal.
+                \item Prints the final simple cycles and their count.
+                \item If \texttt{setof/3} fails (no simple cycles found after filtering), it prints a message and sets \texttt{SimpleCycles} to \texttt{[]}.
+            \end{itemize}
+        7. If \texttt{NumElementary =< 0}:
+            \begin{itemize}
+                \item Prints a message indicating no elementary cycles were found.
+                \item Sets \texttt{SimpleCycles} to \texttt{[]}.
+            \end{itemize}
+        8. The argument \texttt{SimpleCycles} is unified with the final list.
+    \item \texttt{print\_cycles\_list/2}: A helper predicate \texttt{print\_cycles\_list(Header, ListOfCycles)}.
+        \begin{itemize}
+            \item **Base Case:** If \texttt{ListOfCycles} is empty (\texttt{[]}), it does nothing (due to the cut \texttt{!}).
+            \item **General Case:** Prints the \texttt{Header} string using \texttt{writeln/1}. Then, uses \texttt{forall(member(Cycle, ListOfCycles), (write('  '), writeln(Cycle)))} to iterate through each \texttt{Cycle} in the list and print it indented on a new line. \texttt{forall(Condition, Action)} succeeds if \texttt{Action} is true for all possible solutions of \texttt{Condition}.
+        \end{itemize}
+\end{itemize}
+
+\section{Usage}
+
+1.  Ensure a Prolog interpreter (like SWI-Prolog) is installed.
+2.  Load the program file:
+    \texttt{?- [simpleCycle].}
+3.  Run the main predicate:
+    \texttt{?- find\_simple\_cycles(Cycles).}
+4.  The program will print the intermediate elementary cycles found and the final list of unique, normalized simple cycles. The variable \texttt{Cycles} will be unified with the list of simple cycles.
+
+\section{Example Graph}
+The code includes an example graph defined by \texttt{node/2} and \texttt{arc/4} facts:
+\begin{itemize}
+    \item Nodes: a, b, c, d, e
+    \item Arcs forming cycle 1: a $\rightarrow$ b, b $\rightarrow$ c, c $\rightarrow$ d, d $\rightarrow$ a
+    \item Arcs forming cycle 2: b $\rightarrow$ e, e $\rightarrow$ d, d $\rightarrow$ c, c $\rightarrow$ b
+    \item A "shortcut" arc: a $\rightarrow$ d
+\end{itemize}
+In this example:
+\begin{itemize}
+    \item Elementary cycles found are (normalized): \texttt{[a, b, c, d]} and \texttt{[b, c, d, e]}.
+    \item The cycle \texttt{[a, b, c, d]} is \textbf{not simple} because the path a $\rightarrow$ d along the cycle has length 3, but a direct arc a $\rightarrow$ d exists (length 1).
+    \item The cycle \texttt{[b, c, d, e]} \textbf{is simple} as there are no shorter paths between its constituent nodes outside the cycle edges.
+\end{itemize}
+Therefore, the expected output for \texttt{Cycles} is \texttt{[[b, c, d, e]]}.
+
+
+\section{Conclusion}
+The Prolog program successfully implements an algorithm to find simple cycles in a directed graph based on a shortest path criterion. It demonstrates the use of DFS for cycle detection, BFS for shortest path calculation, and Prolog's features for list manipulation and backtracking. The normalization step ensures that unique cycles are reported consistently.
+
+\end{document}
