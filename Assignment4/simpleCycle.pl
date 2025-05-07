@@ -139,7 +139,7 @@ normalize_cycle(RawCycle, NormalizedNodeList) :-
 find_min_node([M], M) :- !.
 find_min_node([H | T], Min) :-
     find_min_node(T, MinTail),
-    ( H @< MinTail -> Min = H ; Min = MinTail ).
+    ( H @< MinTail -> Min = H ; Min = MinTail ).  %  @< is used for comparing atoms lexicographically.
 
 rotate_list_to_start_with(List, Element, RotatedList) :-
     append(Before, [Element | After], List),
