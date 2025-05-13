@@ -24,7 +24,7 @@ stringstyle=\color{prologstring},
 identifierstyle=\color{prologvariable}, % Style for variables
 morekeywords={node, arc, edge, find_simple_cycles, generate_edges, find_all_elementary_cycles, dfs_find_cycle, filter_simple_cycles, is_simple_cycle, check_all_pairs_shortest_path, check_pairs_from_node, get_cycle_distance, shortest_path_length, bfs, add_neighbors_to_queue, normalize_cycle, find_min_node, rotate_list_to_start_with, print_cycles_list, print_cycles_list_reversed, member, length, writeln, write, nl, retractall, forall, assertz, findall, reverse, append, nth0, list_to_set, setof, main, setup_test, read, halt}, % Added new main predicates
 morecomment=[l]{//}, % Line comments starting with //
-morecomment=[l]{\%}, % Line comments starting with %
+morecomment=[l]{%}, % Line comments starting with %
 morestring=[b]', % Single quoted strings/atoms
 morestring=[b]", % Double quoted strings (less common in Prolog)
 showstringspaces=false,
@@ -48,17 +48,23 @@ This document describes a Prolog program designed to identify all "simple cycles
 \section{Introduction}
 A cycle in a directed graph is a path that starts and ends at the same node. An \textit{elementary cycle} is a cycle where no node (except the start/end node) appears more than once. This program aims to find a subset of elementary cycles termed "simple cycles".
 A cycle is defined as \textit{simple} if, for any two distinct nodes 
-$u$ 
+u
+u
  and 
-$v$ 
+v
+v
  within the cycle, the shortest path from 
-$u$ 
+u
+u
  to 
-$v$ 
+v
+v
  in the \textit{entire graph} is the path that follows the edges of the cycle itself. If a shorter path (a "shortcut") exists between 
-$u$ 
+u
+u
  and 
-$v$ 
+v
+v
  using edges outside the cycle, the cycle is not considered simple.
 This program implements this definition using Prolog, leveraging its backtracking capabilities for graph traversal and dynamic fact manipulation for setting up different graph structures.
 \section{Implementation Details}
@@ -109,7 +115,19 @@ Elementary cycles are found using a Depth-First Search (DFS) approach:
 \item Base Case: If \texttt{NextNode == TargetNode}, the starting node is reached. \texttt{Cycle} is unified with \texttt{[TargetNode | PathSoFar]}.
 \item Recursive Step: If \texttt{NextNode} is not \texttt{TargetNode}, it checks \texttt{\+ memberchk(NextNode, PathSoFar)} to ensure elementarity. If not visited in the current path, it recursively calls \texttt{dfs_find_cycle(NextNode, TargetNode, [NextNode | PathSoFar], Cycle)}.
 \end{itemize}
-\item Cycles from DFS are returned in reverse traversal order (e.g., \texttt{[a, d, c, b, a]} for a cycle $a \rightarrow b \rightarrow c \rightarrow d \rightarrow a$). 
+\item Cycles from DFS are returned in reverse traversal order (e.g., \texttt{[a, d, c, b, a]} for a cycle a 
+/rightarrow
+/rightarrow
+ b 
+/rightarrow
+/rightarrow
+ c 
+/rightarrow
+/rightarrow
+ d 
+/rightarrow
+/rightarrow
+ a).
 \end{itemize}
 \subsection{Filtering for Simple Cycles}
 The logic for identifying simple cycles:
@@ -126,7 +144,13 @@ The logic for identifying simple cycles:
 \item Deconstructs to get ordered unique nodes: \texttt{ForwardCycleWithRepeatEnd = [StartNode | PathNodesWithRepeatEnd]}, \texttt{append(PathNodesUnique, [StartNode], PathNodesWithRepeatEnd)}, \texttt{NodesInCycleOrdered = [StartNode | PathNodesUnique]}. E.g., for DFS output \texttt{[a,c,b,a]}, this yields \texttt{[a,b,c]}.
 \item Calls \texttt{check_all_pairs_shortest_path(NodesInCycleOrdered, NodesInCycleOrdered)}.
 \end{itemize}
-\item \texttt{check_all_pairs_shortest_path/2}: Iterates through ordered pairs $(u,v)$ 
+\item \texttt{check_all_pairs_shortest_path/2}: Iterates through ordered pairs 
+(
+u
+,
+v
+)
+(u,v)
  in \texttt{NodesInCycleOrdered}.
 \begin{itemize}
 \item Base Case: \texttt{check_all_pairs_shortest_path([], _)}.
@@ -140,10 +164,8 @@ The logic for identifying simple cycles:
 \item Else, calculate \texttt{get_cycle_distance(N1, N2, OriginalCycleNodes, CycleDist)} and \texttt{shortest_path_length(N1, N2, ShortestDist)}.
 \item Check simplicity:
 \begin{itemize}
-\item If \texttt{ShortestDist == -1} (no path in graph), then $CycleDist > 0$ 
- must hold (or \texttt{!, fail}).
-\item Else (path exists), $ShortestDist \ge CycleDist$ 
- must hold.
+\item If \texttt{ShortestDist == -1} (no path in graph), then \texttt{CycleDist > 0} must hold (or \texttt{!, fail}).
+\item Else (path exists), \texttt{ShortestDist >= CycleDist} must hold.
 \end{itemize}
 \item If the check succeeds, cut (\texttt{!}) and recurse on \texttt{RestN2}.
 \item Failure Clause: \texttt{check_pairs_from_node(_, _, _) :- !, fail.} ensures immediate failure if any pair violates simplicity.
@@ -151,8 +173,8 @@ The logic for identifying simple cycles:
 \item \texttt{get_cycle_distance/4}: Calculates distance from \texttt{NodeA} to \texttt{NodeB} along \texttt{CycleNodes}.
 \begin{itemize}
 \item Finds indices \texttt{IndexA}, \texttt{IndexB} using \texttt{nth0/3}. Gets \texttt{length(CycleNodes, Len)}.
-\item If $IndexB \ge IndexA$, $Distance = IndexB - IndexA$. 
-\item Else, $Distance = Len - IndexA + IndexB$. 
+\item If \texttt{IndexB >= IndexA}, \texttt{Distance is IndexB - IndexA}.
+\item Else, \texttt{Distance is Len - IndexA + IndexB}.
 \end{itemize}
 \item \texttt{shortest_path_length/3}: Finds shortest path length between \texttt{Start} and \texttt{End} using BFS.
 \begin{itemize}
@@ -163,8 +185,7 @@ The logic for identifying simple cycles:
 \begin{itemize}
 \item Base Case 1 (Queue Empty): \texttt{bfs([], _, _, _) :- !, fail.}
 \item Base Case 2 (Target Found): \texttt{bfs([[Target, Length] | _], Target, _, Length) :- !.}
-\item Recursive Step: Dequeues \texttt{[Current, Dist]}. Finds unvisited neighbors via \texttt{findall(Next, (edge(Current, Next), \+ member(Next, Visited)), Neighbors)}. Calculates $NewDist = Dist + 1$. 
- Adds neighbors to queue via \texttt{add_neighbors_to_queue/4}. Updates visited list (using \texttt{append/3} and \texttt{list_to_set/2}). Recurses.
+\item Recursive Step: Dequeues \texttt{[Current, Dist]}. Finds unvisited neighbors via \texttt{findall(Next, (edge(Current, Next), \+ member(Next, Visited)), Neighbors)}. Calculates \texttt{NewDist is Dist + 1}. Adds neighbors to queue via \texttt{add_neighbors_to_queue/4}. Updates visited list (using \texttt{append/3} and \texttt{list_to_set/2}). Recurses.
 \end{itemize}
 \item \texttt{add_neighbors_to_queue/4}: Formats neighbors as \texttt{[Node, Distance]} and appends to queue using \texttt{findall/3} and \texttt{append/3}.
 \end{itemize}
@@ -173,13 +194,11 @@ Ensures unique representation for identical cycles starting at different nodes.
 \begin{itemize}
 \item \texttt{normalize_cycle/2}: Converts raw DFS cycle \texttt{RawCycle} (e.g., \texttt{[a,d,c,b,a]}) to \texttt{NormalizedNodeList}.
 \item Process:
-\begin{enumerate}
-\item Deconstruct: \texttt{RawCycle = [StartNode | ReversedPathWithStart]}.
-\item Get forward path nodes: \texttt{reverse(ReversedPathWithStart, [_ | ForwardPathNodes])}.
-\item Reconstruct forward cycle nodes: \texttt{ForwardCycleNodes = [StartNode | ForwardPathNodes]} (e.g., \texttt{[a,b,c,d]}).
-\item Find minimum node: \texttt{find_min_node(ForwardCycleNodes, MinNode)}.
-\item Rotate: \texttt{rotate_list_to_start_with(ForwardCycleNodes, MinNode, NormalizedNodeList)}.
-\end{enumerate}
+1. Deconstruct: \texttt{RawCycle = [StartNode | ReversedPathWithStart]}.
+2. Get forward path nodes: \texttt{reverse(ReversedPathWithStart, [_ | ForwardPathNodes])}.
+3. Reconstruct forward cycle nodes: \texttt{ForwardCycleNodes = [StartNode | ForwardPathNodes]} (e.g., \texttt{[a,b,c,d]}).
+4. Find minimum node: \texttt{find_min_node(ForwardCycleNodes, MinNode)}.
+5. Rotate: \texttt{rotate_list_to_start_with(ForwardCycleNodes, MinNode, NormalizedNodeList)}.
 \item \texttt{find_min_node/2}: Finds minimum node in a list using \texttt{@<}.
 \begin{itemize}
 \item Base Case: \texttt{find_min_node([M], M) :- !.}
@@ -237,7 +256,16 @@ The program will then halt.
 The program includes four predefined test cases, set up by \texttt{setup_test/1}.
 \subsubsection{Test Case 1: Simple Triangle}
 \begin{itemize}
-\item \textbf{Description:} A basic directed triangle: $a \rightarrow b \rightarrow c \rightarrow a$. 
+\item \textbf{Description:} A basic directed triangle: a 
+/rightarrow
+/rightarrow
+ b 
+/rightarrow
+/rightarrow
+ c 
+/rightarrow
+/rightarrow
+ a.
 \item \textbf{Arcs Defined:}
 \begin{lstlisting}[style=prologstyle, basicstyle=\ttfamily\footnotesize]
 assertz(arc(1, t, a, b)).
@@ -255,7 +283,22 @@ assertz(arc(3, t, c, a)).
 \end{itemize}
 \subsubsection{Test Case 2: Square with a Chord}
 \begin{itemize}
-\item \textbf{Description:} A square cycle $a \rightarrow b \rightarrow c \rightarrow d \rightarrow a$, with an additional "chord" arc $b \rightarrow d$. 
+\item \textbf{Description:} A square cycle a 
+/rightarrow
+/rightarrow
+ b 
+/rightarrow
+/rightarrow
+ c 
+/rightarrow
+/rightarrow
+ d 
+/rightarrow
+/rightarrow
+ a, with an additional "chord" arc b 
+/rightarrow
+/rightarrow
+ d.
 \item \textbf{Arcs Defined:}
 \begin{lstlisting}[style=prologstyle, basicstyle=\ttfamily\footnotesize]
 assertz(arc(1, t, a, b)).
@@ -271,11 +314,38 @@ assertz(arc(5, t, b, d)). % The chord
 \caption{Graphical representation of Test Case 2.}
 \label{fig:test_case_2}
 \end{figure}
-\item \textbf{Expected Simple Cycles:} \texttt{[[a,b,d], [b,c,d]]}. The cycle \texttt{[a,b,c,d]} (from $a \rightarrow b \rightarrow c \rightarrow d \rightarrow a$) is elementary but not simple due to the shortcut $b \rightarrow d$ (path $b \rightarrow c \rightarrow d$ has length 2, path $b \rightarrow d$ has length 1). 
+\item \textbf{Expected Simple Cycles:} \texttt{[[a,b,d], [b,c,d]]}. The cycle \texttt{[a,b,c,d]} (from a 
+/rightarrow
+/rightarrow
+ b 
+/rightarrow
+/rightarrow
+ c 
+/rightarrow
+/rightarrow
+ d 
+/rightarrow
+/rightarrow
+ a) is elementary but not simple due to the shortcut b 
+/rightarrow
+/rightarrow
+ d (path b 
+/rightarrow
+/rightarrow
+ c 
+/rightarrow
+/rightarrow
+ d has length 2, path b 
+/rightarrow
+/rightarrow
+ d has length 1).
 \end{itemize}
 \subsubsection{Test Case 3: Disjoint Cycles}
 \begin{itemize}
-\item \textbf{Description:} A graph containing a 2-cycle ($a \leftrightarrow b$) and two separate, non-overlapping triangles ($c \rightarrow d \rightarrow e \rightarrow c$ and $d \rightarrow f \rightarrow g \rightarrow d$). 
+\item \textbf{Description:} A graph containing a 2-cycle (a 
+/leftrightarrow
+/leftrightarrow
+ b) and two separate, non-overlapping triangles (c-d-e-c and d-f-g-d).
 \item \textbf{Arcs Defined:}
 \begin{lstlisting}[style=prologstyle, basicstyle=\ttfamily\footnotesize]
 assertz(arc(1, t, a, b)). % 2-cycle
@@ -299,10 +369,43 @@ assertz(arc(8, t, g, d)).
 \subsubsection{Test Case 4: Complex Overlapping Cycles and Chord}
 \begin{itemize}
 \item \textbf{Description:} A more complex graph with two larger, overlapping cycles and a shortcut arc.
-Cycle A: $a \rightarrow b \rightarrow c \rightarrow d \rightarrow a$. 
-Cycle B: $b \rightarrow e \rightarrow d \rightarrow c \rightarrow b$. 
-Chord: $a \rightarrow d$. 
-This also creates smaller 2-cycles like $b \leftrightarrow c$ and $c \leftrightarrow d$ due to edges from both Cycle A and Cycle B. 
+Cycle A: a 
+/rightarrow
+/rightarrow
+ b 
+/rightarrow
+/rightarrow
+ c 
+/rightarrow
+/rightarrow
+ d 
+/rightarrow
+/rightarrow
+ a.
+Cycle B: b 
+/rightarrow
+/rightarrow
+ e 
+/rightarrow
+/rightarrow
+ d 
+/rightarrow
+/rightarrow
+ c 
+/rightarrow
+/rightarrow
+ b.
+Chord: a 
+/rightarrow
+/rightarrow
+ d.
+This also creates smaller 2-cycles like b 
+/leftrightarrow
+/leftrightarrow
+ c and c 
+/leftrightarrow
+/leftrightarrow
+ d due to edges from both Cycle A and Cycle B.
 \item \textbf{Arcs Defined:}
 \begin{lstlisting}[style=prologstyle, basicstyle=\ttfamily\footnotesize]
 assertz(arc(1, t, a, b)).
@@ -324,9 +427,75 @@ assertz(arc(9, t, a, d)). % Chord for Cycle A
 \end{figure}
 \item \textbf{Expected Simple Cycles:} \texttt{[[a,d], [b,c], [c,d]]}.
 \begin{itemize}
-\item \texttt{[a,b,c,d]} (from $a \rightarrow b \rightarrow c \rightarrow d \rightarrow a$) is not simple because path $a \rightarrow b \rightarrow c \rightarrow d$ (length 3) is longer than direct shortcut $a \rightarrow d$ (length 1). 
-\item \texttt{[b,e,d,c]} (from $b \rightarrow e \rightarrow d \rightarrow c \rightarrow b$) is not simple because path $b \rightarrow e \rightarrow d \rightarrow c$ (length 3) is longer than direct shortcut $b \rightarrow c$ (length 1, via arc 2). 
-\item The 2-cycles \texttt{[a,d]} ($a \rightarrow d$, $d \rightarrow a$), \texttt{[b,c]} ($b \rightarrow c$, $c \rightarrow b$), and \texttt{[c,d]} ($c \rightarrow d$, $d \rightarrow c$) are simple as their constituent 1-edge paths are inherently the shortest. 
+\item \texttt{[a,b,c,d]} (from a 
+/rightarrow
+/rightarrow
+ b 
+/rightarrow
+/rightarrow
+ c 
+/rightarrow
+/rightarrow
+ d 
+/rightarrow
+/rightarrow
+ a) is not simple because path a 
+/rightarrow
+/rightarrow
+ b 
+/rightarrow
+/rightarrow
+ c 
+/rightarrow
+/rightarrow
+ d (length 3) is longer than direct shortcut a 
+/rightarrow
+/rightarrow
+ d (length 1).
+\item \texttt{[b,e,d,c]} (from b 
+/rightarrow
+/rightarrow
+ e 
+/rightarrow
+/rightarrow
+ d 
+/rightarrow
+/rightarrow
+ c 
+/rightarrow
+/rightarrow
+ b) is not simple because path b 
+/rightarrow
+/rightarrow
+ e 
+/rightarrow
+/rightarrow
+ d 
+/rightarrow
+/rightarrow
+ c (length 3) is longer than direct shortcut b 
+/rightarrow
+/rightarrow
+ c (length 1, via arc 2).
+\item The 2-cycles \texttt{[a,d]} (a 
+/rightarrow
+/rightarrow
+ d, d 
+/rightarrow
+/rightarrow
+ a), \texttt{[b,c]} (b 
+/rightarrow
+/rightarrow
+ c, c 
+/rightarrow
+/rightarrow
+ b), and \texttt{[c,d]} (c 
+/rightarrow
+/rightarrow
+ d, d 
+/rightarrow
+/rightarrow
+ c) are simple as their constituent 1-edge paths are inherently the shortest.
 \end{itemize}
 \end{itemize}
 \section{Conclusion}
