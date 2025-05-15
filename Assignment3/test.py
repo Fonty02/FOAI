@@ -19,7 +19,7 @@ def main():
         domain_name = domain_data.domain
         imported_files = getattr(domain_data, "importedFiles", [])
         top_entities_count = len(domain_data.entityTree.getChildren()) if hasattr(domain_data.entityTree, "getChildren") else 0
-        all_relationships_count = len(domain_data.relationshipTree.getAllDescendants()) if hasattr(domain_data.relationshipTree, "getAllDescendants") else 0
+        all_relationships_count = len(domain_data.getAllRelationships())
         n_rel_refs = getattr(domain_data, "nRelRefs", 0)
         axioms_count = len(domain_data.axioms) if hasattr(domain_data, "axioms") else 0
 

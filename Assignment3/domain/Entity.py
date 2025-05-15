@@ -22,6 +22,7 @@ class Entity(DomainTag):
     children: List[Entity] = []  # List of child entities
     parent: Optional[Entity] = None  # Parent entity
     _abstract: bool = False  # Indicates if the entity is abstract
+    name: str  # Name of the entity
 
     def __init__(self, name: str, domain: Optional[str] = None):
         """
@@ -32,7 +33,7 @@ class Entity(DomainTag):
             domain: The domain the entity belongs to (optional).
         """
         super().__init__()
-        self._name: str = name
+        self.name: str = name
         if domain:
             self.setDomain(domain)
         self.values: List[str] = []

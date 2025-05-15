@@ -1734,7 +1734,7 @@ class DomainData:
             self.removeRelationship(r.getName()) # Call the existing remove method
 
     # Method: findInTree (public in Java)
-    def findInTree(self, parent: Entity, nodeName: str) -> Optional[Entity]: # Java returns Entity
+    def findInTree(self, parent: Entity, nodeName: str) -> Optional[Entity]:
         """
         Finds the entity/relationship with the given name in the tree starting from parent (DFS).
         Case-insensitive search matching Java behavior.
@@ -1742,59 +1742,16 @@ class DomainData:
         """
         if not parent:
             return None
-
-        # Use a set to keep track of visited nodes to prevent infinite loops
-        visited: Set[Entity] = set()
-        # Initialize stack with children of the parent node
-        try:
-            # Ensure getChildren exists and handle potential errors
-            if not hasattr(parent, 'getChildren'):
-                 print(f"Warning: Parent node {type(parent)} lacks getChildren method in findInTree.")
-                 return None
-            initial_children = parent.getChildren()
-            stack: List[Entity] = list(initial_children)
-            visited.update(initial_children) # Mark initial children as visited
-        except Exception as e:
-            print(f"Error getting initial children from parent {parent.getName() if hasattr(parent, 'getName') else type(parent)}: {e}")
-            return None
-
-
-        while stack:
-            current_node = stack.pop()
-
-            # --- Safely get the name ---
-            current_node_name: Optional[str] = None
-            try:
-                if hasattr(current_node, 'getName'):
-                    current_node_name = current_node.getName()
-                else:
-                    print(f"Warning: Node encountered in findInTree does not have getName method: {type(current_node)}")
-                    continue # Skip this node
-            except Exception as e:
-                print(f"Warning: Error calling getName() on node {type(current_node)}: {e}")
-                continue # Skip this node
-
-            # --- Perform comparison only if name is not None ---
-            if current_node_name is not None and current_node_name.lower() == nodeName.lower():
-                return current_node
-
-            # --- Add children to stack for further exploration ---
-            if hasattr(current_node, 'getChildren'):
-                try:
-                    children = current_node.getChildren()
-                    # Add children that haven't been visited yet
-                    for child in reversed(children):
-                         # Ensure child is not None and hasn't been visited
-                         if child is not None and child not in visited:
-                              visited.add(child)
-                              stack.append(child)
-                         elif child is None:
-                              print(f"Warning: Encountered a None child for node '{current_node_name or type(current_node)}' in findInTree.")
-                except Exception as e:
-                    print(f"Warning: Error calling getChildren() on node '{current_node_name or type(current_node)}': {e}")
-            # else: Node might be a leaf or not have children concept
-
-        return None # Node not found
+        children = parent.getChildren()
+        for child in children:_
+            child_name = child.getName() if hasattr(child, 'getName') else str(child)
+            if child_name.lower() == nodeName.lower():
+                return child
+            else:
+                result = self.findInTree(child, nodeName)
+                if result is not None:
+                    return result
+        return None
 
     # Method: getnTopEntities (public in Java)
     def getnTopEntities(self) -> int:

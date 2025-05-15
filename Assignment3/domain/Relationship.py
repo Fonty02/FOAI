@@ -321,3 +321,14 @@ class Relationship(Entity):
         # Accessing parent's name safely
         parent = self.getParent() # Use inherited getter
         return parent is not None and parent.getName() == self.universalRelationshipName
+    
+
+
+    def __hash__(self):
+        # Usa il nome come identificatore univoco (come Java hashCode su stringa)
+        return hash(self.getName())
+
+    def __eq__(self, other):
+        if not isinstance(other, Relationship):
+            return False
+        return self.getName() == other.getName()
