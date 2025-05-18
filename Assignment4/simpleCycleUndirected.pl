@@ -14,14 +14,22 @@ main :-
     ),
     halt. % Terminate the program.
 
-% --- Utility: Generate simplified edge/2 facts from arc/4 ---
+% --- Utility: Generate simplified edge/2 facts from arc/4, bidirectional edges, no duplicates ---
 % This predicate populates the edge/2 relation from the arc/4 facts.
 % The edge/2 relation simplifies graph traversal by omitting arc ID and type,
 % focusing only on the source-destination relationship.
 generate_edges_from_arcs :-
     retractall(edge(_, _)), % Clear any pre-existing edge/2 facts to ensure a clean state.
-    forall(arc(_ArcID, _ArcType, SourceNode, DestinationNode), % For every arc defined in the graph...
-           assertz(edge(SourceNode, DestinationNode))). % ...assert a corresponding edge/2 fact.
+    forall(arc(_ArcID, _ArcType, SourceNode, DestinationNode),
+           (   (   \+ edge(SourceNode, DestinationNode)
+               ->  assertz(edge(SourceNode, DestinationNode))
+               ;   true
+               ),
+               (   \+ edge(DestinationNode, SourceNode)
+               ->  assertz(edge(DestinationNode, SourceNode))
+               ;   true
+               )
+           )).
 
 % --- Test Case Data Setup ---
 % These predicates define various graph structures for testing the cycle detection algorithm.
@@ -134,17 +142,16 @@ find_cycles_from_potential_starts(PotentialStartNodes, ElementaryCyclesList) :-
 % Performs Depth First Search to find a path from CurrentNode back to TargetNode.
 % PathBackToStart is [CurrentNode, PrevNode, ..., TargetNode], i.e., nodes in reverse order of traversal from TargetNode.
 dfs_for_cycle(CurrentNode, TargetNode, PathBackToStart, FoundCycleInReverse) :-
-    edge(CurrentNode, NextNode), % Explore an edge from CurrentNode to NextNode.
-    (   NextNode == TargetNode -> % Cycle detected: CurrentNode has an edge back to TargetNode.
-        % PathBackToStart is [CurrentNode, P(CurrentNode), ..., StartNode_from_main_call].
-        % Prepending TargetNode (which is StartNode_from_main_call) completes the cycle.
-        % E.g., if path was c -> b -> a (TargetNode=a), PathBackToStart=[c,b,a].
-        % FoundCycleInReverse becomes [a,c,b,a]. This represents cycle a-b-c-a.
-        FoundCycleInReverse = [TargetNode | PathBackToStart]
-    ;   % To maintain elementarity (no repeated nodes in path, except start/end of cycle):
-        \+ memberchk(NextNode, PathBackToStart), % Ensure NextNode has not been visited in the current path.
-        % Continue DFS from NextNode, adding it to the path.
-        dfs_for_cycle(NextNode, TargetNode, [NextNode | PathBackToStart], FoundCycleInReverse)
+    PathBackToStart = [CurrentNode, Prev | _],  % Pattern-match to extract the immediate predecessor
+    edge(CurrentNode, NextNode),                % Explore an edge from CurrentNode to NextNode
+    (   % If NextNode is the target and not the immediate predecessor, a cycle is found
+        NextNode == TargetNode,
+        NextNode \== Prev
+    ->  FoundCycleInReverse = [TargetNode | PathBackToStart]
+    ;   % Otherwise, if NextNode is not the target, ensure it's not the immediate predecessor
+        NextNode \== Prev,
+        \+ memberchk(NextNode, PathBackToStart)  % Ensure NextNode is not already in the path
+    ->  dfs_for_cycle(NextNode, TargetNode, [NextNode | PathBackToStart], FoundCycleInReverse)
     ).
 
 % --- Step 2.1: Filter Elementary Cycles to Get "Simple" Cycles ---
@@ -185,31 +192,31 @@ check_all_node_pairs_for_chords([Node1 | RestOfNodes1], OriginalCycleNodesOrdere
     check_one_node_against_all_others(Node1, OriginalCycleNodesOrdered, OriginalCycleNodesOrdered),
     check_all_node_pairs_for_chords(RestOfNodes1, OriginalCycleNodesOrdered). % Recurse for next Node1.
 
-% Iterates through N2 from OriginalCycleNodesOrdered for a given N1.
-check_one_node_against_all_others(_, [], _). % Base case: Node1 checked against all Node2s.
-check_one_node_against_all_others(Node1, [Node2 | RestOfNodes2], OriginalCycleNodesOrdered) :-
-    ( Node1 == Node2 -> true % A node compared to itself trivially satisfies the condition (distance 0).
-    ;   % Determine CyclePathDistance: number of edges from Node1 to Node2 *along the cycle path*.
-        get_distance_along_cycle(Node1, Node2, OriginalCycleNodesOrdered, CyclePathDistance),
-        % Determine GraphShortestDistance: length of shortest path between Node1 and Node2 in the *entire graph*.
-        find_shortest_path_length(Node1, Node2, GraphShortestDistance),
+% Enhanced chord detection: skip adjacent nodes in the undirected cycle to avoid false chords from reverse edges.
+% ------------------------------------------------------------------------------
+% Base case: all checks passed for Node1.
+check_one_node_against_all_others(_, [], _) :- !.
 
-        % The "simple" condition: GraphShortestDistance must not be less than CyclePathDistance.
-        % If GraphShortestDistance < CyclePathDistance, a "chord" exists, making the cycle non-simple.
-        ( GraphShortestDistance == -1 -> % No path found in the entire graph between Node1 and Node2.
-                                         % This shouldn't happen if Node1 and Node2 are part of a valid cycle
-                                         % from which CyclePathDistance could be derived.
-                                         % However, if it implies an infinitely long path, it's "longer"
-                                         % than any finite CyclePathDistance, so it's simple for this pair.
-                                         % This case needs careful consideration for graph disconnectedness.
-                                         % Assuming CyclePathDistance > 0 (distinct nodes in cycle).
-           (CyclePathDistance > 0 -> true ; !, fail) % If no path in graph, but there's one in cycle, it's simple for this pair.
-        ; GraphShortestDistance >= CyclePathDistance
+% For each other node, skip if same or adjacent (in either cycle direction), else check chord condition.
+check_one_node_against_all_others(Node1, [Node2 | Rest], CycleNodes) :-
+    (   Node1 == Node2
+    ;   (get_distance_along_cycle(Node1, Node2, CycleNodes, D1), D1 =:= 1)
+    ;   (get_distance_along_cycle(Node2, Node1, CycleNodes, D2), D2 =:= 1)
+    )
+    ->  true  % trivial: same node or adjacent in undirected cycle
+    ;   % Non-adjacent: ensure no shorter path exists in the graph (no chord)
+        get_distance_along_cycle(Node1, Node2, CycleNodes, CyclePathDistance),
+        find_shortest_path_length(Node1, Node2, GraphShortestDistance),
+        (   GraphShortestDistance == -1
+        ->  CyclePathDistance > 0  % disconnected outside cycle
+        ;   GraphShortestDistance >= CyclePathDistance
         )
-    ),
-    !, % If the check for this Node1-Node2 pair succeeded, commit.
-    check_one_node_against_all_others(Node1, RestOfNodes2, OriginalCycleNodesOrdered). % Check Node1 against next Node2.
-check_one_node_against_all_others(_, _, _) :- !, fail. % If any Node1-Node2 pair fails, this predicate (and thus is_simple_cycle_candidate) fails.
+    ,
+    !,
+    check_one_node_against_all_others(Node1, Rest, CycleNodes).
+
+% Failure: found a chord -> not a simple cycle.
+check_one_node_against_all_others(_, _, _) :- !, fail.
 
 % Calculates the number of edges between NodeA and NodeB when traversing *only* along the provided CycleNodesOrdered path.
 % CycleNodesOrdered is like [n1, n2, n3, n4] for cycle n1-n2-n3-n4-n1.
@@ -253,23 +260,36 @@ add_unvisited_neighbors_to_queue(UnvisitedNeighbors, DistanceToThem, CurrentQueu
     append(CurrentQueue, NeighborEntries, NewQueue). % Append to end of queue for BFS.
 
 % --- Utility: Normalize Cycle Representation for Uniqueness ---
-% Normalization ensures that a cycle is represented in a canonical way,
-% typically by starting with its lexicographically smallest node and listing nodes in traversal order.
-% This is essential for identifying unique cycles, as DFS might find the same cycle
-% starting from different nodes or in different (but equivalent) sequences.
+% Normalizes a cycle to its canonical representation for uniqueness.
+% Canonical form:
+% 1. Lists unique nodes in the cycle.
+% 2. Starts with the lexicographically smallest node.
+% 3. Represents the lexicographically smaller of the two possible traversal directions.
 
 % normalize_cycle_representation(+RawReversedCycle, -NormalizedNodeList)
-% Input RawReversedCycle (e.g., [a,d,c,b,a] for cycle a-b-c-d-a) is the cycle as found by DFS:
-% nodes in reverse traversal order, with start/end node duplicated.
-% Output NormalizedNodeList (e.g., [a,b,c,d] for the example) is the canonical form:
-% nodes in forward traversal order, starting with the lexicographically smallest node in the cycle,
-% and with the duplicate end node removed.
+% RawReversedCycle: Cycle from DFS (e.g., [a,d,c,b,a] for a-b-c-d-a); reversed, duplicate end node.
+% NormalizedNodeList: Canonical cycle (e.g., [a,b,c,d]); unique nodes, smallest start, smaller direction.
 normalize_cycle_representation(RawReversedCycle, NormalizedNodeList) :-
-    RawReversedCycle = [StartNode | PathReversedWithStartNodeAtEnd], % E.g., StartNode=a, PathReversedWithStartNodeAtEnd=[d,c,b,a]
-    reverse(PathReversedWithStartNodeAtEnd, [_StartNodeAgain | PathForwardWithoutStartNode]), % E.g., PathForwardWithoutStartNode=[b,c,d]
-    CycleNodesInForwardOrder = [StartNode | PathForwardWithoutStartNode], % E.g., [a,b,c,d]
-    find_lexicographically_smallest_node(CycleNodesInForwardOrder, SmallestNode), % Find the 'smallest' node (e.g., 'a').
-    rotate_list_to_start_with_element(CycleNodesInForwardOrder, SmallestNode, NormalizedNodeList). % Rotate list so SmallestNode is first.
+    % Step 1: Convert DFS output (reversed, with duplicate end) to a forward list of unique nodes (CycleForward).
+    % E.g., [a,d,c,b,a] becomes [a,b,c,d].
+    RawReversedCycle = [StartNode | PathRevEnd],
+    reverse(PathRevEnd, [_StartAgain | PathForwardREST]), % _StartAgain is the duplicated StartNode
+    CycleForward = [StartNode | PathForwardREST], % Unique nodes, in one traversal direction.
+
+    % Step 2: Normalize CycleForward: rotate to start with its lexicographically smallest node (RotFwd).
+    find_lexicographically_smallest_node(CycleForward, SmallestF),
+    rotate_list_to_start_with_element(CycleForward, SmallestF, RotFwd),
+
+    % Step 3: Generate and normalize the cycle for the opposite traversal direction (RotBwd).
+    reverse(CycleForward, CycleBackwardTemp), % Nodes in reverse traversal order.
+    find_lexicographically_smallest_node(CycleBackwardTemp, SmallestB),
+    rotate_list_to_start_with_element(CycleBackwardTemp, SmallestB, RotBwd),
+
+    % Step 4: Choose the lexicographically smaller list (RotFwd or RotBwd) as the canonical representation.
+    (  RotFwd @=< RotBwd  % Standard term comparison.
+    -> NormalizedNodeList = RotFwd
+    ;  NormalizedNodeList = RotBwd
+    ).
 
 % Finds the lexicographically smallest node in a list of nodes.
 find_lexicographically_smallest_node([Min], Min) :- !. % Base case: list with one element.
