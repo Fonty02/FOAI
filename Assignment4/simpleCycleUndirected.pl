@@ -31,6 +31,19 @@ generate_edges_from_arcs :-
                )
            )).
 
+% --- Default Node Declarations ---
+% Provides default node/2 facts. These are used by find_all_elementary_cycles
+% to get a list of all nodes from which to start cycle searches.
+% This is a fallback in case test setups (arc/4 facts) involve nodes
+% not explicitly declared via node/2.
+node(a, type_default).
+node(b, type_default).
+node(c, type_default).
+node(d, type_default).
+node(e, type_default).
+node(f, type_default).
+node(g, type_default).
+
 % --- Test Case Data Setup ---
 % These predicates define various graph structures for testing the cycle detection algorithm.
 % Each setup_test_graph/1 clause retracts previous arc/4 data before asserting its specific graph structure.
@@ -128,7 +141,7 @@ find_all_elementary_cycles(ElementaryCyclesList) :-
 % Iterates through each node, considering it as a potential start of a cycle, and initiates DFS.
 find_cycles_from_potential_starts(PotentialStartNodes, ElementaryCyclesList) :-
     findall( % Collect all cycles found.
-        RawCycle, % Each cycle found by dfs_find_cycle.
+        RawCycle, % Each cycle found by dfs_for_cycle.
         (   member(StartNode, PotentialStartNodes),     % Select a StartNode.
             edge(StartNode, FirstNeighbor), % Find an edge leading out of it to a FirstNeighbor.
             % Initiate Depth First Search from FirstNeighbor, aiming to return to StartNode.
@@ -319,16 +332,3 @@ print_cycles_list_reversed(Header, CyclesInReverseOrder) :-
        reverse(ReversedCycle, ForwardCycle),
        write('  '), writeln(ForwardCycle)
     )).
-
-% --- Default Node Declarations ---
-% Provides default node/2 facts. These are used by find_all_elementary_cycles
-% to get a list of all nodes from which to start cycle searches.
-% This is a fallback in case test setups (arc/4 facts) involve nodes
-% not explicitly declared via node/2.
-node(a, type_default).
-node(b, type_default).
-node(c, type_default).
-node(d, type_default).
-node(e, type_default).
-node(f, type_default).
-node(g, type_default).
